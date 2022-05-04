@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_navigation"
-    app:startDestination="@id/aboutFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
         android:id="@+id/aboutFragment"
@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_mainFragment_to_safeViewerFragment"
             app:destination="@id/safeViewerFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_safeAddFilesFragment"
+            app:destination="@id/safeAddFilesFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -77,6 +80,17 @@
         tools:layout="@layout/fragment_safe_viewer">
         <action
             android:id="@+id/action_safeViewerFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/safeAddFilesFragment"
+        android:name="com.example.cryptile.ui_fragments.SafeAddFilesFragment"
+        android:label="fragment_safe_add_files"
+        tools:layout="@layout/fragment_safe_add_files">
+        <action
+            android:id="@+id/action_safeAddFilesFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:popUpTo="@id/mainFragment"
             app:popUpToInclusive="true" />

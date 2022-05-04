@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:backgroundTint="#f0f0f0"
+    app:cardCornerRadius="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            tools:text="File safe Name" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/black" />
+
+        <GridLayout
+            android:id="@+id/grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2">
+
+            <TextView
+                android:layout_columnWeight="1"
+                android:text="Owner" />
+
+            <TextView
+                android:layout_columnWeight="2"
+                android:textAlignment="viewEnd"
+                tools:text="something" />
+
+            <TextView
+                android:layout_columnWeight="1"
+                android:text="Created" />
+
+            <TextView
+                android:layout_columnWeight="2"
+                android:textAlignment="viewEnd"
+                tools:text="something" />
+
+            <TextView
+                android:layout_columnWeight="1"
+                android:text="Type" />
+
+            <TextView
+                android:layout_columnWeight="2"
+                android:textAlignment="viewEnd"
+                tools:text="something" />
+
+            <TextView
+                android:layout_columnWeight="1"
+                android:text="Access" />
+
+            <TextView
+                android:layout_columnWeight="2"
+                android:textAlignment="viewEnd"
+                tools:text="something" />
+
+            <TextView
+                android:layout_columnWeight="1"
+                android:text="Size" />
+
+            <TextView
+                android:layout_columnWeight="2"
+                android:textAlignment="viewEnd"
+                tools:text="something" />
+        </GridLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:text="add" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:text="open" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:text="delete" />
+        </LinearLayout>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

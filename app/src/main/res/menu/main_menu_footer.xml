@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Account">
+        <menu>
+            <item
+                android:icon="@drawable/account_sign_in_24"
+                android:title="Sign In" />
+            <item
+                android:icon="@drawable/account_sign_out_24"
+                android:title="Sign Out" />
+            <item
+                android:icon="@drawable/account_add_24"
+                android:title="Sign Up" />
+            <item
+                android:icon="@drawable/account_remove_24"
+                android:title="Remove Account" />
+        </menu>
+    </item>
+
+    <item android:title="Safe">
+        <menu>
+            <item
+                android:icon="@drawable/clear_all_24"
+                android:title="Hide All" />
+            <item
+                android:icon="@drawable/settings_24"
+                android:title="Setting" />
+        </menu>
+    </item>
+
+    <item android:title="Documentation">
+        <menu>
+            <item
+                android:icon="@drawable/info_24"
+                android:title="About" />
+            <item
+                android:icon="@drawable/instructions_24"
+                android:title="Manual" />
+        </menu>
+    </item>
+    <item android:title="Exit">
+        <menu>
+            <item
+                android:icon="@drawable/exit_24"
+                android:title="Exit" />
+        </menu>
+    </item>
+</menu>
