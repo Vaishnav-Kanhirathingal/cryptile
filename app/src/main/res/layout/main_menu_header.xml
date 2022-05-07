@@ -37,6 +37,7 @@
         <TextView android:text="Name" />
 
         <TextView
+            android:id="@+id/name_text_view"
             android:layout_columnWeight="1"
             android:layout_marginStart="@dimen/side_menu_margin"
             android:textAlignment="viewEnd"
@@ -45,6 +46,7 @@
         <TextView android:text="Email" />
 
         <TextView
+            android:id="@+id/email_text_view"
             android:layout_columnWeight="1"
             android:layout_marginStart="@dimen/side_menu_margin"
             android:textAlignment="viewEnd"
@@ -53,10 +55,20 @@
         <TextView android:text="Phone No." />
 
         <TextView
+            android:id="@+id/phone_text_view"
             android:layout_columnWeight="1"
             android:layout_marginStart="@dimen/side_menu_margin"
             android:textAlignment="viewEnd"
             tools:text="Phone" />
+
+        <TextView android:text="Account Status" />
+
+        <TextView
+            android:id="@+id/logged_in_text_view"
+            android:layout_columnWeight="1"
+            android:layout_marginStart="@dimen/side_menu_margin"
+            android:textAlignment="viewEnd"
+            tools:text="Logged In" />
 
     </GridLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

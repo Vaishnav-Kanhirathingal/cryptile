@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.cryptile.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

@@ -2,4 +2,6 @@
 <resources>
     <dimen name="side_menu_margin">20dp</dimen>
     <dimen name="floating_button">20dp</dimen>
+    <dimen name="create_safe_vertical">10dp</dimen>
+    <dimen name="file_list_padding">8dp</dimen>
 </resources>

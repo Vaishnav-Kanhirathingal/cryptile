@@ -6,15 +6,19 @@
     <item android:title="Account">
         <menu>
             <item
+                android:id="@+id/account_sign_in"
                 android:icon="@drawable/account_sign_in_24"
                 android:title="Sign In" />
             <item
+                android:id="@+id/account_sign_out"
                 android:icon="@drawable/account_sign_out_24"
                 android:title="Sign Out" />
             <item
+                android:id="@+id/account_sign_up"
                 android:icon="@drawable/account_add_24"
                 android:title="Sign Up" />
             <item
+                android:id="@+id/account_remove"
                 android:icon="@drawable/account_remove_24"
                 android:title="Remove Account" />
         </menu>
@@ -23,9 +27,11 @@
     <item android:title="Safe">
         <menu>
             <item
+                android:id="@+id/safe_hide_all"
                 android:icon="@drawable/clear_all_24"
                 android:title="Hide All" />
             <item
+                android:id="@+id/safe_settings"
                 android:icon="@drawable/settings_24"
                 android:title="Setting" />
         </menu>
@@ -34,9 +40,11 @@
     <item android:title="Documentation">
         <menu>
             <item
+                android:id="@+id/app_about"
                 android:icon="@drawable/info_24"
                 android:title="About" />
             <item
+                android:id="@+id/app_manual"
                 android:icon="@drawable/instructions_24"
                 android:title="Manual" />
         </menu>
@@ -44,6 +52,7 @@
     <item android:title="Exit">
         <menu>
             <item
+                android:id="@+id/app_exit"
                 android:icon="@drawable/exit_24"
                 android:title="Exit" />
         </menu>

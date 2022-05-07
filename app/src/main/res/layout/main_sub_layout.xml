@@ -22,6 +22,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/safe_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
@@ -32,6 +33,7 @@
         tools:listitem="@layout/list_item_safe" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_safe_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/floating_button"
