@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/side_menu_margin"
     tools:background="#eeeeee">
 
@@ -61,7 +61,7 @@
             android:textAlignment="viewEnd"
             tools:text="Phone" />
 
-        <TextView android:text="Account Status" />
+        <TextView android:text="Activity" />
 
         <TextView
             android:id="@+id/logged_in_text_view"

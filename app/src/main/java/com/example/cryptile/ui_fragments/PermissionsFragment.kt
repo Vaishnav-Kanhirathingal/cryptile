@@ -5,11 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.cryptile.databinding.FragmentSignUpBinding
+import com.example.cryptile.databinding.FragmentPermissionsBinding
 
-class SignUpFragment : Fragment() {
-    private lateinit var binding: FragmentSignUpBinding
-
+class PermissionsFragment : Fragment() {
+    private lateinit var binding: FragmentPermissionsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -18,12 +17,13 @@ class SignUpFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSignUpBinding.inflate(layoutInflater)
+        binding = FragmentPermissionsBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //code
         topBinding()
         mainBinding()
     }

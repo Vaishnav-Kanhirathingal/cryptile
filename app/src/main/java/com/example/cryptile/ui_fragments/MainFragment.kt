@@ -1,5 +1,6 @@
 package com.example.cryptile.ui_fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.databinding.FragmentMainBinding
+import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.google.android.material.navigation.NavigationView
 
 class MainFragment : Fragment() {
@@ -44,7 +46,27 @@ class MainFragment : Fragment() {
 
     private fun mainBinding() {
         binding.includedSubLayout.addSafeFab.setOnClickListener {
-            // TODO: a prompt to import or create a new safe
+            val promptAddSafeBinding = PromptAddSafeBinding.inflate(layoutInflater)
+            val dialogBox = Dialog(requireContext())
+            promptAddSafeBinding.apply {
+                createSafe.setOnClickListener {
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToCreateSafeFragment())
+                    dialogBox.dismiss()
+                }
+                importSafe.setOnClickListener {
+                    // TODO: open file explorer
+                    dialogBox.dismiss()
+                }
+            }
+            dialogBox.apply {
+                setContentView(promptAddSafeBinding.root)
+                window!!.setLayout(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                setCancelable(true)
+                show()
+            }
         }
         // TODO: add adapter for safe recycler
         binding.includedSubLayout.safeRecycler
@@ -58,6 +80,7 @@ class MainFragment : Fragment() {
             findViewById<TextView>(R.id.name_text_view).text = "Some body"
             findViewById<TextView>(R.id.email_text_view).text = "Some Mail"
             findViewById<TextView>(R.id.phone_text_view).text = "Some Number"
+            findViewById<TextView>(R.id.logged_in_text_view).text = "Logged In/Out"
         }
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -81,8 +104,12 @@ class MainFragment : Fragment() {
                     // TODO: prompt
                     true
                 }
-                R.id.safe_settings -> {
+                R.id.settings -> {
                     findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
+                    true
+                }
+                R.id.permission_manager -> {
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToPermissionsFragment())
                     true
                 }
                 R.id.app_about -> {

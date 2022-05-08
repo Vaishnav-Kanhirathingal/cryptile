@@ -2,4 +2,11 @@
     <string name="app_name">CRYPTILE</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="safe_password">Safe Password</string>
+    <string name="safe_name">Safe Name</string>
+    <string name="level_of_encryption_message">Set the level of encryption required for your safe. Higher also means more processing time required. Lower is faster but uses comparatively easier algorithms. More details provided in the documentation section.</string>
+    <string name="verify">Verify</string>
+    <string name="clear">Clear</string>
 </resources>

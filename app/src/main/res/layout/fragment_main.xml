@@ -23,4 +23,3 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:menu="@menu/main_menu_footer" />
 </androidx.drawerlayout.widget.DrawerLayout>
-

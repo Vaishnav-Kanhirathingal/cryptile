@@ -30,10 +30,18 @@
                 android:id="@+id/safe_hide_all"
                 android:icon="@drawable/clear_all_24"
                 android:title="Hide All" />
+        </menu>
+    </item>
+    <item android:title="Settings">
+        <menu>
             <item
-                android:id="@+id/safe_settings"
+                android:id="@+id/settings"
                 android:icon="@drawable/settings_24"
                 android:title="Setting" />
+            <item
+                android:id="@+id/permission_manager"
+                android:icon="@drawable/permission_24"
+                android:title="Permissions" />
         </menu>
     </item>
 

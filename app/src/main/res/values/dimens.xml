@@ -4,4 +4,10 @@
     <dimen name="floating_button">20dp</dimen>
     <dimen name="create_safe_vertical">10dp</dimen>
     <dimen name="file_list_padding">8dp</dimen>
+    <dimen name="create_safe_horizontal">4dp</dimen>
+    <dimen name="create_safe_card_radius">10dp</dimen>
+    <dimen name="safe_name_size">20sp</dimen>
+    <dimen name="safe_details_size">12sp</dimen>
+    <dimen name="sign_up_vertical">10dp</dimen>
+    <dimen name="sign_up_horizontal">10dp</dimen>
 </resources>

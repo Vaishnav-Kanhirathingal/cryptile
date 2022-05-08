@@ -24,6 +24,13 @@ class SafeViewerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //code
+        topBinding()
+        mainBinding()
+    }
+
+    private fun topBinding() {
+    }
+
+    private fun mainBinding() {
     }
 }

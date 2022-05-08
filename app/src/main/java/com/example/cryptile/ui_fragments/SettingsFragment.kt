@@ -21,4 +21,16 @@ class SettingsFragment : Fragment() {
         binding = FragmentSettingsBinding.inflate(layoutInflater)
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        topBinding()
+        mainBinding()
+    }
+
+    private fun topBinding() {
+    }
+
+    private fun mainBinding() {
+    }
 }

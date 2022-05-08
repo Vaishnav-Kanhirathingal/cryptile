@@ -14,95 +14,120 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            tools:text="File safe Name" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/safe_image"
+                android:layout_width="36dp"
+                android:layout_height="0dp"
+                android:src="@drawable/personal_safe_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/safe_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="@dimen/safe_name_size"
+                app:layout_constraintBottom_toTopOf="@id/safe_info_linear"
+                app:layout_constraintLeft_toRightOf="@id/safe_image"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/safe_image"
+                tools:text="File safe Name" />
+
+            <LinearLayout
+                android:id="@+id/safe_info_linear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/safe_image"
+                app:layout_constraintLeft_toRightOf="@id/safe_image"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/safe_name">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/safe_details_size"
+                    tools:text="10/2/2022" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/create_safe_horizontal"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/safe_details_size"
+                    tools:text="Level-1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/create_safe_horizontal"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/safe_details_size"
+                    tools:text="Access Type" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/create_safe_horizontal"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/safe_details_size"
+                    tools:text="1.02GB" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/black" />
 
-        <GridLayout
-            android:id="@+id/grid"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2">
+            android:layout_height="wrap_content">
 
             <TextView
-                android:layout_columnWeight="1"
-                android:text="Owner" />
-
-            <TextView
-                android:layout_columnWeight="2"
-                android:textAlignment="viewEnd"
-                tools:text="something" />
-
-            <TextView
-                android:layout_columnWeight="1"
-                android:text="Created" />
-
-            <TextView
-                android:layout_columnWeight="2"
-                android:textAlignment="viewEnd"
-                tools:text="something" />
-
-            <TextView
-                android:layout_columnWeight="1"
-                android:text="Type" />
-
-            <TextView
-                android:layout_columnWeight="2"
-                android:textAlignment="viewEnd"
-                tools:text="something" />
-
-            <TextView
-                android:layout_columnWeight="1"
-                android:text="Access" />
-
-            <TextView
-                android:layout_columnWeight="2"
-                android:textAlignment="viewEnd"
-                tools:text="something" />
-
-            <TextView
-                android:layout_columnWeight="1"
-                android:text="Size" />
-
-            <TextView
-                android:layout_columnWeight="2"
-                android:textAlignment="viewEnd"
-                tools:text="something" />
-        </GridLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                android:layout_weight="1"
-                android:text="add" />
+                android:layout_marginStart="@dimen/create_safe_horizontal"
+                android:textSize="@dimen/safe_name_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="\@Owner_Name" />
 
-            <Button
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="1"
-                android:text="open" />
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:text="delete" />
-        </LinearLayout>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/add_24" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/open_in_new_24" />
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/delete_24" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>
