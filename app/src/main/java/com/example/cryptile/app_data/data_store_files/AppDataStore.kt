@@ -16,7 +16,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class AppDataStore(val context: Context) {
-    private val reset = "reset"
+    private val default = "Default"
 
     //------------------------------------------------------------------------------------------keys
     private val userNameKey = stringPreferencesKey("user_name_key")
@@ -41,7 +41,7 @@ class AppDataStore(val context: Context) {
      * similarly, boolean mapper is used to access every boolean from the data store
      */
     private fun stringMapper(key: Preferences.Key<String>): Flow<String> {
-        return context.dataStore.data.catch { it.printStackTrace() }.map { it[key] ?: reset }
+        return context.dataStore.data.catch { it.printStackTrace() }.map { it[key] ?: default }
     }
 
     private fun booleanMapper(key: Preferences.Key<Boolean>): Flow<Boolean> {

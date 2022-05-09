@@ -116,7 +116,7 @@
         android:id="@+id/permissionsFragment"
         android:name="com.example.cryptile.ui_fragments.PermissionsFragment"
         android:label="fragment_permissions"
-        tools:layout="@layout/fragment_permissions" >
+        tools:layout="@layout/fragment_permissions">
         <action
             android:id="@+id/action_permissionsFragment_to_mainFragment"
             app:destination="@id/mainFragment"

@@ -71,7 +71,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/user_set_password_edit_text_text_field"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -132,12 +132,12 @@
                         android:layout_marginEnd="@dimen/sign_up_horizontal"
                         android:hint="Phone OTP"
                         app:endIconDrawable="@drawable/refresh_24"
-                        app:startIconDrawable="@drawable/pin_24"
                         app:endIconMode="custom"
                         app:helperText="Check Message Box For The \nEntered Phone Number"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toLeftOf="@id/verify_phone_otp"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:startIconDrawable="@drawable/pin_24">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/user_phone_otp_edit_text_text_field"
@@ -180,8 +180,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:startIconDrawable="@drawable/email_24"
-                    android:hint="Email Address">
+                    android:hint="Email Address"
+                    app:startIconDrawable="@drawable/email_24">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/user_email_edit_text_text_field"
@@ -205,12 +205,12 @@
                         android:hint="Email OTP"
                         app:endIconDrawable="@drawable/refresh_24"
                         app:endIconMode="custom"
-                        app:startIconDrawable="@drawable/pin_24"
                         app:helperText="Check Inbox For The Entered\nEmail"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toLeftOf="@id/verify_email_otp"
-                        app:layout_constraintTop_toTopOf="parent">
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:startIconDrawable="@drawable/pin_24">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/user_email_otp_edit_text_text_field"

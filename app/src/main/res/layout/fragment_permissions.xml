@@ -17,9 +17,7 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/main_menu_top"
             app:navigationIcon="@drawable/arrow_back_24"
-            app:title="Permissions" />
-
+            app:title="Permission" />
     </com.google.android.material.appbar.AppBarLayout>
 </LinearLayout>

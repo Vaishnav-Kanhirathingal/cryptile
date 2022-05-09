@@ -23,7 +23,6 @@
                 android:title="Remove Account" />
         </menu>
     </item>
-
     <item android:title="Safe">
         <menu>
             <item
@@ -44,7 +43,6 @@
                 android:title="Permissions" />
         </menu>
     </item>
-
     <item android:title="Documentation">
         <menu>
             <item
@@ -54,7 +52,7 @@
             <item
                 android:id="@+id/app_manual"
                 android:icon="@drawable/instructions_24"
-                android:title="Manual" />
+                android:title="Documentation" />
         </menu>
     </item>
     <item android:title="Exit">
