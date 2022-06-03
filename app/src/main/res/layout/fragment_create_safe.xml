@@ -63,11 +63,19 @@
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                android:layout_marginBottom="@dimen/create_safe_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/create_safe_vertical"
-                android:backgroundTint="#eeeeee"
+                android:backgroundTint="@color/card_background"
                 app:cardCornerRadius="@dimen/create_safe_card_radius">
 
                 <LinearLayout
@@ -112,11 +120,19 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                android:layout_marginBottom="@dimen/create_safe_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/create_safe_vertical"
-                android:backgroundTint="#eeeeee"
+                android:backgroundTint="@color/card_background"
                 app:cardCornerRadius="@dimen/create_safe_card_radius">
 
                 <LinearLayout
@@ -146,11 +162,19 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                android:layout_marginBottom="@dimen/create_safe_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/create_safe_vertical"
-                android:backgroundTint="#eeeeee"
+                android:backgroundTint="@color/card_background"
                 android:padding="@dimen/create_safe_horizontal"
                 app:cardCornerRadius="@dimen/create_safe_card_radius">
 
@@ -181,11 +205,19 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                android:layout_marginBottom="@dimen/create_safe_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/create_safe_vertical"
-                android:backgroundTint="#eeeeee"
+                android:backgroundTint="@color/card_background"
                 app:cardCornerRadius="@dimen/create_safe_card_radius">
 
                 <LinearLayout
@@ -207,6 +239,14 @@
                         android:valueTo="3" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                android:layout_marginBottom="@dimen/create_safe_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"

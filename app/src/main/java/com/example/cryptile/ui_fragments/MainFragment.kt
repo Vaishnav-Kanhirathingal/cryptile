@@ -1,17 +1,24 @@
 package com.example.cryptile.ui_fragments
 
+import android.Manifest
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
+import com.example.cryptile.databinding.PromptSignInBinding
 import com.google.android.material.navigation.NavigationView
+
+private const val TAG = "MainFragment"
 
 class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
@@ -24,17 +31,17 @@ class MainFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMainBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //code
         topMenuBinding()
         mainBinding()
         sideBinding()
+        test1()
     }
 
 
@@ -50,7 +57,9 @@ class MainFragment : Fragment() {
             val dialogBox = Dialog(requireContext())
             promptAddSafeBinding.apply {
                 createSafe.setOnClickListener {
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToCreateSafeFragment())
+                    findNavController().navigate(
+                        MainFragmentDirections.actionMainFragmentToCreateSafeFragment()
+                    )
                     dialogBox.dismiss()
                 }
                 importSafe.setOnClickListener {
@@ -77,6 +86,7 @@ class MainFragment : Fragment() {
         val headerMenu = menu.getHeaderView(0)
 
         headerMenu.apply {
+            // TODO: change this to actual values
             findViewById<TextView>(R.id.name_text_view).text = "Some body"
             findViewById<TextView>(R.id.email_text_view).text = "Some Mail"
             findViewById<TextView>(R.id.phone_text_view).text = "Some Number"
@@ -85,7 +95,7 @@ class MainFragment : Fragment() {
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.account_sign_in -> {
-                    // TODO: prompt
+                    signInPrompt()
                     true
                 }
                 R.id.account_sign_out -> {
@@ -129,5 +139,49 @@ class MainFragment : Fragment() {
                 }
             }
         }
+    }
+
+    //---------------------------------------------------------------------------------------prompts
+    private fun signInPrompt() {
+        val promptSignInBinding = PromptSignInBinding.inflate(layoutInflater)
+        val dialogBox = Dialog(requireContext())
+        promptSignInBinding.apply {
+            cancelSignIn.setOnClickListener {
+                Toast.makeText(requireContext(), "Sign In Failed", Toast.LENGTH_SHORT).show()
+                dialogBox.dismiss()
+            }
+            signIn.setOnClickListener {
+                // TODO: apply sign in bindings
+            }
+        }
+        dialogBox.apply {
+            setContentView(promptSignInBinding.root)
+            window!!.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setCancelable(false)
+            show()
+        }
+    }
+
+    //------------------------------------------------------------------------------add-file-to-room
+    private fun importSafe() {
+        // TODO: check intent
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.type = "*/*"
+        val i = Intent.createChooser(intent, "File")
+        startActivity(i)
+    }
+
+    //----------------------------------------------------------------------------permission-manager
+    private fun test1() {
+        val permission = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        Log.d(TAG, "requesting permissions")
+        requireActivity().requestPermissions(permission, 100)
     }
 }

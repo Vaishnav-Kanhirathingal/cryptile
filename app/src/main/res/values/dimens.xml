@@ -8,6 +8,9 @@
     <dimen name="create_safe_card_radius">10dp</dimen>
     <dimen name="safe_name_size">20sp</dimen>
     <dimen name="safe_details_size">12sp</dimen>
-    <dimen name="sign_up_vertical">10dp</dimen>
-    <dimen name="sign_up_horizontal">10dp</dimen>
+    <dimen name="sign_up_vertical">12dp</dimen>
+    <dimen name="sign_up_horizontal">12dp</dimen>
+    <dimen name="prompt_vertical">10dp</dimen>
+    <dimen name="prompt_horizontal">10dp</dimen>
+    <dimen name="divider_thickness">1px</dimen>
 </resources>

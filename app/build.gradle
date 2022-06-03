@@ -78,5 +78,6 @@ dependencies {
 
     //----------------------------------------------------------------------------------cryptography
 
-    //keystore to store cryptographic keys
+    //keystore to store cryptographic key.
+    //json formatter required to store file's details inside.
 }

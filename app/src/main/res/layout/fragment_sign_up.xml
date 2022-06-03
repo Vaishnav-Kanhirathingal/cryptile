@@ -19,301 +19,314 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/arrow_back_24"
             app:title="Sign Up" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <ScrollView
-            android:id="@+id/scroll_view"
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#f8f8f8">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/sign_up_horizontal">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_name_edit_text"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="@dimen/sign_up_horizontal">
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:hint="Full Name"
+                app:helperText="First-Name Middle-Name Last-Name"
+                app:startIconDrawable="@drawable/account_24">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/user_name_edit_text"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/user_name_edit_text_text_field"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    android:hint="Full Name"
-                    app:helperText="First-Name Middle-Name Last-Name">
+                    android:layout_height="wrap_content" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/user_name_edit_text_text_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/sign_up_horizontal"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
 
-                <com.google.android.material.divider.MaterialDivider
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_set_password_edit_text"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:hint="Set New Password"
+                app:counterEnabled="true"
+                app:counterMaxLength="32"
+                app:endIconMode="password_toggle"
+                app:helperText="This Will Be Used To Access The App"
+                app:startIconDrawable="@drawable/password_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/user_set_password_edit_text_text_field"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
+                    android:layout_height="wrap_content" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/user_set_password_edit_text"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/user_confirm_password_edit_text"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:hint="Confirm New Password"
+                app:counterEnabled="true"
+                app:counterMaxLength="32"
+                app:endIconMode="password_toggle"
+                app:helperText="Repeat Password"
+                app:startIconDrawable="@drawable/password_24">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/user_confirm_password_edit_text_text_field"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    android:hint="Set New Password"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="32"
-                    app:endIconMode="password_toggle"
-                    app:helperText="This Will Be Used To Access The App"
-                    app:startIconDrawable="@drawable/password_24">
+                    android:layout_height="wrap_content" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/user_set_password_edit_text_text_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/sign_up_horizontal"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/user_confirm_password_edit_text"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    android:hint="Confirm New Password"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="32"
-                    app:endIconMode="password_toggle"
-                    app:helperText="Repeat Password"
-                    app:startIconDrawable="@drawable/password_24">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/user_confirm_password_edit_text_text_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/user_phone_number_edit_text"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    android:hint="Phone Number"
-                    app:startIconDrawable="@drawable/phone_24">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/user_phone_number_edit_text_text_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:digits="0123456789+"
-                        android:inputType="phone" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/user_phone_otp_edit_text"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/sign_up_horizontal"
-                        android:hint="Phone OTP"
-                        app:endIconDrawable="@drawable/refresh_24"
-                        app:endIconMode="custom"
-                        app:helperText="Check Message Box For The \nEntered Phone Number"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@id/verify_phone_otp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:startIconDrawable="@drawable/pin_24">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/user_phone_otp_edit_text_text_field"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:digits="0123456789"
-                            android:inputType="number" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <Button
-                        android:id="@+id/verify_phone_otp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/verify"
-                        app:layout_constraintBottom_toTopOf="@id/clear_phone_otp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <Button
-                        android:id="@+id/clear_phone_otp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/clear"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/verify_phone_otp" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/user_email_edit_text"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    android:hint="Email Address"
-                    app:startIconDrawable="@drawable/email_24">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/user_email_edit_text_text_field"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/user_email_otp_edit_text"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/sign_up_horizontal"
-                        android:hint="Email OTP"
-                        app:endIconDrawable="@drawable/refresh_24"
-                        app:endIconMode="custom"
-                        app:helperText="Check Inbox For The Entered\nEmail"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@id/verify_email_otp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:startIconDrawable="@drawable/pin_24">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/user_email_otp_edit_text_text_field"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:digits="0123456789"
-                            android:inputType="number" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <Button
-                        android:id="@+id/verify_email_otp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/verify"
-                        app:layout_constraintBottom_toTopOf="@id/clear_email_otp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <Button
-                        android:id="@+id/clear_email_otp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/clear"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/verify_email_otp" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical">
-
-                    <com.google.android.material.switchmaterial.SwitchMaterial
-                        android:id="@+id/user_use_fingerprint"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:text="Use Fingerprint" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
-
-
-                <com.google.android.material.divider.MaterialDivider
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:backgroundTint="@color/card_background"
+                app:cardCornerRadius="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sign_up_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-                    <Button
-                        android:id="@+id/cancel_login"
-                        style="?attr/materialButtonOutlinedStyle"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/user_phone_number_edit_text"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/sign_up_horizontal"
-                        android:layout_weight="1"
-                        android:text="@string/cancel" />
+                        android:hint="Phone Number"
+                        app:startIconDrawable="@drawable/phone_24">
 
-                    <Button
-                        android:id="@+id/register_login"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/user_phone_number_edit_text_text_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="0123456789+"
+                            android:inputType="phone" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/sign_up_horizontal"
-                        android:layout_weight="1"
-                        android:text="sign Up" />
+                        android:layout_marginTop="@dimen/sign_up_vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/user_phone_otp_edit_text"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/sign_up_horizontal"
+                            android:hint="Phone OTP"
+                            app:endIconDrawable="@drawable/refresh_24"
+                            app:endIconMode="custom"
+                            app:helperText="Check Message Box For The \nEntered Phone Number"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toLeftOf="@id/verify_phone_otp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:startIconDrawable="@drawable/pin_24">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/user_phone_otp_edit_text_text_field"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:digits="0123456789"
+                                android:inputType="number" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/verify_phone_otp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/verify"
+                            app:layout_constraintBottom_toTopOf="@id/clear_phone_otp"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:id="@+id/clear_phone_otp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/clear"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/verify_phone_otp" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.divider.MaterialDivider
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/sign_up_horizontal"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:backgroundTint="@color/card_background"
+                app:cardCornerRadius="10dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:layout_marginVertical="@dimen/sign_up_vertical"
-                    app:dividerThickness="1dp" />
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/user_email_edit_text"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Email Address"
+                        app:startIconDrawable="@drawable/email_24">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/user_email_edit_text_text_field"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sign_up_vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/user_email_otp_edit_text"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/sign_up_horizontal"
+                            android:hint="Email OTP"
+                            app:endIconDrawable="@drawable/refresh_24"
+                            app:endIconMode="custom"
+                            app:helperText="Check Inbox For The Entered\nEmail"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toLeftOf="@id/verify_email_otp"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:startIconDrawable="@drawable/pin_24">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/user_email_otp_edit_text_text_field"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:digits="0123456789"
+                                android:inputType="number" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/verify_email_otp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/verify"
+                            app:layout_constraintBottom_toTopOf="@id/clear_email_otp"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <Button
+                            android:id="@+id/clear_email_otp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/clear"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/verify_email_otp" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/sign_up_horizontal"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:backgroundTint="@color/card_background">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/user_use_fingerprint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:text="Use Fingerprint" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/sign_up_horizontal"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                app:dividerThickness="@dimen/divider_thickness"
+                tools:dividerThickness="3dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sign_up_vertical"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancel_login"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/sign_up_horizontal"
+                    android:layout_weight="1"
+                    android:text="@string/cancel" />
+
+                <Button
+                    android:id="@+id/register_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sign_up_horizontal"
+                    android:layout_weight="1"
+                    android:text="sign Up" />
             </LinearLayout>
-        </ScrollView>
-    </com.google.android.material.appbar.AppBarLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
