@@ -96,6 +96,7 @@
                             android:src="@drawable/key_24" />
 
                         <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/use_multiple_passwords_switch"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/create_safe_horizontal"
@@ -148,6 +149,7 @@
                         android:src="@drawable/folder_24" />
 
                     <TextView
+                        android:id="@+id/current_safe_directory"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/create_safe_horizontal"
@@ -155,6 +157,7 @@
                         android:text="safe/location/folder/name" />
 
                     <ImageButton
+                        android:id="@+id/select_directory_image_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/create_safe_horizontal"
