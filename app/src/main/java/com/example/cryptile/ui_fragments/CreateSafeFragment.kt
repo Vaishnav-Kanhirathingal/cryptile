@@ -2,6 +2,8 @@ package com.example.cryptile.ui_fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Environment
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.databinding.FragmentCreateSafeBinding
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 
 private const val TAG = "CreateSafeFragment"
 
@@ -37,25 +42,64 @@ class CreateSafeFragment : Fragment() {
     }
 
     private fun mainBinding() {
-        //---------------------------------------------------------------------------top-bar-binding
+        /**
+         * top app bar binding
+         */
         binding.topAppBar.setNavigationOnClickListener {
             findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
         }
-        //-----------------------------------------------------------------------multi-password-card
-        binding.useMultiplePasswordsSwitch.setOnCheckedChangeListener { compoundButton, status ->
-            useMultiplePasswords.value = status
-        }
+        /**
+         * multi password card binding
+         */
+        binding.useMultiplePasswordsSwitch
+            .setOnCheckedChangeListener { _, status -> useMultiplePasswords.value = status }
         useMultiplePasswords.observe(viewLifecycleOwner) {
             binding.safePasswordTwoInputLayout.isEnabled = it
         }
-        //---------------------------------------------------------------------------------path-card
+        /**
+         * select directory card binding
+         */
         binding.selectDirectoryImageButton.setOnClickListener {
             selectDirectory()
         }
         location.observe(viewLifecycleOwner) {
             binding.currentSafeDirectory.text = it
         }
+        /**
+         * bottom confirmation and cancellation button bindings
+         */
+        binding.cancelButton.setOnClickListener {
+            findNavController().navigate(
+                CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
+            )
+        }
+        binding.confirmButton.setOnClickListener {
+            // TODO: create directory zips8
+            test()
+        }
     }
+
+    //working, can create a file at a given location
+    private fun test() {
+        try {
+            val fileName =
+                DateFormat.format("MM-dd-yyyyy-h-mmssaa", System.currentTimeMillis()).toString()
+            val fileDirectory = File(Environment.getExternalStorageDirectory(), "Notes/some")
+            //file generated at above given location.
+            if (!fileDirectory.exists()) {
+                fileDirectory.mkdirs()
+            }
+            val filepath = File(fileDirectory, "$fileName.txt")
+            val writer = FileWriter(filepath)
+            writer.append("test text for files")
+            writer.flush()
+            writer.close()
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun selectDirectory() {
         try {
@@ -64,7 +108,6 @@ class CreateSafeFragment : Fragment() {
             startActivityForResult(intent, 1)
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(requireContext(), "System Error", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -79,6 +122,5 @@ class CreateSafeFragment : Fragment() {
                 .show()
             e.printStackTrace()
         }
-        val x: String = ""
     }
 }
