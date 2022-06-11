@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/file_list_padding"
-    app:cardCornerRadius="@dimen/file_list_padding"
-    tools:backgroundTint="#CDCEFD">
+    app:cardCornerRadius="@dimen/file_list_padding">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,46 +13,115 @@
         android:padding="@dimen/file_list_padding">
 
         <ImageView
-            android:id="@+id/type_image_view"
-            android:layout_width="50dp"
+            android:id="@+id/safe_condition"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/menu_24"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/check_circle_24"
+            app:layout_constraintBottom_toBottomOf="@id/file_name_text_view"
             app:layout_constraintDimensionRatio="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/file_name_text_view" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/file_name_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/file_list_padding"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@id/type_image_view"
-            app:layout_constraintLeft_toRightOf="@id/type_image_view"
+            android:layout_marginEnd="@dimen/file_list_padding"
+            android:textSize="@dimen/safe_name_size"
+            app:layout_constraintRight_toLeftOf="@id/safe_condition"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="File Name" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/top_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/file_list_padding"
+            app:layout_constraintTop_toBottomOf="@id/file_name_text_view" />
+
+        <ImageView
+            android:id="@+id/safe_type_image_view"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/file_list_padding"
+            app:layout_constraintBottom_toBottomOf="@id/details_grid"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/details_grid"
+            app:layout_constraintTop_toTopOf="@id/details_grid"
+            tools:src="@drawable/personal_safe_24" />
+
+        <GridLayout
+            android:id="@+id/details_grid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/file_list_padding"
+            android:columnCount="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/safe_type_image_view"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/type_image_view">
+            app:layout_constraintTop_toBottomOf="@id/top_divider">
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                tools:text="File_Name.file" />
+                android:layout_columnWeight="1"
+                android:text="Owner"
+                android:textSize="@dimen/safe_details_size" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="date: 01/02/2022" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Location"
+                android:textSize="@dimen/safe_details_size" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/file_list_padding"
-                    tools:text="(2)" />
-            </LinearLayout>
-        </LinearLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Multi-Password"
+                android:textSize="@dimen/safe_details_size" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Private"
+                android:textSize="@dimen/safe_details_size" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
+        </GridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

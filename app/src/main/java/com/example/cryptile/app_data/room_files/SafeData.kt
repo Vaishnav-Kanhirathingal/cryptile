@@ -9,14 +9,14 @@ class SafeData(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 
     @ColumnInfo(name = "safe_name") var safeName: String,
+    @ColumnInfo(name = "safe_owner") var safeOwner: String,
+
+    @ColumnInfo(name = "safe_uses_multiple_password") var safeUsesMultiplePassword: Boolean,
+    @ColumnInfo(name = "safe_partial_password_one") var safePartialPasswordOne: String,
+    @ColumnInfo(name = "safe_partial_password_two") var safePartialPasswordTwo: String,
+    @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
+    @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,
+
     @ColumnInfo(name = "safe_location") var safeLocation: String,
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
-
-    @ColumnInfo(name = "safe_password_one") var safePasswordOne: String,
-    @ColumnInfo(name = "safe_uses_two_password") var safeUsesTwoPassword: Boolean,
-    @ColumnInfo(name = "safe_password_two") var safePasswordTwo: String,
-
-    @ColumnInfo(name = "encryption_type") var encryptionType: String,
-    @ColumnInfo(name = "safe_owner") var safeOwner: String
-
 )

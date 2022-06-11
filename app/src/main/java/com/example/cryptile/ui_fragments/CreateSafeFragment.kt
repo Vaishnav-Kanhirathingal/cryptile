@@ -3,7 +3,6 @@ package com.example.cryptile.ui_fragments
 import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -42,64 +41,92 @@ class CreateSafeFragment : Fragment() {
     }
 
     private fun mainBinding() {
-        /**
-         * top app bar binding
-         */
-        binding.topAppBar.setNavigationOnClickListener {
-            findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
-        }
-        /**
-         * multi password card binding
-         */
-        binding.useMultiplePasswordsSwitch
-            .setOnCheckedChangeListener { _, status -> useMultiplePasswords.value = status }
-        useMultiplePasswords.observe(viewLifecycleOwner) {
-            binding.safePasswordTwoInputLayout.isEnabled = it
-        }
-        /**
-         * select directory card binding
-         */
-        binding.selectDirectoryImageButton.setOnClickListener {
-            selectDirectory()
-        }
-        location.observe(viewLifecycleOwner) {
-            binding.currentSafeDirectory.text = it
-        }
-        /**
-         * bottom confirmation and cancellation button bindings
-         */
-        binding.cancelButton.setOnClickListener {
-            findNavController().navigate(
-                CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
-            )
-        }
-        binding.confirmButton.setOnClickListener {
-            // TODO: create directory zips8
-            test()
+        binding.apply {
+            /**
+             * top app bar binding
+             */
+            topAppBar.setNavigationOnClickListener {
+                findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
+            }
+            /**
+             * multi password card binding
+             */
+            useMultiplePasswordsSwitch
+                .setOnCheckedChangeListener { _, status -> useMultiplePasswords.value = status }
+            useMultiplePasswords.observe(viewLifecycleOwner) {
+                safePasswordTwoInputLayout.isEnabled = it
+            }
+            /**
+             * select directory card binding
+             */
+            selectDirectoryImageButton.setOnClickListener { selectDirectory() }
+            location.observe(viewLifecycleOwner) { currentSafeDirectory.text = it }
+            /**
+             * bottom confirmation and cancellation button bindings
+             */
+            cancelButton.setOnClickListener {
+                findNavController().navigate(
+                    CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
+                )
+            }
+            confirmButton.setOnClickListener {
+                // TODO: change provided values for test function.
+                val usesMultiPasswords = useMultiplePasswordsSwitch.isChecked
+                createSafeFiles(
+                    safeName = safeNameInputLayout.editText!!.text.toString(),
+                    safeOwner = "get from datastore",
+                    usesMultiplePasswords = usesMultiPasswords,
+                    ownerSignedPartialKeyOne = "ownerSignedPartialKeyOne",
+                    ownerSignedPartialKeyTwo = (if (usesMultiPasswords) "ownerSignedPartialKeyTwo" else null),
+                    personalAccessOnly = personalAccessOnlySwitch.isChecked,
+                    encryptionAlgorithmUsed = when (encryptionLevelSlider.value) {
+                        1.0f -> "one"
+                        2.0f -> "two"
+                        else -> "three"
+                    }
+                )
+            }
         }
     }
 
-    //working, can create a file at a given location
-    private fun test() {
+    private fun createSafeFiles(
+        safeName: String,
+        safeOwner: String,
+        usesMultiplePasswords: Boolean,
+        ownerSignedPartialKeyOne: String,
+        ownerSignedPartialKeyTwo: String?,
+        personalAccessOnly: Boolean,
+        encryptionAlgorithmUsed: String
+    ) {
         try {
-            val fileName =
-                DateFormat.format("MM-dd-yyyyy-h-mmssaa", System.currentTimeMillis()).toString()
-            val fileDirectory = File(Environment.getExternalStorageDirectory(), "Notes/some")
+            val fileDirectory =
+                File(Environment.getExternalStorageDirectory(), "Cryptile/$safeName")
             //file generated at above given location.
             if (!fileDirectory.exists()) {
                 fileDirectory.mkdirs()
             }
-            val filepath = File(fileDirectory, "$fileName.txt")
+            val filepath = File(fileDirectory, "SAFE_META_DATA_$safeName.txt")
             val writer = FileWriter(filepath)
-            writer.append("test text for files")
+            writer.append(
+                "File Safe Details:-" +
+                        "\n{" +
+                        "\n\t" + "\"safeName\" : \"$safeName\"" +
+                        "\n\t" + "\"safeOwner\" : \"$safeOwner\"" +
+                        "\n\t" + "\"usesMultiplePasswords\" : \"$usesMultiplePasswords\"" +
+                        "\n\t" + "\"ownerSignedPartialKeyOne\" : \"$ownerSignedPartialKeyOne\"" +
+                        "\n\t" + "\"ownerSignedPartialKeyTwo\" : \"$ownerSignedPartialKeyTwo\"" +
+                        "\n\t" + "\"personalAccessOnly\" : \"$personalAccessOnly\"" +
+                        "\n\t" + "\"encryptionAlgorithmUsed\" : \"$encryptionAlgorithmUsed\"" +
+                        "\n\t" + "\"time\": " + "\"${System.currentTimeMillis()}\"" +
+                        "\n}"
+                // TODO: add test values and their cipher for password verification
+            )
             writer.flush()
             writer.close()
-
         } catch (e: IOException) {
             e.printStackTrace()
         }
     }
-
 
     private fun selectDirectory() {
         try {

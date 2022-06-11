@@ -197,6 +197,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/personal_access_only_switch"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/create_safe_horizontal"
@@ -235,6 +236,7 @@
                         android:text="@string/level_of_encryption_message" />
 
                     <com.google.android.material.slider.Slider
+                        android:id="@+id/encryption_level_slider"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:stepSize="1.0"

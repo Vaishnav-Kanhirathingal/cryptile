@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'androidx.navigation.safeargs'
     id 'com.google.devtools.ksp'
-//    id 'org.jetbrains.kotlin.jvm'
 }
 
 
@@ -76,8 +75,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
 
+    //------------------------------------------------------------------------------------------gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
     //----------------------------------------------------------------------------------cryptography
 
     //keystore to store cryptographic key.
-    //json formatter required to store file's details inside.
 }
