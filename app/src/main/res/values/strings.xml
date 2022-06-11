@@ -9,4 +9,7 @@
     <string name="level_of_encryption_message">Set the level of encryption required for your safe. Higher also means more processing time required. Lower is faster but uses comparatively easier algorithms. More details provided in the documentation section.</string>
     <string name="verify">Verify</string>
     <string name="clear">Clear</string>
+    <string name="open">Open</string>
+    <string name="delete">Delete</string>
+    <string name="remove">Remove</string>
 </resources>

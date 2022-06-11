@@ -4,130 +4,125 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:backgroundTint="#f0f0f0"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="@dimen/file_list_padding"
+    tools:backgroundTint="#f0f0f0"
+    tools:layout_margin="@dimen/file_list_padding">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="@dimen/file_list_padding">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/safe_condition"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/check_circle_24"
+            app:layout_constraintBottom_toBottomOf="@id/file_name_text_view"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/file_name_text_view" />
+
+        <TextView
+            android:id="@+id/file_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/file_list_padding"
+            android:textSize="@dimen/safe_name_size"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/safe_condition"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="File Name" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/top_divider"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/file_list_padding"
+            app:layout_constraintTop_toBottomOf="@id/file_name_text_view" />
 
-            <ImageView
-                android:id="@+id/safe_image"
-                android:layout_width="36dp"
-                android:layout_height="0dp"
-                android:src="@drawable/personal_safe_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/safe_type_image_view"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/file_list_padding"
+            app:layout_constraintBottom_toBottomOf="@id/details_grid"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/details_grid"
+            app:layout_constraintTop_toTopOf="@id/details_grid"
+            tools:src="@drawable/personal_safe_24" />
+
+        <GridLayout
+            android:id="@+id/details_grid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/file_list_padding"
+            android:columnCount="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/safe_type_image_view"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/top_divider">
 
             <TextView
-                android:id="@+id/safe_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:textSize="@dimen/safe_name_size"
-                app:layout_constraintBottom_toTopOf="@id/safe_info_linear"
-                app:layout_constraintLeft_toRightOf="@id/safe_image"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/safe_image"
-                tools:text="File safe Name" />
-
-            <LinearLayout
-                android:id="@+id/safe_info_linear"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                app:layout_constraintBottom_toBottomOf="@id/safe_image"
-                app:layout_constraintLeft_toRightOf="@id/safe_image"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/safe_name">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/safe_details_size"
-                    tools:text="10/2/2022" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/create_safe_horizontal"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/safe_details_size"
-                    tools:text="Level-1" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/create_safe_horizontal"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/safe_details_size"
-                    tools:text="Access Type" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/create_safe_horizontal"
-                    android:layout_weight="1"
-                    android:textSize="@dimen/safe_details_size"
-                    tools:text="1.02GB" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/black" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+                android:layout_columnWeight="1"
+                android:text="Owner"
+                android:textSize="@dimen/safe_details_size" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/create_safe_horizontal"
-                android:textSize="@dimen/safe_name_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="\@Owner_Name" />
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_columnWeight="1"
+                android:text="Location"
+                android:textSize="@dimen/safe_details_size" />
 
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/add_24" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
 
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/open_in_new_24" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Multi-Password"
+                android:textSize="@dimen/safe_details_size" />
 
-                <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/delete_24" />
-            </LinearLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:text="Private"
+                android:textSize="@dimen/safe_details_size" />
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="2"
+                android:text="something"
+                android:textAlignment="textEnd"
+                android:textSize="@dimen/safe_details_size" />
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
