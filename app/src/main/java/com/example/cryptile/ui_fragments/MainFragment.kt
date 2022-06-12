@@ -13,20 +13,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
+import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.databinding.PromptSignInBinding
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.Gson
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
+
 
 private const val TAG = "MainFragment"
 
 class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private lateinit var menu: NavigationView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,12 +40,8 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        topMenuBinding()
-        mainBinding()
-        sideBinding()
-        test1()
+        topMenuBinding();mainBinding();sideBinding();getPermissions()
     }
-
 
     private fun topMenuBinding() {
         binding.includedSubLayout.topAppBar.setNavigationOnClickListener {
@@ -64,6 +62,9 @@ class MainFragment : Fragment() {
                 }
                 importSafe.setOnClickListener {
                     // TODO: open file explorer
+                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+                    intent.type = "text/plain"
+                    startActivityForResult(intent, 1)
                     dialogBox.dismiss()
                 }
             }
@@ -165,23 +166,48 @@ class MainFragment : Fragment() {
         }
     }
 
-    //------------------------------------------------------------------------------add-file-to-room
-    private fun importSafe() {
-        // TODO: check intent
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.type = "*/*"
-        val i = Intent.createChooser(intent, "File")
-        startActivity(i)
-    }
-
     //----------------------------------------------------------------------------permission-manager
-    private fun test1() {
+    private fun getPermissions() {
         val permission = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         Log.d(TAG, "requesting permissions")
         requireActivity().requestPermissions(permission, 100)
+    }
+
+    private fun readMetadata(path: String) {
+        val reader = BufferedReader(FileReader(File(path)))
+        var nextLine = reader.readLine()
+        var fileDataString = ""
+        while (!nextLine.isNullOrEmpty()) {
+            fileDataString += "\n$nextLine"
+            nextLine = reader.readLine()
+        }
+        Log.d(TAG, "string received = $fileDataString")
+        val finalData = Gson().fromJson(fileDataString, SafeData::class.java)
+        Log.d(TAG, finalData.toString())
+        // TODO: get data from str and store to database
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        try {
+            val path =
+                "/storage/emulated/0/${data!!.data!!.lastPathSegment!!.removePrefix("primary:")}"
+            Log.d(TAG, "Safe Path = $path")
+            if (path.isNullOrBlank() || !path.endsWith(".txt")) {
+                Toast.makeText(
+                    requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                // TODO: get details from the metadata file.
+                readMetadata(path)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)
+                .show()
+            e.printStackTrace()
+        }
     }
 }
