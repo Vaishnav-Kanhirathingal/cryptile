@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/cancel"
-        android:icon="@drawable/cancel_24"
+        android:id="@+id/add_files"
+        android:icon="@drawable/add_24"
         android:title="Cancel"
         app:showAsAction="always" />
 </menu>

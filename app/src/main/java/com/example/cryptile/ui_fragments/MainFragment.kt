@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
+import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.databinding.PromptSignInBinding
@@ -48,16 +49,13 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        topMenuBinding();mainBinding();sideBinding();getPermissions()
-    }
-
-    private fun topMenuBinding() {
-        binding.includedSubLayout.topAppBar.setNavigationOnClickListener {
-            binding.root.openDrawer(binding.navigationViewMainScreen)
-        }
+        mainBinding();sideBinding();getPermissions()
     }
 
     private fun mainBinding() {
+        binding.includedSubLayout.topAppBar.setNavigationOnClickListener {
+            binding.root.openDrawer(binding.navigationViewMainScreen)
+        }
         binding.includedSubLayout.addSafeFab.setOnClickListener {
             val promptAddSafeBinding = PromptAddSafeBinding.inflate(layoutInflater)
             val dialogBox = Dialog(requireContext())
@@ -87,9 +85,15 @@ class MainFragment : Fragment() {
             }
         }
         // TODO: add adapter for safe recycler
-        val x = SafeAdapter(viewModel, viewLifecycleOwner, layoutInflater, requireContext())
-        viewModel.getListOfIds().asLiveData().observe(viewLifecycleOwner) { x.submitList(it) }
-        binding.includedSubLayout.safeRecycler.adapter = x
+        val safeAdapter = SafeAdapter(
+            viewModel = viewModel,
+            lifeCycle = viewLifecycleOwner,
+            inflater = layoutInflater,
+            navController = findNavController(),
+        )
+        viewModel.getListOfIds().asLiveData()
+            .observe(viewLifecycleOwner) { safeAdapter.submitList(it) }
+        binding.includedSubLayout.safeRecycler.adapter = safeAdapter
         binding.includedSubLayout.safeRecycler
     }
 
@@ -184,12 +188,13 @@ class MainFragment : Fragment() {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
+        SafeFiles.root
         Log.d(TAG, "requesting permissions")
         requireActivity().requestPermissions(permission, 100)
     }
 
     private fun readMetadata(path: String) {
-        val reader = BufferedReader(FileReader(File("/storage/emulated/0/$path")))
+        val reader = BufferedReader(FileReader(File(SafeFiles.root + path)))
         var nextLine = reader.readLine()
         var fileDataString = ""
         while (!nextLine.isNullOrEmpty()) {

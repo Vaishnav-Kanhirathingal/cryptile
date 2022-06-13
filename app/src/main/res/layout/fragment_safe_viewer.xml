@@ -17,7 +17,19 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/add_files_top"
             app:navigationIcon="@drawable/arrow_back_24"
             app:title="Viewer" />
     </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/file_list_recycler_view"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingHorizontal="8dp"
+        android:paddingBottom="100dp"
+        android:scrollbars="vertical"
+        tools:itemCount="10"
+        tools:listitem="@layout/list_item_file_explorer" />
 </LinearLayout>

@@ -22,5 +22,5 @@ interface SafeDao {
 
     // TODO: delete all entries from the table
     @Query("DELETE FROM safe_database")
-    fun deleteAll()
+    suspend fun deleteAll()
 }

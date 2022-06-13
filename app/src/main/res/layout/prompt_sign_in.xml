@@ -14,6 +14,14 @@
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/prompt_horizontal">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/prompt_vertical"
+            android:text="Sign In"
+            android:textAlignment="center"
+            android:textSize="36sp" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/user_name_text_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

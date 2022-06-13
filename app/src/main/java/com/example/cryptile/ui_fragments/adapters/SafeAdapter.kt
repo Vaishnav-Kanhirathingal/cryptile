@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.asLiveData
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
+import com.example.cryptile.ui_fragments.MainFragmentDirections
 import com.example.cryptile.view_models.AppViewModel
 
 private const val TAG = "SafeAdapter"
@@ -22,22 +24,19 @@ class SafeAdapter(
     private val viewModel: AppViewModel,
     private val lifeCycle: LifecycleOwner,
     private val inflater: LayoutInflater,
-    private val context: Context
+    private val navController: NavController,
 ) :
     ListAdapter<Int, SafeAdapter.SafeAdapterViewHolder>(diffCallBack) {
 
-    class SafeAdapterViewHolder(private val binding: ListItemSafeBinding) :
+    class SafeAdapterViewHolder(
+        private val binding: ListItemSafeBinding,
+        private val context: Context
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(safeData: SafeData) {
             binding.apply {
                 fileNameTextView.text = safeData.safeName
-                safeTypeImageView.setImageResource(
-                    if (safeData.personalAccessOnly) {
-                        R.drawable.personal_safe_24
-                    } else {
-                        R.drawable.lock_24
-                    }
-                )
+                safeTypeImageView.setImageResource(if (safeData.personalAccessOnly) R.drawable.personal_safe_24 else R.drawable.lock_24)
                 safeOwnerTextView.text = safeData.safeOwner
                 safeAbsolutePathTextView.text = safeData.safeAbsoluteLocation
                 safeIsMultiPasswordTextView.text =
@@ -51,22 +50,47 @@ class SafeAdapter(
             }
         }
 
-        fun promptListener(inflater: LayoutInflater, context: Context, safeData: SafeData) {
+        fun promptListener(
+            inflater: LayoutInflater,
+            safeData: SafeData,
+            viewModel: AppViewModel,
+            navController: NavController
+        ) {
             val binding: PromptOpenSafeBinding = PromptOpenSafeBinding.inflate(inflater)
             val dialogBox = Dialog(context)
             binding.apply {
-                // TODO: apply button bindings.
                 binding.apply {
                     safeNameTextView.text = safeData.safeName
+                    if (!safeData.safeUsesMultiplePassword) {
+                        passwordTwoTextLayout.isEnabled = false
+                    }
                     removeImageButton.setOnClickListener {
-                        // TODO: remove safe from database, don't delete
+                        viewModel.delete(safeData)
                     }
                     deleteImageButton.setOnClickListener {
-                        // TODO: check password/s and delete entire safe directory
+                        // TODO: check password/s and delete entire safe directory if personal safe is disabled
                     }
                     cancelButton.setOnClickListener { dialogBox.dismiss() }
                     openButton.setOnClickListener {
-                        // TODO: check password validity and open file explorer fragment, pass id to the fragment
+                        if (
+                            true
+                        // TODO: check if the password generates matching ciphertext of the plaintext
+                        ) {
+                            navController.navigate(
+                                MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
+                                    safeData.id
+                                    // TODO: add key as an argument
+                                )
+                            )
+                        } else {
+                            passwordOneTextLayout.apply {
+                                error = "Password might be incorrect"; isErrorEnabled = true
+                            }
+                            passwordTwoTextLayout.apply {
+                                error = "Password might be incorrect"; isErrorEnabled = true
+                            }
+                        }
+                        dialogBox.dismiss()
                     }
                 }
             }
@@ -90,7 +114,9 @@ class SafeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapterViewHolder =
-        SafeAdapterViewHolder(ListItemSafeBinding.inflate(LayoutInflater.from(parent.context)))
+        SafeAdapterViewHolder(
+            ListItemSafeBinding.inflate(LayoutInflater.from(parent.context)), parent.context
+        )
 
     override fun onBindViewHolder(holder: SafeAdapterViewHolder, position: Int) {
         viewModel.getById(getItem(position)).asLiveData().observe(lifeCycle) {
@@ -100,9 +126,10 @@ class SafeAdapter(
                 holder.itemView.setOnClickListener {
                     Log.d(TAG, "item selected = $data")
                     holder.promptListener(
-                        inflater,
-                        context,
-                        data
+                        inflater = inflater,
+                        safeData = data,
+                        viewModel = viewModel,
+                        navController = navController
                     )
                 }
             } catch (e: Exception) {
