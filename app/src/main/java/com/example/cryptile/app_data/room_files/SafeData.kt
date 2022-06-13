@@ -17,7 +17,7 @@ data class SafeData(
     @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
     @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
-    
+
     @ColumnInfo(name = "test_plain") var testPlain: String,
     @ColumnInfo(name = "test_cipher") var testCipher: String,
     @ColumnInfo(name = "safe_absolute_location") var safeAbsoluteLocation: String,
@@ -37,5 +37,26 @@ data class SafeData(
                 "\n\ttestCipher = $testCipher" +
                 "\n\tsafeAbsoluteLocation = $safeAbsoluteLocation" +
                 "\n}"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        try {
+            val x = other as SafeData
+            return id == x.id &&
+                    safeName == x.safeName &&
+                    safeOwner == x.safeOwner &&
+                    safeUsesMultiplePassword == x.safeUsesMultiplePassword &&
+                    safePartialPasswordOne == x.safePartialPasswordOne &&
+                    safePartialPasswordTwo == x.safePartialPasswordTwo &&
+                    personalAccessOnly == x.personalAccessOnly &&
+                    encryptionAlgorithm == x.encryptionAlgorithm &&
+                    safeCreated == x.safeCreated &&
+                    testPlain == x.testPlain &&
+                    testCipher == x.testCipher &&
+                    safeAbsoluteLocation == x.safeAbsoluteLocation
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
     }
 }

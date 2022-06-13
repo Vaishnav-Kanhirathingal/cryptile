@@ -29,6 +29,10 @@ class AppViewModel(private val safeDao: SafeDao) : ViewModel() {
     fun delete(safeData: SafeData) {
         CoroutineScope(Dispatchers.IO).launch { safeDao.delete(safeData) }
     }
+
+    fun deleteAll() {
+        CoroutineScope(Dispatchers.IO).launch { safeDao.deleteAll() }
+    }
 }
 
 class AppViewModelFactory(private val safeDao: SafeDao) : ViewModelProvider.Factory {

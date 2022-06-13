@@ -11,22 +11,30 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
+import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.databinding.PromptSignInBinding
+import com.example.cryptile.ui_fragments.adapters.SafeAdapter
+import com.example.cryptile.view_models.AppViewModel
+import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
-
 private const val TAG = "MainFragment"
 
 class MainFragment : Fragment() {
+    private val viewModel: AppViewModel by activityViewModels {
+        AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
+    }
     private lateinit var binding: FragmentMainBinding
     private lateinit var menu: NavigationView
 
@@ -54,24 +62,24 @@ class MainFragment : Fragment() {
             val promptAddSafeBinding = PromptAddSafeBinding.inflate(layoutInflater)
             val dialogBox = Dialog(requireContext())
             promptAddSafeBinding.apply {
-                createSafe.setOnClickListener {
+                createSafeButton.setOnClickListener {
                     findNavController().navigate(
                         MainFragmentDirections.actionMainFragmentToCreateSafeFragment()
                     )
                     dialogBox.dismiss()
                 }
-                importSafe.setOnClickListener {
-                    // TODO: open file explorer
+                importSafeButton.setOnClickListener {
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
                     intent.type = "text/plain"
                     startActivityForResult(intent, 1)
                     dialogBox.dismiss()
                 }
+                cancelButton.setOnClickListener { dialogBox.dismiss() }
             }
             dialogBox.apply {
                 setContentView(promptAddSafeBinding.root)
                 window!!.setLayout(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 setCancelable(true)
@@ -79,6 +87,9 @@ class MainFragment : Fragment() {
             }
         }
         // TODO: add adapter for safe recycler
+        val x = SafeAdapter(viewModel, viewLifecycleOwner, layoutInflater, requireContext())
+        viewModel.getListOfIds().asLiveData().observe(viewLifecycleOwner) { x.submitList(it) }
+        binding.includedSubLayout.safeRecycler.adapter = x
         binding.includedSubLayout.safeRecycler
     }
 
@@ -111,8 +122,9 @@ class MainFragment : Fragment() {
                     // TODO: prompt
                     true
                 }
-                R.id.safe_hide_all -> {
+                R.id.safe_remove_all -> {
                     // TODO: prompt
+                    viewModel.deleteAll()
                     true
                 }
                 R.id.settings -> {
@@ -177,7 +189,7 @@ class MainFragment : Fragment() {
     }
 
     private fun readMetadata(path: String) {
-        val reader = BufferedReader(FileReader(File(path)))
+        val reader = BufferedReader(FileReader(File("/storage/emulated/0/$path")))
         var nextLine = reader.readLine()
         var fileDataString = ""
         while (!nextLine.isNullOrEmpty()) {
@@ -186,22 +198,21 @@ class MainFragment : Fragment() {
         }
         Log.d(TAG, "string received = $fileDataString")
         val finalData = Gson().fromJson(fileDataString, SafeData::class.java)
+        finalData.safeAbsoluteLocation = path
         Log.d(TAG, finalData.toString())
-        // TODO: get data from str and store to database
+        viewModel.insert(finalData)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try {
-            val path =
-                "/storage/emulated/0/${data!!.data!!.lastPathSegment!!.removePrefix("primary:")}"
+            val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
             Log.d(TAG, "Safe Path = $path")
             if (path.isNullOrBlank() || !path.endsWith(".txt")) {
                 Toast.makeText(
                     requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
                 ).show()
             } else {
-                // TODO: get details from the metadata file.
                 readMetadata(path)
             }
         } catch (e: Exception) {

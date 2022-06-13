@@ -25,11 +25,15 @@
         android:id="@+id/safe_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_recycler_safe"
+        android:paddingVertical="@dimen/padding_recycler_safe"
+        android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
-        tools:itemCount="3"
+        tools:itemCount="10"
         tools:listitem="@layout/list_item_safe" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

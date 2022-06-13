@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="@dimen/padding_recycler_safe"
     app:cardCornerRadius="@dimen/file_list_padding"
-    tools:backgroundTint="#f0f0f0"
-    tools:layout_margin="@dimen/file_list_padding">
+    tools:backgroundTint="#f0f0f0">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -28,6 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/file_list_padding"
+            android:maxLines="1"
             android:textSize="@dimen/safe_name_size"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/safe_condition"
@@ -39,6 +40,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/file_list_padding"
+            android:clipToPadding="false"
+            app:dividerColor="@color/black"
+            app:dividerThickness="1px"
             app:layout_constraintTop_toBottomOf="@id/file_name_text_view" />
 
         <ImageView
@@ -72,6 +76,7 @@
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
+                android:id="@+id/safe_owner_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
@@ -87,9 +92,11 @@
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
+                android:id="@+id/safe_absolute_path_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
+                android:maxLines="1"
                 android:text="something"
                 android:textAlignment="textEnd"
                 android:textSize="@dimen/safe_details_size" />
@@ -102,6 +109,7 @@
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
+                android:id="@+id/safe_is_multi_password_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
@@ -117,6 +125,7 @@
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
+                android:id="@+id/safe_is_private_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"

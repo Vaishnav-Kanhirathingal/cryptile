@@ -73,10 +73,8 @@ class CreateSafeFragment : Fragment() {
                 // TODO: change provided values for test function.
                 val usesMultiPasswords = useMultiplePasswordsSwitch.isChecked
                 createSafeFiles(
-                    safeName = if (safeNameInputLayout.editText!!.text.toString().isEmpty()) {
-                        "CRYPTILE_SAFE_" + SimpleDateFormat("yyyy_MM_dd_hh:mm:ss_a").format(System.currentTimeMillis())
-                    } else {
-                        safeNameInputLayout.editText!!.text.toString()
+                    safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                        "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
                     },
                     safeOwner = "get from datastore",
                     usesMultiplePasswords = usesMultiPasswords,
@@ -108,7 +106,7 @@ class CreateSafeFragment : Fragment() {
             if (!fileDirectory.exists()) {
                 fileDirectory.mkdirs()
             }
-            val filepath = File(fileDirectory, "SAFE_META_DATA.txt")
+            val filepath = File(fileDirectory, "META_DATA.txt")
             val writer = FileWriter(filepath)
             val jsonMetadata = GsonBuilder().setPrettyPrinting().create().toJson(
                 SafeData(
@@ -122,7 +120,7 @@ class CreateSafeFragment : Fragment() {
                     safeCreated = System.currentTimeMillis(),
                     testPlain = "plain text",
                     testCipher = "cipher text",
-                    safeAbsoluteLocation = "remaining",
+                    safeAbsoluteLocation = currentPath.value!!,
                 )
             )
             writer.append(jsonMetadata)

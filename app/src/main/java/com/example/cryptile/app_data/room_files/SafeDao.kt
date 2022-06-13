@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SafeDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(safeData: SafeData)
 
     @Update
@@ -19,4 +19,8 @@ interface SafeDao {
 
     @Query("SELECT * FROM safe_database where id = :id")
     fun getById(id: Int): Flow<SafeData>
+
+    // TODO: delete all entries from the table
+    @Query("DELETE FROM safe_database")
+    fun deleteAll()
 }

@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    tools:backgroundTint="#eeeeee"
     android:layout_height="wrap_content"
+    tools:backgroundTint="#eeeeee"
     tools:layout_margin="20dp">
 
     <LinearLayout
@@ -13,30 +13,44 @@
         android:orientation="vertical"
         android:padding="@dimen/card_padding">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end">
 
+            <TextView
+                android:id="@+id/safe_name_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="@dimen/safe_name_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/remove_image_button"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Safe name" />
+
             <ImageButton
+                android:id="@+id/remove_image_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="remove safe"
-                android:src="@drawable/remove_circle_24" />
+                android:src="@drawable/remove_circle_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/delete_image_button"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
+                android:id="@+id/delete_image_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="delete safe"
-                android:src="@drawable/delete_24" />
+                android:src="@drawable/delete_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="clear entries"
-                android:src="@drawable/cancel_24" />
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/password_one_text_layout"
@@ -49,6 +63,7 @@
             app:counterMaxLength="32"
             app:endIconDrawable="@drawable/lock_24"
             app:endIconMode="custom"
+            app:helperText="Enter your main password"
             tools:startIconDrawable="@drawable/password_24">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -68,6 +83,7 @@
             app:counterMaxLength="32"
             app:endIconDrawable="@drawable/lock_24"
             app:endIconMode="custom"
+            app:helperText="Required only if secondary password enabled"
             tools:startIconDrawable="@drawable/personal_safe_24">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -83,12 +99,14 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/cancel_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/cancel" />
 
             <Button
+                android:id="@+id/open_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/prompt_horizontal"

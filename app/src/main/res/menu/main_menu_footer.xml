@@ -26,9 +26,9 @@
     <item android:title="Safe">
         <menu>
             <item
-                android:id="@+id/safe_hide_all"
+                android:id="@+id/safe_remove_all"
                 android:icon="@drawable/clear_all_24"
-                android:title="Hide All" />
+                android:title="Remove All" />
         </menu>
     </item>
     <item android:title="Settings">

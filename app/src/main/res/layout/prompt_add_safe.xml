@@ -1,24 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app1="http://schemas.android.com/apk/res-auto"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
+    xmlns:app3="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:background="#eeeeee"
+    tools:layout_margin="10dp">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:text="How Would You Like To Add A CRYPTILE Safe?"
+        android:textAlignment="center"
+        android:textSize="@dimen/safe_name_size" />
 
-        <Button
-            android:id="@+id/create_safe"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="create" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/prompt_horizontal"
+        android:text="Select the required safe's metadata file from the file explorer to import a safe."
+        android:textAlignment="center"
+        android:textSize="@dimen/safe_details_size" />
 
-        <Button
-            android:id="@+id/import_safe"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="import" />
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/prompt_vertical"
+        app:dividerColor="@color/black"
+        app:dividerThickness="1px" />
+
+    <Button
+        android:id="@+id/import_safe_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="import from file explorer" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app1:dividerThickness="1px"
+        app:dividerColor="@color/black" />
+
+    <Button
+        android:id="@+id/create_safe_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="create new safe" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app2:dividerThickness="1px"
+        app:dividerColor="@color/black" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app3:dividerThickness="1px"
+        app:dividerColor="@color/black" />
+</LinearLayout>
