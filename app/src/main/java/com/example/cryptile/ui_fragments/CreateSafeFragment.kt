@@ -103,6 +103,8 @@ class CreateSafeFragment : Fragment() {
                  * making a directory is necessary since the 'saveChangesToMetadata'
                  * function used below doesn't create a directory.
                  */
+            } else {
+                // TODO: throw a warning toast and return
             }
             val safeData = SafeData(
                 safeName = safeName,
@@ -118,8 +120,11 @@ class CreateSafeFragment : Fragment() {
                 safeAbsoluteLocation = safePath,
             )
             SafeFiles.saveChangesToMetadata(safeData)
-            // TODO: create empty log file
-            SafeFiles.saveChangesToLogFile("safe created", safePath, safeData.safeName)
+            SafeFiles.saveChangesToLogFile(
+                "\t\t\t\t-------------safe-created-------------\n", safePath, safeData.safeName
+            )
+            // TODO: set master key properly.
+            SafeFiles.generateTestFilesAndStorageDirectory(safePath, "masterKey")
             viewModel.insert(safeData)
         } catch (e: IOException) {
             e.printStackTrace()

@@ -44,10 +44,10 @@ class SafeViewerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        applyBindings()
         viewModel.getById(id!!).asLiveData().observe(viewLifecycleOwner) {
             safeData = it
         }
+        applyBindings()
     }
 
     private fun applyBindings() {
@@ -74,7 +74,7 @@ class SafeViewerFragment : Fragment() {
 
     private fun addFile(path: String) {
         // TODO: use function from safeFiles companion object
-        Log.d(TAG, "output\nfile selected = $path\nsafe details = ${safeData.toString()}")
+        Log.d(TAG, "output\nfile selected = $path")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
