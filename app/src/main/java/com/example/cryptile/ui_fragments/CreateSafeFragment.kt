@@ -9,19 +9,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
+import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
+import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentCreateSafeBinding
-import com.google.gson.GsonBuilder
+import com.example.cryptile.view_models.AppViewModel
+import com.example.cryptile.view_models.AppViewModelFactory
 import java.io.File
-import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
 
 private const val TAG = "CreateSafeFragment"
 
 class CreateSafeFragment : Fragment() {
+    private val viewModel: AppViewModel by activityViewModels {
+        AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
+    }
     private lateinit var binding: FragmentCreateSafeBinding
     private var currentPath: MutableLiveData<String> =
         MutableLiveData("Cryptile")
@@ -42,28 +48,15 @@ class CreateSafeFragment : Fragment() {
 
     private fun mainBinding() {
         binding.apply {
-            /**
-             * top app bar binding
-             */
             topAppBar.setNavigationOnClickListener {
                 findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
             }
-            /**
-             * multi password card binding
-             */
             useMultiplePasswordsSwitch
                 .setOnCheckedChangeListener { _, status -> useMultiplePasswords.value = status }
-            useMultiplePasswords.observe(viewLifecycleOwner) {
-                safePasswordTwoInputLayout.isEnabled = it
-            }
-            /**
-             * select directory card binding
-             */
+            useMultiplePasswords
+                .observe(viewLifecycleOwner) { safePasswordTwoInputLayout.isEnabled = it }
             selectDirectoryImageButton.setOnClickListener { selectDirectory() }
             currentPath.observe(viewLifecycleOwner) { currentSafeDirectory.text = it }
-            /**
-             * bottom confirmation and cancellation button bindings
-             */
             cancelButton.setOnClickListener {
                 findNavController().navigate(
                     CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
@@ -87,6 +80,7 @@ class CreateSafeFragment : Fragment() {
                         else -> "three"
                     }
                 )
+                findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
             }
         }
     }
@@ -101,31 +95,32 @@ class CreateSafeFragment : Fragment() {
         encryptionAlgorithmUsed: String
     ) {
         try {
-            val fileDirectory =
-                File(Environment.getExternalStorageDirectory(), "${currentPath.value}/$safeName")
+            val safePath = "${currentPath.value}/$safeName"
+            val fileDirectory = File(Environment.getExternalStorageDirectory(), safePath)
             if (!fileDirectory.exists()) {
                 fileDirectory.mkdirs()
+                /**
+                 * making a directory is necessary since the 'saveChangesToMetadata'
+                 * function used below doesn't create a directory.
+                 */
             }
-            val filepath = File(fileDirectory, "META_DATA.txt")
-            val writer = FileWriter(filepath)
-            val jsonMetadata = GsonBuilder().setPrettyPrinting().create().toJson(
-                SafeData(
-                    safeName = safeName,
-                    safeOwner = safeOwner,
-                    safeUsesMultiplePassword = usesMultiplePasswords,
-                    safePartialPasswordOne = ownerSignedPartialKeyOne,
-                    safePartialPasswordTwo = ownerSignedPartialKeyTwo,
-                    personalAccessOnly = personalAccessOnly,
-                    encryptionAlgorithm = encryptionAlgorithmUsed,
-                    safeCreated = System.currentTimeMillis(),
-                    testPlain = "plain text",
-                    testCipher = "cipher text",
-                    safeAbsoluteLocation = currentPath.value!!,
-                )
+            val safeData = SafeData(
+                safeName = safeName,
+                safeOwner = safeOwner,
+                safeUsesMultiplePassword = usesMultiplePasswords,
+                safePartialPasswordOne = ownerSignedPartialKeyOne,
+                safePartialPasswordTwo = ownerSignedPartialKeyTwo,
+                personalAccessOnly = personalAccessOnly,
+                encryptionAlgorithm = encryptionAlgorithmUsed,
+                safeCreated = System.currentTimeMillis(),
+                testPlain = "plain text",
+                testCipher = "cipher text",
+                safeAbsoluteLocation = safePath,
             )
-            writer.append(jsonMetadata)
-            writer.flush()
-            writer.close()
+            SafeFiles.saveChangesToMetadata(safeData)
+            // TODO: create empty log file
+            SafeFiles.saveChangesToLogFile("safe created", safePath, safeData.safeName)
+            viewModel.insert(safeData)
         } catch (e: IOException) {
             e.printStackTrace()
         }

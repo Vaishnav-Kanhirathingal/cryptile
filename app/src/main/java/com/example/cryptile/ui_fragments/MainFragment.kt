@@ -16,7 +16,6 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
-import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
@@ -25,10 +24,6 @@ import com.example.cryptile.ui_fragments.adapters.SafeAdapter
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
 
 private const val TAG = "MainFragment"
 
@@ -188,24 +183,8 @@ class MainFragment : Fragment() {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
-        SafeFiles.root
         Log.d(TAG, "requesting permissions")
         requireActivity().requestPermissions(permission, 100)
-    }
-
-    private fun readMetadata(path: String) {
-        val reader = BufferedReader(FileReader(File(SafeFiles.root + path)))
-        var nextLine = reader.readLine()
-        var fileDataString = ""
-        while (!nextLine.isNullOrEmpty()) {
-            fileDataString += "\n$nextLine"
-            nextLine = reader.readLine()
-        }
-        Log.d(TAG, "string received = $fileDataString")
-        val finalData = Gson().fromJson(fileDataString, SafeData::class.java)
-        finalData.safeAbsoluteLocation = path
-        Log.d(TAG, finalData.toString())
-        viewModel.insert(finalData)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -218,7 +197,7 @@ class MainFragment : Fragment() {
                     requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
                 ).show()
             } else {
-                readMetadata(path)
+                viewModel.insert(SafeFiles.readMetaData(path))
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)

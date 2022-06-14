@@ -27,7 +27,7 @@ class SafeViewerFragment : Fragment() {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
     var id: Int? = null
-    private lateinit var data: SafeData
+    private lateinit var safeData: SafeData
     private lateinit var binding: FragmentSafeViewerBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,18 +39,14 @@ class SafeViewerFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments.let {
-            id = it!!.getInt("id")
-            Log.d(TAG, "id = $id")
-        }
+        id = arguments!!.getInt("id")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         applyBindings()
         viewModel.getById(id!!).asLiveData().observe(viewLifecycleOwner) {
-            data = it
-            Log.d(TAG, data.toString())
+            safeData = it
         }
     }
 
@@ -77,8 +73,8 @@ class SafeViewerFragment : Fragment() {
     }
 
     private fun addFile(path: String) {
-        Log.d(TAG, "output\nfile selected = $path\nsafe details = ${data.toString()}")
-        // TODO: get file name and convert to hex. create a folder in the safe, encrypt the file and add to safe.
+        // TODO: use function from safeFiles companion object
+        Log.d(TAG, "output\nfile selected = $path\nsafe details = ${safeData.toString()}")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

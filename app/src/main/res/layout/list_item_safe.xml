@@ -69,9 +69,8 @@
             app:layout_constraintTop_toBottomOf="@id/top_divider">
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
                 android:text="Owner"
                 android:textSize="@dimen/safe_details_size" />
 
@@ -80,14 +79,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
+                android:layout_marginStart="@dimen/file_list_padding"
                 android:text="something"
                 android:textAlignment="textEnd"
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
                 android:text="Location"
                 android:textSize="@dimen/safe_details_size" />
 
@@ -96,15 +95,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
+                android:layout_marginStart="@dimen/file_list_padding"
                 android:maxLines="1"
                 android:text="something"
                 android:textAlignment="textEnd"
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
                 android:text="Multi-Password"
                 android:textSize="@dimen/safe_details_size" />
 
@@ -113,14 +112,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
+                android:layout_marginStart="@dimen/file_list_padding"
                 android:text="something"
                 android:textAlignment="textEnd"
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
                 android:text="Private"
                 android:textSize="@dimen/safe_details_size" />
 
@@ -129,6 +128,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="2"
+                android:layout_marginStart="@dimen/file_list_padding"
                 android:text="something"
                 android:textAlignment="textEnd"
                 android:textSize="@dimen/safe_details_size" />
