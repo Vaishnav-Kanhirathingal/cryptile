@@ -5,6 +5,9 @@ import android.util.Log
 import com.example.cryptile.app_data.room_files.SafeData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.*
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
@@ -12,7 +15,9 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
+import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import com.example.cryptile.data_classes.SafeFiles.Companion.safeDataFolder as safeDataFolder2
 
@@ -128,11 +133,7 @@ data class SafeFiles(
             }
             File(
                 Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$safeDataFolder2"
-            ).apply {
-                if (!this.exists()) {
-                    this.mkdirs()
-                }
-            }
+            ).apply { if (!this.exists()) this.mkdirs() }
         }
 
         /**
@@ -142,7 +143,7 @@ data class SafeFiles(
         fun importFileToSafe(
             absoluteFilePath: String,
             safeMasterKey: String,
-            safePath: String
+            safeAbsolutePath: String
         ) {
             // TODO: implement
         }
@@ -163,7 +164,6 @@ data class SafeFiles(
                     finalList.add(i.name)
                 }
             }
-            Log.d(TAG, "final list of directory items = ${finalList.toString()}")
             return finalList
         }
 
@@ -171,30 +171,23 @@ data class SafeFiles(
          * creates a random string of some fixed length.This can be used to get a string of required
          * length to be a key Use this function twice if required.
          */
-        fun createPartialKey(): String {
-            // TODO: check
+        fun createRandomPartialKey(): String {
+            //remove from here
+            CoroutineScope(Dispatchers.IO).launch { test() }
+            //to here
             var originalKey: SecretKey
             KeyGenerator.getInstance("AES").apply {
                 init(256)
-                originalKey = generateKey()
+                return Base64.getEncoder().encodeToString(generateKey().encoded)
             }
-            val encodedKey = Base64.getEncoder().encodeToString(originalKey.encoded)
-
-            val str = "qwertyuiop"
-            val CT = encrypt(str, originalKey)
-            val PT = decrypt(CT, originalKey)
-            Log.d(TAG, "\"encoded key = $encodedKey\nstr = $str\nCT = $CT\nPT = $PT")
-            return encodedKey
         }
 
-
-        fun encrypt(strToEncrypt: String, key: SecretKey): String? {
-            // TODO: check
+        private fun encrypt(plainText: String, key: SecretKey): String? {
             try {
                 val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                 cipher.init(Cipher.ENCRYPT_MODE, key, ivspec)
                 return Base64.getEncoder().encodeToString(
-                    cipher.doFinal(strToEncrypt.toByteArray(StandardCharsets.UTF_8))
+                    cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -202,34 +195,50 @@ data class SafeFiles(
             return null
         }
 
-        fun decrypt(strToDecrypt: String?, key: SecretKey): String? {
-            // TODO: check
+        private fun decrypt(cipherText: String?, key: SecretKey): String? {
             try {
                 val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
                 cipher.init(Cipher.DECRYPT_MODE, key, ivspec)
-                return String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)))
+                return String(cipher.doFinal(Base64.getDecoder().decode(cipherText)))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
             return null
         }
 
+        private fun test() {
+            val n = 4
+            for (i in 0..n) {
+                //
+            }
+        }
 
-        fun getKeyFromString(encodedKey: String): SecretKey {
-            val decodedKey = Base64.getDecoder().decode(encodedKey)
-            return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+        /**
+         * takes a password string as parameter and generates a secret key from that key. the key
+         * generated is always the same.
+         */
+        private fun generateKeyFromPassword(password: String): SecretKey {
+            val salt = generateKeyFromPassword("a_salt_string").encoded
+            val saltString = Base64.getEncoder().encodeToString(salt)
+            return SecretKeySpec(
+                SecretKeyFactory
+                    .getInstance("PBKDF2WithHmacSHA256")
+                    .generateSecret(
+                        PBEKeySpec(
+                            password.toCharArray(), saltString.toByteArray(), 65536, 256
+                        )
+                    ).encoded, "AES"
+            )
         }
 
         /**
          * decrypt the partial key using given password and return the result as key.
          */
-        fun getKey(
-            passwordOne: String,
-            partialKeyOne: String,
-            safeIsPersonal: Boolean
-        ): String {
-            // TODO: implement
-            return "generated key"
+        fun getKey(safeIsPersonal: Boolean, partialKey: String, passwordOne: String): SecretKey {
+            // TODO: implement personal
+            val key = stringToKey(partialKey)
+            val ecp = encrypt(passwordOne, key) ?: passwordOne
+            return generateKeyFromPassword(ecp)
         }
 
         /**
@@ -237,14 +246,12 @@ data class SafeFiles(
          * generated, encrypt key-two using key one to get final key to be returned.
          */
         fun getKey(
-            passwordOne: String,
-            partialKeyOne: String,
-            safeIsPersonal: Boolean,
-            passwordTwo: String,
-            partialKeyTwo: String,
-        ): String {
-            // TODO: implement
-            return "generated key"
+            safeIsPersonal: Boolean, partialKey: String, passwordOne: String, passwordTwo: String
+        ): SecretKey {
+            // TODO: implement personal
+            val key = stringToKey(partialKey)
+            val ecp = encrypt(passwordOne, key) + encrypt(passwordTwo, key)
+            return generateKeyFromPassword(ecp)
         }
 
         /**
@@ -252,10 +259,24 @@ data class SafeFiles(
          * it, then checks if the encrypted string is the same as the encrypted test file content.
          * if same, returns true else false
          */
-        fun checkKeyGenerated(masterKey: String, safeAbsolutePath: String): Boolean {
+        fun checkKeyGenerated(masterKey: SecretKey, safeAbsolutePath: String): Boolean {
             // TODO: implement
             return true
         }
+
+        /**
+         * takes key converted to string as parameter and converts it back to the initial key.
+         */
+        fun stringToKey(encodedKey: String): SecretKey {
+            val decodedKey = Base64.getDecoder().decode(encodedKey)
+            return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+        }
+
+        /**
+         * takes key as parameter and converts it to string such that is can be extracted back from
+         * the string outputted
+         */
+        fun keyToString(key: SecretKey) = Base64.getEncoder().encodeToString(key.encoded)
 
         fun deleteSafe() {
             // TODO: implement

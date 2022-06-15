@@ -81,17 +81,16 @@ class SafeAdapter(
                 openButton.setOnClickListener {
                     val key = if (safeData.safeUsesMultiplePassword) {
                         SafeFiles.getKey(
-                            passwordOneTextLayout.editText!!.text.toString(),
-                            safeData.safePartialPasswordOne,
-                            safeData.personalAccessOnly,
-                            passwordTwoTextLayout.editText!!.text.toString(),
-                            safeData.safePartialPasswordTwo!!
+                            passwordOne = passwordOneTextLayout.editText!!.text.toString(),
+                            passwordTwo = passwordTwoTextLayout.editText!!.text.toString(),
+                            partialKey = safeData.safePartialKey,
+                            safeIsPersonal = safeData.personalAccessOnly,
                         )
                     } else {
                         SafeFiles.getKey(
-                            passwordOneTextLayout.editText!!.text.toString(),
-                            safeData.safePartialPasswordOne,
-                            safeData.personalAccessOnly
+                            passwordOne = passwordOneTextLayout.editText!!.text.toString(),
+                            partialKey = safeData.safePartialKey,
+                            safeIsPersonal = safeData.personalAccessOnly
                         )
                     }
                     val keyIsCorrect: Boolean =
@@ -99,7 +98,10 @@ class SafeAdapter(
                     if (keyIsCorrect) {
                         navController.navigate(
                             MainFragmentDirections
-                                .actionMainFragmentToSafeViewerFragment(safeData.id, key)
+                                .actionMainFragmentToSafeViewerFragment(
+                                    safeData.id,
+                                    SafeFiles.keyToString(key)
+                                )
                         )
                     } else {
                         passwordOneTextLayout.apply {

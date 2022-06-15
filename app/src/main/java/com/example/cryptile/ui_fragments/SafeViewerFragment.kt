@@ -83,9 +83,9 @@ class SafeViewerFragment : Fragment() {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
             } else {
                 SafeFiles.importFileToSafe(
-                    path,
-                    "key",// TODO: get master key
-                    safeData.safeAbsoluteLocation
+                    absoluteFilePath = path,
+                    safeMasterKey = key,
+                    safeAbsolutePath = safeData.safeAbsoluteLocation
                 )
             }
         } catch (e: Exception) {

@@ -71,8 +71,7 @@ class CreateSafeFragment : Fragment() {
                     },
                     safeOwner = "get from datastore",
                     usesMultiplePasswords = usesMultiPasswords,
-                    partialKeyOne = SafeFiles.createPartialKey(),
-                    partialKeyTwo = (if (usesMultiPasswords) SafeFiles.createPartialKey() else null),
+                    partialKey = SafeFiles.createRandomPartialKey(),
                     personalAccessOnly = personalAccessOnlySwitch.isChecked,
                     encryptionAlgorithmUsed = when (encryptionLevelSlider.value) {
                         1.0f -> "one"
@@ -89,8 +88,7 @@ class CreateSafeFragment : Fragment() {
         safeName: String,
         safeOwner: String,
         usesMultiplePasswords: Boolean,
-        partialKeyOne: String,
-        partialKeyTwo: String?,
+        partialKey: String,
         personalAccessOnly: Boolean,
         encryptionAlgorithmUsed: String
     ) {
@@ -110,8 +108,7 @@ class CreateSafeFragment : Fragment() {
                 safeName = safeName,
                 safeOwner = safeOwner,
                 safeUsesMultiplePassword = usesMultiplePasswords,
-                safePartialPasswordOne = partialKeyOne,
-                safePartialPasswordTwo = partialKeyTwo,
+                safePartialKey = partialKey,
                 personalAccessOnly = personalAccessOnly,
                 encryptionAlgorithm = encryptionAlgorithmUsed,
                 safeCreated = System.currentTimeMillis(),
