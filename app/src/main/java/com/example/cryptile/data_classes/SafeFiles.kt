@@ -39,7 +39,7 @@ data class SafeFiles(
         private const val encryptedTestFileName = "ETF_CRYPTILE.txt"
 
         // TODO: check here
-        private const val testSizeLimit = 2
+        private const val testSizeLimit = 50
 
         private val ivSpec =
             IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
@@ -133,7 +133,6 @@ data class SafeFiles(
          * for generating data path to store encrypted files.
          */
         fun generateTestFilesAndStorageDirectory(safeAbsolutePath: String, masterKey: String) {
-            // TODO: implement correctly
             File(
                 Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$testDirectory"
             ).apply {
@@ -144,7 +143,6 @@ data class SafeFiles(
                 val cipherWriter = FileWriter(File(this, encryptedTestFileName))
 
                 for (i in 0..testSizeLimit) {
-                    // TODO: error
                     val generatedString = UUID.randomUUID().toString()
                     val cipher = encrypt(
                         generatedString.toByteArray(StandardCharsets.ISO_8859_1),
@@ -209,22 +207,6 @@ data class SafeFiles(
             return null
         }
 
-        //-----------------------------------------------------------------------------above-working
-        //-----------------------------------------------------------------------------above-working
-        //-----------------------------------------------------------------------------above-working
-
-        /**
-         * takes absolute file path of the selected file, safe master key for encryption, safe path
-         * to store the encrypted file inside the safe.
-         */
-        fun importFileToSafe(
-            absoluteFilePath: String,
-            safeMasterKey: String,
-            safeAbsolutePath: String
-        ) {
-            // TODO: implement
-        }
-
         /**
          * creates a random string of some fixed length.This can be used to get a string of required
          * length to be a key Use this function twice if required.
@@ -242,16 +224,6 @@ data class SafeFiles(
                 init(256)
                 return Base64.getEncoder().encodeToString(generateKey().encoded)
             }
-        }
-
-        private fun test(salt: ByteArray) {
-            val regen =
-                String(salt, StandardCharsets.ISO_8859_1).toByteArray(StandardCharsets.ISO_8859_1)
-            Log.d(
-                TAG, "salts are ${
-                    if (regen.contentEquals(salt)) "" else "un"
-                }equal"
-            )
         }
 
         /**
@@ -285,7 +257,6 @@ data class SafeFiles(
             // TODO: implement personal
             val key = stringToKey(partialKey)
             val ecp = encrypt(passwordOne.toByteArray(StandardCharsets.UTF_8), key) ?: passwordOne
-            Log.d(TAG, "key from getKey = ${keyToString(key)}")
             return generateKeyFromPassword(ecp, salt)
         }
 
@@ -333,6 +304,36 @@ data class SafeFiles(
                 }
             }
             return true
+        }
+
+        //-----------------------------------------------------------------------------above-working
+        //-----------------------------------------------------------------------------above-working
+        //-----------------------------------------------------------------------------above-working
+
+        /**
+         * takes absolute file path of the selected file, safe master key for encryption, safe path
+         * to store the encrypted file inside the safe.
+         */
+        fun importFileToSafe(
+            absoluteFilePath: String,
+            safeMasterKey: String,
+            safeAbsolutePath: String
+        ) {
+            // TODO: implement
+        }
+
+        fun openFile(key: SecretKey, actualName: String, safeAbsolutePath: String) {
+            val filePath = "$root$safeAbsolutePath/$safeDataFolder/$actualName"
+        }
+
+        private fun test(salt: ByteArray) {
+            val regen =
+                String(salt, StandardCharsets.ISO_8859_1).toByteArray(StandardCharsets.ISO_8859_1)
+            Log.d(
+                TAG, "salts are ${
+                    if (regen.contentEquals(salt)) "" else "un"
+                }equal"
+            )
         }
 
         fun deleteSafe() {

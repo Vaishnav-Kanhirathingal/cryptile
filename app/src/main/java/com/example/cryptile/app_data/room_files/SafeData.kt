@@ -20,16 +20,16 @@ data class SafeData(
 ) {
     override fun toString(): String {
         return "data received = \n{" +
-                "\n\t\"id\" = " + id +
-                "\n\t\"safeName\" = " + safeName +
-                "\n\t\"safeOwner\" = " + safeOwner +
-                "\n\t\"safeUsesMultiplePassword\" = " + safeUsesMultiplePassword +
-                "\n\t\"safePartialKey\" = " + safePartialKey +
-                "\n\t\"personalAccessOnly\" = " + personalAccessOnly +
-                "\n\t\"encryptionAlgorithm\" = " + encryptionAlgorithm +
-                "\n\t\"safeCreated\" = " + safeCreated +
-                "\n\t\"safeAbsoluteLocation\" = " + safeAbsoluteLocation +
-                "\n\t\"safeSalt\" = " + safeSalt +
+                "\n\tid\" = " + id +
+                "\n\tsafeName\" = " + safeName +
+                "\n\tsafeOwner\" = " + safeOwner +
+                "\n\tsafeUsesMultiplePassword\" = " + safeUsesMultiplePassword +
+                "\n\tsafePartialKey\" = " + safePartialKey +
+                "\n\tpersonalAccessOnly\" = " + personalAccessOnly +
+                "\n\tencryptionAlgorithm\" = " + encryptionAlgorithm +
+                "\n\tsafeCreated\" = " + safeCreated +
+                "\n\tsafeAbsoluteLocation\" = " + safeAbsoluteLocation +
+                "\n\tsafeSalt\" = " + safeSalt +
                 "\n}"
     }
 
