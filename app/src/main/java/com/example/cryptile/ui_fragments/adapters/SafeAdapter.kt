@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData
+import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
 import com.example.cryptile.ui_fragments.MainFragmentDirections
@@ -59,39 +60,56 @@ class SafeAdapter(
             val binding: PromptOpenSafeBinding = PromptOpenSafeBinding.inflate(inflater)
             val dialogBox = Dialog(context)
             binding.apply {
-                binding.apply {
-                    safeNameTextView.text = safeData.safeName
-                    if (!safeData.safeUsesMultiplePassword) {
-                        passwordTwoTextLayout.isEnabled = false
+                safeNameTextView.text = safeData.safeName
+                passwordTwoTextLayout.isEnabled = safeData.safeUsesMultiplePassword
+                resetImageButton.setOnClickListener {
+                    passwordOneTextLayout.isEnabled = true
+                    passwordTwoTextLayout.isEnabled = safeData.safeUsesMultiplePassword
+                }
+                removeImageButton.setOnClickListener { viewModel.delete(safeData);dialogBox.dismiss() }
+                deleteImageButton.setOnClickListener {
+                    // TODO: check password/s and delete entire safe directory if personal safe is disabled
+                    dialogBox.dismiss()
+                }
+                passwordOneTextLayout.setEndIconOnClickListener {
+                    passwordOneTextLayout.isEnabled = false
+                }
+                passwordTwoTextLayout.setEndIconOnClickListener {
+                    passwordTwoTextLayout.isEnabled = false
+                }
+                cancelButton.setOnClickListener { dialogBox.dismiss() }
+                openButton.setOnClickListener {
+                    val key = if (safeData.safeUsesMultiplePassword) {
+                        SafeFiles.getKey(
+                            passwordOneTextLayout.editText!!.text.toString(),
+                            safeData.safePartialPasswordOne,
+                            safeData.personalAccessOnly,
+                            passwordTwoTextLayout.editText!!.text.toString(),
+                            safeData.safePartialPasswordTwo!!
+                        )
+                    } else {
+                        SafeFiles.getKey(
+                            passwordOneTextLayout.editText!!.text.toString(),
+                            safeData.safePartialPasswordOne,
+                            safeData.personalAccessOnly
+                        )
                     }
-                    removeImageButton.setOnClickListener {
-                        viewModel.delete(safeData)
-                    }
-                    deleteImageButton.setOnClickListener {
-                        // TODO: check password/s and delete entire safe directory if personal safe is disabled
-                    }
-                    cancelButton.setOnClickListener { dialogBox.dismiss() }
-                    openButton.setOnClickListener {
-                        if (
-                            true
-                        // TODO: check if the password generates matching ciphertext of the plaintext
-                        ) {
-                            navController.navigate(
-                                MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
-                                    safeData.id
-                                    // TODO: add key as an argument
-                                )
-                            )
-                        } else {
-                            passwordOneTextLayout.apply {
-                                error = "Password might be incorrect"; isErrorEnabled = true
-                            }
-                            passwordTwoTextLayout.apply {
-                                error = "Password might be incorrect"; isErrorEnabled = true
-                            }
+                    val keyIsCorrect: Boolean =
+                        SafeFiles.checkKeyGenerated(key, safeData.safeAbsoluteLocation)
+                    if (keyIsCorrect) {
+                        navController.navigate(
+                            MainFragmentDirections
+                                .actionMainFragmentToSafeViewerFragment(safeData.id, key)
+                        )
+                    } else {
+                        passwordOneTextLayout.apply {
+                            error = "Password might be incorrect"; isErrorEnabled = true
                         }
-                        dialogBox.dismiss()
+                        passwordTwoTextLayout.apply {
+                            error = "Password might be incorrect"; isErrorEnabled = true
+                        }
                     }
+                    dialogBox.dismiss()
                 }
             }
             dialogBox.apply {

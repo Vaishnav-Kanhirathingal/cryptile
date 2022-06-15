@@ -27,12 +27,13 @@ class SafeViewerFragment : Fragment() {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
     var id: Int? = null
+    private lateinit var key: String
     private lateinit var safeData: SafeData
     private lateinit var binding: FragmentSafeViewerBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSafeViewerBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -40,6 +41,7 @@ class SafeViewerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         id = arguments!!.getInt("id")
+        key = arguments!!.getString("key")!!
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -72,11 +74,6 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
-    private fun addFile(path: String) {
-        // TODO: use function from safeFiles companion object
-        Log.d(TAG, "output\nfile selected = $path")
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try {
@@ -84,7 +81,13 @@ class SafeViewerFragment : Fragment() {
             Log.d(TAG, "Safe Path = $path")
             if (path.isBlank()) {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
-            } else addFile(SafeFiles.root + path)
+            } else {
+                SafeFiles.importFileToSafe(
+                    path,
+                    "key",// TODO: get master key
+                    safeData.safeAbsoluteLocation
+                )
+            }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)
                 .show()

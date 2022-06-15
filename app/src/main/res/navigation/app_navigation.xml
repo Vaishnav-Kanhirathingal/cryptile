@@ -89,6 +89,9 @@
         <argument
             android:name="id"
             app:argType="integer" />
+        <argument
+            android:name="key"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"

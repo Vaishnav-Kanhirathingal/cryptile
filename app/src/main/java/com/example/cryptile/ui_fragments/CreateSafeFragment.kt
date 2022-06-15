@@ -71,8 +71,8 @@ class CreateSafeFragment : Fragment() {
                     },
                     safeOwner = "get from datastore",
                     usesMultiplePasswords = usesMultiPasswords,
-                    ownerSignedPartialKeyOne = "ownerSignedPartialKeyOne",
-                    ownerSignedPartialKeyTwo = (if (usesMultiPasswords) "ownerSignedPartialKeyTwo" else null),
+                    partialKeyOne = SafeFiles.createPartialKey(),
+                    partialKeyTwo = (if (usesMultiPasswords) SafeFiles.createPartialKey() else null),
                     personalAccessOnly = personalAccessOnlySwitch.isChecked,
                     encryptionAlgorithmUsed = when (encryptionLevelSlider.value) {
                         1.0f -> "one"
@@ -80,7 +80,7 @@ class CreateSafeFragment : Fragment() {
                         else -> "three"
                     }
                 )
-                findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
+                //findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
             }
         }
     }
@@ -89,8 +89,8 @@ class CreateSafeFragment : Fragment() {
         safeName: String,
         safeOwner: String,
         usesMultiplePasswords: Boolean,
-        ownerSignedPartialKeyOne: String,
-        ownerSignedPartialKeyTwo: String?,
+        partialKeyOne: String,
+        partialKeyTwo: String?,
         personalAccessOnly: Boolean,
         encryptionAlgorithmUsed: String
     ) {
@@ -110,13 +110,11 @@ class CreateSafeFragment : Fragment() {
                 safeName = safeName,
                 safeOwner = safeOwner,
                 safeUsesMultiplePassword = usesMultiplePasswords,
-                safePartialPasswordOne = ownerSignedPartialKeyOne,
-                safePartialPasswordTwo = ownerSignedPartialKeyTwo,
+                safePartialPasswordOne = partialKeyOne,
+                safePartialPasswordTwo = partialKeyTwo,
                 personalAccessOnly = personalAccessOnly,
                 encryptionAlgorithm = encryptionAlgorithmUsed,
                 safeCreated = System.currentTimeMillis(),
-                testPlain = "plain text",
-                testCipher = "cipher text",
                 safeAbsoluteLocation = safePath,
             )
             SafeFiles.saveChangesToMetadata(safeData)

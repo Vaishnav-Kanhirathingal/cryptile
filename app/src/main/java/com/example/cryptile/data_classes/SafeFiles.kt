@@ -6,8 +6,16 @@ import com.example.cryptile.app_data.room_files.SafeData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.*
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 import com.example.cryptile.data_classes.SafeFiles.Companion.safeDataFolder as safeDataFolder2
+
 
 private const val TAG = "SafeFiles"
 
@@ -25,6 +33,9 @@ data class SafeFiles(
         private const val testDirectory = "TEST"
         private const val unencryptedTestFileName = "UETF_CRYPTILE.txt"
         private const val encryptedTestFileName = "ETF_CRYPTILE.txt"
+
+        private val ivspec =
+            IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
         /**
          * This takes path of a metadata file of a safe as a parameter. Then, using that file,
@@ -101,7 +112,7 @@ data class SafeFiles(
          * for generating data path to store encrypted files.
          */
         fun generateTestFilesAndStorageDirectory(safeAbsolutePath: String, masterKey: String) {
-            // TODO: implement
+            // TODO: implement correctly
             File(
                 Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$testDirectory"
             ).apply {
@@ -122,16 +133,6 @@ data class SafeFiles(
                     this.mkdirs()
                 }
             }
-        }
-
-        /**
-         * takes master key as parameter. it then takes the test file content from safe, encrypts
-         * it, then checks if the encrypted string is the same as the encrypted test file content.
-         * if same, returns true else false
-         */
-        fun checkKeyGenerated(masterKey: String): Boolean {
-            // TODO: implement
-            return true
         }
 
         /**
@@ -156,8 +157,11 @@ data class SafeFiles(
             )
             val listOfFiles = directory.listFiles()
             val finalList = mutableListOf<String>()
-            for (i in listOfFiles) {
-                finalList.add(i.name)
+
+            if (!listOfFiles.isNullOrEmpty()) {
+                for (i in listOfFiles) {
+                    finalList.add(i.name)
+                }
             }
             Log.d(TAG, "final list of directory items = ${finalList.toString()}")
             return finalList
@@ -168,8 +172,52 @@ data class SafeFiles(
          * length to be a key Use this function twice if required.
          */
         fun createPartialKey(): String {
-            // TODO: implement
-            return "someKey"
+            // TODO: check
+            var originalKey: SecretKey
+            KeyGenerator.getInstance("AES").apply {
+                init(256)
+                originalKey = generateKey()
+            }
+            val encodedKey = Base64.getEncoder().encodeToString(originalKey.encoded)
+
+            val str = "qwertyuiop"
+            val CT = encrypt(str, originalKey)
+            val PT = decrypt(CT, originalKey)
+            Log.d(TAG, "\"encoded key = $encodedKey\nstr = $str\nCT = $CT\nPT = $PT")
+            return encodedKey
+        }
+
+
+        fun encrypt(strToEncrypt: String, key: SecretKey): String? {
+            // TODO: check
+            try {
+                val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                cipher.init(Cipher.ENCRYPT_MODE, key, ivspec)
+                return Base64.getEncoder().encodeToString(
+                    cipher.doFinal(strToEncrypt.toByteArray(StandardCharsets.UTF_8))
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        fun decrypt(strToDecrypt: String?, key: SecretKey): String? {
+            // TODO: check
+            try {
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+                cipher.init(Cipher.DECRYPT_MODE, key, ivspec)
+                return String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+
+        fun getKeyFromString(encodedKey: String): SecretKey {
+            val decodedKey = Base64.getDecoder().decode(encodedKey)
+            return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
         }
 
         /**
@@ -177,7 +225,8 @@ data class SafeFiles(
          */
         fun getKey(
             passwordOne: String,
-            partialKeyOne: String
+            partialKeyOne: String,
+            safeIsPersonal: Boolean
         ): String {
             // TODO: implement
             return "generated key"
@@ -185,16 +234,31 @@ data class SafeFiles(
 
         /**
          * generates key one and key two using the method mentioned in get-key function. Once
-         * generated, encrpt key-two using key one to get final key to be returned.
+         * generated, encrypt key-two using key one to get final key to be returned.
          */
         fun getKey(
             passwordOne: String,
             partialKeyOne: String,
+            safeIsPersonal: Boolean,
             passwordTwo: String,
             partialKeyTwo: String,
         ): String {
             // TODO: implement
             return "generated key"
+        }
+
+        /**
+         * takes master key as parameter. it then takes the test file content from safe, encrypts
+         * it, then checks if the encrypted string is the same as the encrypted test file content.
+         * if same, returns true else false
+         */
+        fun checkKeyGenerated(masterKey: String, safeAbsolutePath: String): Boolean {
+            // TODO: implement
+            return true
+        }
+
+        fun deleteSafe() {
+            // TODO: implement
         }
     }
 }
