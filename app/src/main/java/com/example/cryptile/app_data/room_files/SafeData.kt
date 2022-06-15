@@ -16,23 +16,25 @@ data class SafeData(
     @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
     @ColumnInfo(name = "safe_absolute_location") var safeAbsoluteLocation: String,
+    @ColumnInfo(name = "safe_salt") var safeSalt: String,
 ) {
     override fun toString(): String {
         return "data received = \n{" +
-                "\n\tid = $id" +
-                "\n\tsafeName = $safeName" +
-                "\n\tsafeOwner = $safeOwner" +
-                "\n\tsafeUsesMultiplePassword = $safeUsesMultiplePassword" +
-                "\n\tsafePartialPasswordOne = $safePartialKey" +
-                "\n\tpersonalAccessOnly = $personalAccessOnly" +
-                "\n\tencryptionAlgorithm = $encryptionAlgorithm" +
-                "\n\tsafeCreated = $safeCreated" +
-                "\n\tsafeAbsoluteLocation = $safeAbsoluteLocation" +
+                "\n\t\"id\" = " + id +
+                "\n\t\"safeName\" = " + safeName +
+                "\n\t\"safeOwner\" = " + safeOwner +
+                "\n\t\"safeUsesMultiplePassword\" = " + safeUsesMultiplePassword +
+                "\n\t\"safePartialKey\" = " + safePartialKey +
+                "\n\t\"personalAccessOnly\" = " + personalAccessOnly +
+                "\n\t\"encryptionAlgorithm\" = " + encryptionAlgorithm +
+                "\n\t\"safeCreated\" = " + safeCreated +
+                "\n\t\"safeAbsoluteLocation\" = " + safeAbsoluteLocation +
+                "\n\t\"safeSalt\" = " + safeSalt +
                 "\n}"
     }
 
     override fun equals(other: Any?): Boolean {
-        try {
+        return try {
             val x = other as SafeData
             return id == x.id &&
                     safeName == x.safeName &&
@@ -42,10 +44,11 @@ data class SafeData(
                     personalAccessOnly == x.personalAccessOnly &&
                     encryptionAlgorithm == x.encryptionAlgorithm &&
                     safeCreated == x.safeCreated &&
-                    safeAbsoluteLocation == x.safeAbsoluteLocation
+                    safeAbsoluteLocation == x.safeAbsoluteLocation &&
+                    safeSalt == x.safeSalt
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
 }

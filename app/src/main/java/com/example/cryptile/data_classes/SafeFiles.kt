@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
 import java.nio.charset.StandardCharsets
+import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
@@ -21,7 +22,6 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import com.example.cryptile.data_classes.SafeFiles.Companion.safeDataFolder as safeDataFolder2
 
-
 private const val TAG = "SafeFiles"
 
 data class SafeFiles(
@@ -29,7 +29,6 @@ data class SafeFiles(
     val fileCreated: String,
     val fileSize: String
 ) {
-
     companion object {
         const val root = "/storage/emulated/0/"
         private const val metaDataFileName = "META_DATA.txt"
@@ -39,8 +38,25 @@ data class SafeFiles(
         private const val unencryptedTestFileName = "UETF_CRYPTILE.txt"
         private const val encryptedTestFileName = "ETF_CRYPTILE.txt"
 
-        private val ivspec =
+        // TODO: check here
+        private const val testSizeLimit = 2
+
+        private val ivSpec =
             IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+
+        /**
+         * takes key converted to string as parameter and converts it back to the initial key.
+         */
+        fun stringToKey(encodedKey: String): SecretKey {
+            val decodedKey = Base64.getDecoder().decode(encodedKey)
+            return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
+        }
+
+        /**
+         * takes key as parameter and converts it to string such that is can be extracted back from
+         * the string outputted
+         */
+        fun keyToString(key: SecretKey) = Base64.getEncoder().encodeToString(key.encoded)!!
 
         /**
          * This takes path of a metadata file of a safe as a parameter. Then, using that file,
@@ -124,28 +140,26 @@ data class SafeFiles(
                 if (!this.exists()) {
                     this.mkdirs()
                 }
-                FileWriter(File(this, unencryptedTestFileName)).apply {
-                    append("UETF\nmaster key - $masterKey");flush();close()
+                val plainWriter = FileWriter(File(this, unencryptedTestFileName))
+                val cipherWriter = FileWriter(File(this, encryptedTestFileName))
+
+                for (i in 0..testSizeLimit) {
+                    // TODO: error
+                    val generatedString = UUID.randomUUID().toString()
+                    val cipher = encrypt(
+                        generatedString.toByteArray(StandardCharsets.ISO_8859_1),
+                        stringToKey(masterKey)
+                    )
+                    plainWriter.append("$generatedString\n")
+                    cipherWriter.append("$cipher\n")
+
                 }
-                FileWriter(File(this, encryptedTestFileName)).apply {
-                    append("ETF");flush();close()
-                }
+                plainWriter.apply { flush();close() }
+                cipherWriter.apply { flush();close() }
             }
             File(
                 Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$safeDataFolder2"
             ).apply { if (!this.exists()) this.mkdirs() }
-        }
-
-        /**
-         * takes absolute file path of the selected file, safe master key for encryption, safe path
-         * to store the encrypted file inside the safe.
-         */
-        fun importFileToSafe(
-            absoluteFilePath: String,
-            safeMasterKey: String,
-            safeAbsolutePath: String
-        ) {
-            // TODO: implement
         }
 
         /**
@@ -168,12 +182,60 @@ data class SafeFiles(
         }
 
         /**
+         * encrypts byte array using key given
+         */
+        private fun encrypt(byteArray: ByteArray, key: SecretKey): String? {
+            try {
+                val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
+                return Base64.getEncoder().encodeToString(cipher.doFinal(byteArray))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        /**
+         * decrypts encrypted byte array using key given
+         */
+        private fun decrypt(byteArray: ByteArray, key: SecretKey): String? {
+            try {
+                val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+                cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
+                return String(cipher.doFinal(Base64.getDecoder().decode(byteArray)))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        //-----------------------------------------------------------------------------above-working
+        //-----------------------------------------------------------------------------above-working
+        //-----------------------------------------------------------------------------above-working
+
+        /**
+         * takes absolute file path of the selected file, safe master key for encryption, safe path
+         * to store the encrypted file inside the safe.
+         */
+        fun importFileToSafe(
+            absoluteFilePath: String,
+            safeMasterKey: String,
+            safeAbsolutePath: String
+        ) {
+            // TODO: implement
+        }
+
+        /**
          * creates a random string of some fixed length.This can be used to get a string of required
          * length to be a key Use this function twice if required.
          */
         fun createRandomPartialKey(): String {
             //remove from here
-            CoroutineScope(Dispatchers.IO).launch { test() }
+            CoroutineScope(Dispatchers.IO).launch {
+                val salt = ByteArray(32)
+                SecureRandom().nextBytes(salt)
+                test(salt)
+            }
             //to here
             var originalKey: SecretKey
             KeyGenerator.getInstance("AES").apply {
@@ -182,43 +244,23 @@ data class SafeFiles(
             }
         }
 
-        private fun encrypt(plainText: String, key: SecretKey): String? {
-            try {
-                val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-                cipher.init(Cipher.ENCRYPT_MODE, key, ivspec)
-                return Base64.getEncoder().encodeToString(
-                    cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
-        private fun decrypt(cipherText: String?, key: SecretKey): String? {
-            try {
-                val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
-                cipher.init(Cipher.DECRYPT_MODE, key, ivspec)
-                return String(cipher.doFinal(Base64.getDecoder().decode(cipherText)))
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
-        private fun test() {
-            val n = 4
-            for (i in 0..n) {
-                //
-            }
+        private fun test(salt: ByteArray) {
+            val regen =
+                String(salt, StandardCharsets.ISO_8859_1).toByteArray(StandardCharsets.ISO_8859_1)
+            Log.d(
+                TAG, "salts are ${
+                    if (regen.contentEquals(salt)) "" else "un"
+                }equal"
+            )
         }
 
         /**
          * takes a password string as parameter and generates a secret key from that key. the key
          * generated is always the same.
          */
-        private fun generateKeyFromPassword(password: String): SecretKey {
-            val salt = generateKeyFromPassword("a_salt_string").encoded
+        private fun generateKeyFromPassword(password: String, stringSalt: String): SecretKey {
+            // TODO: get salt from safe data
+            val salt = stringSalt.toByteArray(StandardCharsets.ISO_8859_1)
             val saltString = Base64.getEncoder().encodeToString(salt)
             return SecretKeySpec(
                 SecretKeyFactory
@@ -234,11 +276,17 @@ data class SafeFiles(
         /**
          * decrypt the partial key using given password and return the result as key.
          */
-        fun getKey(safeIsPersonal: Boolean, partialKey: String, passwordOne: String): SecretKey {
+        fun getKey(
+            salt: String,
+            safeIsPersonal: Boolean,
+            partialKey: String,
+            passwordOne: String,
+        ): SecretKey {
             // TODO: implement personal
             val key = stringToKey(partialKey)
-            val ecp = encrypt(passwordOne, key) ?: passwordOne
-            return generateKeyFromPassword(ecp)
+            val ecp = encrypt(passwordOne.toByteArray(StandardCharsets.UTF_8), key) ?: passwordOne
+            Log.d(TAG, "key from getKey = ${keyToString(key)}")
+            return generateKeyFromPassword(ecp, salt)
         }
 
         /**
@@ -246,12 +294,21 @@ data class SafeFiles(
          * generated, encrypt key-two using key one to get final key to be returned.
          */
         fun getKey(
-            safeIsPersonal: Boolean, partialKey: String, passwordOne: String, passwordTwo: String
+            salt: String,
+            safeIsPersonal: Boolean,
+            partialKey: String,
+            passwordOne: String,
+            passwordTwo: String,
         ): SecretKey {
             // TODO: implement personal
             val key = stringToKey(partialKey)
-            val ecp = encrypt(passwordOne, key) + encrypt(passwordTwo, key)
-            return generateKeyFromPassword(ecp)
+            val ecp = encrypt(
+                passwordOne.toByteArray(StandardCharsets.UTF_8),
+                key
+            ) + encrypt(passwordTwo.toByteArray(StandardCharsets.UTF_8), key)
+            val returnable = generateKeyFromPassword(ecp, salt)
+            Log.d(TAG, "key - ${keyToString(returnable)}")
+            return returnable
         }
 
         /**
@@ -260,23 +317,23 @@ data class SafeFiles(
          * if same, returns true else false
          */
         fun checkKeyGenerated(masterKey: SecretKey, safeAbsolutePath: String): Boolean {
-            // TODO: implement
+            val cipherReader =
+                BufferedReader(FileReader(File("$root$safeAbsolutePath/$testDirectory/$encryptedTestFileName")))
+            val plainReader =
+                BufferedReader(FileReader(File("$root$safeAbsolutePath/$testDirectory/$unencryptedTestFileName")))
+            for (i in 0..testSizeLimit) {
+                val plain = plainReader.readLine()
+                val cipher = cipherReader.readLine()
+                val extractedText =
+                    decrypt(cipher.toByteArray(StandardCharsets.ISO_8859_1), masterKey)
+                if (plain == extractedText) {
+                    Log.d(TAG, "text matches for line $i")
+                } else {
+                    return false
+                }
+            }
             return true
         }
-
-        /**
-         * takes key converted to string as parameter and converts it back to the initial key.
-         */
-        fun stringToKey(encodedKey: String): SecretKey {
-            val decodedKey = Base64.getDecoder().decode(encodedKey)
-            return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
-        }
-
-        /**
-         * takes key as parameter and converts it to string such that is can be extracted back from
-         * the string outputted
-         */
-        fun keyToString(key: SecretKey) = Base64.getEncoder().encodeToString(key.encoded)
 
         fun deleteSafe() {
             // TODO: implement

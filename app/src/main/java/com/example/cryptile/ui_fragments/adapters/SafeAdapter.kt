@@ -85,12 +85,14 @@ class SafeAdapter(
                             passwordTwo = passwordTwoTextLayout.editText!!.text.toString(),
                             partialKey = safeData.safePartialKey,
                             safeIsPersonal = safeData.personalAccessOnly,
+                            salt = safeData.safeSalt,
                         )
                     } else {
                         SafeFiles.getKey(
                             passwordOne = passwordOneTextLayout.editText!!.text.toString(),
                             partialKey = safeData.safePartialKey,
-                            safeIsPersonal = safeData.personalAccessOnly
+                            safeIsPersonal = safeData.personalAccessOnly,
+                            salt = safeData.safeSalt,
                         )
                     }
                     val keyIsCorrect: Boolean =

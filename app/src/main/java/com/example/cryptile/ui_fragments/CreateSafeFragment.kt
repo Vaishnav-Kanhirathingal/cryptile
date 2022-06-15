@@ -20,6 +20,8 @@ import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
 import java.io.File
 import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.security.SecureRandom
 import java.text.SimpleDateFormat
 
 private const val TAG = "CreateSafeFragment"
@@ -104,6 +106,8 @@ class CreateSafeFragment : Fragment() {
             } else {
                 // TODO: throw a warning toast and return
             }
+            val salt = ByteArray(32)
+            SecureRandom().nextBytes(salt)
             val safeData = SafeData(
                 safeName = safeName,
                 safeOwner = safeOwner,
@@ -113,13 +117,35 @@ class CreateSafeFragment : Fragment() {
                 encryptionAlgorithm = encryptionAlgorithmUsed,
                 safeCreated = System.currentTimeMillis(),
                 safeAbsoluteLocation = safePath,
+                safeSalt = String(salt, StandardCharsets.ISO_8859_1),
             )
             SafeFiles.saveChangesToMetadata(safeData)
             SafeFiles.saveChangesToLogFile(
                 "\t\t\t\t-------------safe-created-------------\n", safePath, safeData.safeName
             )
-            // TODO: set master key properly.
-            SafeFiles.generateTestFilesAndStorageDirectory(safePath, "masterKey")
+            SafeFiles.generateTestFilesAndStorageDirectory(
+                safePath,
+                if (safeData.safeUsesMultiplePassword) {
+                    SafeFiles.keyToString(
+                        SafeFiles.getKey(
+                            salt = String(salt, StandardCharsets.ISO_8859_1),
+                            safeIsPersonal = personalAccessOnly,
+                            partialKey = partialKey,
+                            passwordOne = binding.safePasswordOneInputLayout.editText!!.text.toString(),
+                            passwordTwo = binding.safePasswordTwoInputLayout.editText!!.text.toString(),
+                        )
+                    )
+                } else {
+                    SafeFiles.keyToString(
+                        SafeFiles.getKey(
+                            salt = String(salt, StandardCharsets.ISO_8859_1),
+                            safeIsPersonal = personalAccessOnly,
+                            partialKey = partialKey,
+                            passwordOne = binding.safePasswordOneInputLayout.editText!!.text.toString()
+                        )
+                    )
+                }
+            )
             viewModel.insert(safeData)
         } catch (e: IOException) {
             e.printStackTrace()
