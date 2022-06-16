@@ -82,6 +82,7 @@ class SafeViewerFragment : Fragment() {
             if (path.isBlank()) {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
             } else {
+                // TODO: if false, file already exists.
                 SafeFiles.importFileToSafe(
                     fileAbsolutePath = path,
                     safeMasterKey = key,

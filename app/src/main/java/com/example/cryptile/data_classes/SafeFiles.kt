@@ -18,41 +18,38 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
-import com.example.cryptile.data_classes.SafeFiles.Companion.safeDataFolder as safeDataFolder2
 
 
 private const val TAG = "SafeFiles"
 
 data class SafeFiles(
     val fileNameUpperCase: String,
-    val fullFileName: String,
+    val extension: String,
     val fileAdded: String,
     val fileSize: String,
     val fileType: FileType,
 ) {
     companion object {
-        const val root = "/storage/emulated/0/"
+        private const val rootDirectory = "/storage/emulated/0"
         private const val metaDataFileName = "META_DATA.txt"
-        private const val safeDataFolder = "DATA"
+        private const val safeDataDirectory = "DATA"
         private const val logFileName = "Log.txt"
         private const val testDirectory = "TEST"
-        private const val unencryptedTestFileName = "UETF_CRYPTILE.txt"
+        private const val unencryptedTestFileName = "U_ETF_CRYPTILE.txt"
         private const val encryptedTestFileName = "ETF_CRYPTILE.txt"
         private const val cacheDirectory = ".CACHE"
-
-        // TODO: check this
-        private const val encryptedFileName = "ENC_FILE.TXT"
-
-        // TODO: check here
-        private const val testSizeLimit = 50
-
         private val ivSpec =
             IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+
+        // TODO: check below this
+        val decryptedFileName = UUID.randomUUID().toString()
+        private const val encryptedFileName = "ENC_FILE.TXT"
+        private const val testSizeLimit = 50
 
         /**
          * takes key converted to string as parameter and converts it back to the initial key.
          */
-        fun stringToKey(encodedKey: String): SecretKey {
+        private fun stringToKey(encodedKey: String): SecretKey {
             val decodedKey = Base64.getDecoder().decode(encodedKey)
             return SecretKeySpec(decodedKey, 0, decodedKey.size, "AES")
         }
@@ -69,7 +66,7 @@ data class SafeFiles(
          * changed and records this changes into the meta-data file.
          */
         fun readMetaData(path: String): SafeData {
-            val reader = BufferedReader(FileReader(File(root + path)))
+            val reader = BufferedReader(FileReader(File("$rootDirectory/$path")))
             var nextLine = reader.readLine()
             var fileDataString = ""
             while (!nextLine.isNullOrEmpty()) {
@@ -132,6 +129,48 @@ data class SafeFiles(
         }
 
         /**
+         * gets extension string. eg - ".mp4", ".acc", etc. then categorizes it into one of multiple
+         * enum file types.
+         */
+        private fun getFileType(extension: String): FileType {
+            when (extension.uppercase(Locale.getDefault())) {
+                in listOf(
+                    ".WEBM", ".MPG", ".MPEG", ".MPV", ".OGG", ".MP4", ".AVI", ".MOV", ".SWF"
+                ) -> {
+                    return FileType.VIDEO
+                }
+                in listOf(
+                    ".M4A", ".FLAC", ".MP3", ".WAV", ".AAC",
+                    ".PCM", ".AIFF", ".OGG", ".WMA", ".ALAC"
+                ) -> {
+                    return FileType.AUDIO
+                }
+                in listOf(
+                    ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW",
+                    ".BMP", ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS", ".PDF"
+                ) -> {
+                    return FileType.IMAGE
+                }
+                in listOf(
+                    ".PDF", ".WORDX", ".XLS", ".XLSX", ".XLSB", ".DOC", ".DOCX"
+                ) -> {
+                    return FileType.DOCUMENT
+                }
+                in listOf(
+                    ".ZIP", ".7Z", ".ARJ", ".DEB", ".PKG", ".RAR", ".RPM", ".TAR", ".GZ", ".Z"
+                ) -> {
+                    return FileType.COMPRESSED
+                }
+                in listOf(".TXT") -> {
+                    return FileType.TEXT
+                }
+                else -> {
+                    return FileType.UNKNOWN
+                }
+            }
+        }
+
+        /**
          * takes safe path to store test files at appropriate locations. Uses master key for
          * encryption. Generates a long string for encryption and stores it in the unencrypted file.
          * Then, encrypts the string and stores it into the encrypted file. This is also responsible
@@ -163,7 +202,10 @@ data class SafeFiles(
                 cipherWriter.apply { flush();close() }
             }
             File(
-                Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$safeDataFolder2"
+                Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$safeDataDirectory"
+            ).apply { if (!this.exists()) this.mkdirs() }
+            File(
+                Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$cacheDirectory"
             ).apply { if (!this.exists()) this.mkdirs() }
         }
 
@@ -174,7 +216,7 @@ data class SafeFiles(
         fun getDataFileList(safeAbsolutePath: String): List<String> {
             // TODO: has to return files as list of SafeFiles
             val directory = File(
-                Environment.getExternalStorageDirectory(), "${safeAbsolutePath}/$safeDataFolder"
+                Environment.getExternalStorageDirectory(), "${safeAbsolutePath}/$safeDataDirectory"
             )
             val listOfFiles = directory.listFiles()
             val finalList = mutableListOf<String>()
@@ -188,8 +230,7 @@ data class SafeFiles(
         }
 
         /**
-         * encrypts byte array using key given. use Base64.getEncoder().encodeToString() to convert
-         * to string. to convert string to byte array use string.toByteArray(StandardCharsets.ISO_8859_1)
+         * encrypts byte array using key given.
          */
         private fun encrypt(byteArray: ByteArray, key: SecretKey): ByteArray? {
             try {
@@ -203,8 +244,7 @@ data class SafeFiles(
         }
 
         /**
-         * decrypts encrypted byte array using key given. use String() to convert to string. To
-         * convert encrypted string to byte array use cipher.toByteArray(StandardCharsets.ISO_8859_1)
+         * decrypts encrypted byte array using key given.
          */
         private fun decrypt(byteArray: ByteArray, key: SecretKey): ByteArray? {
             try {
@@ -294,9 +334,9 @@ data class SafeFiles(
          */
         fun checkKeyGenerated(masterKey: SecretKey, safeAbsolutePath: String): Boolean {
             val cipherReader =
-                BufferedReader(FileReader(File("$root$safeAbsolutePath/$testDirectory/$encryptedTestFileName")))
+                BufferedReader(FileReader(File("$rootDirectory/$safeAbsolutePath/$testDirectory/$encryptedTestFileName")))
             val plainReader =
-                BufferedReader(FileReader(File("$root$safeAbsolutePath/$testDirectory/$unencryptedTestFileName")))
+                BufferedReader(FileReader(File("$rootDirectory/$safeAbsolutePath/$testDirectory/$unencryptedTestFileName")))
             for (i in 0..testSizeLimit) {
                 val plain = plainReader.readLine()
                 val cipher = cipherReader.readLine()
@@ -331,48 +371,6 @@ data class SafeFiles(
         }
 
         /**
-         * gets extension string. eg - ".mp4", ".acc", etc. then categorizes it into one of multiple
-         * enum file types.
-         */
-        private fun getFileType(extension: String): FileType {
-            when (extension.uppercase(Locale.getDefault())) {
-                in listOf(
-                    ".WEBM", ".MPG", ".MPEG", ".MPV", ".OGG", ".MP4", ".AVI", ".MOV", ".SWF"
-                ) -> {
-                    return FileType.VIDEO
-                }
-                in listOf(
-                    ".M4A", ".FLAC", ".MP3", ".WAV", ".AAC",
-                    ".PCM", ".AIFF", ".OGG", ".WMA", ".ALAC"
-                ) -> {
-                    return FileType.AUDIO
-                }
-                in listOf(
-                    ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW",
-                    ".BMP", ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS", ".PDF"
-                ) -> {
-                    return FileType.IMAGE
-                }
-                in listOf(
-                    ".PDF", ".WORDX", ".XLS", ".XLSX", ".XLSB", ".DOC", ".DOCX"
-                ) -> {
-                    return FileType.DOCUMENT
-                }
-                in listOf(
-                    ".ZIP", ".7Z", ".ARJ", ".DEB", ".PKG", ".RAR", ".RPM", ".TAR", ".GZ", ".Z"
-                ) -> {
-                    return FileType.COMPRESSED
-                }
-                in listOf(".TXT") -> {
-                    return FileType.TEXT
-                }
-                else -> {
-                    return FileType.UNKNOWN
-                }
-            }
-        }
-
-        /**
          * takes file's absolute path and returns a SafeFiles object
          */
         private fun getFile(fileAbsolutePath: String): SafeFiles {
@@ -380,7 +378,7 @@ data class SafeFiles(
             val extensionType = fileAbsolutePath.substring(pointerIndex, fileAbsolutePath.length)
             val fileName =
                 fileAbsolutePath.substring(fileAbsolutePath.lastIndexOf('/') + 1, pointerIndex)
-            val file = File("$root/$fileAbsolutePath")
+            val file = File("$rootDirectory/$fileAbsolutePath")
             val size = Files.readAttributes(file.toPath(), BasicFileAttributes::class.java).size()
             val bytes = ByteArray(size.toInt())
             BufferedInputStream(FileInputStream(file)).apply {
@@ -394,7 +392,7 @@ data class SafeFiles(
                     size
                 ),
                 fileType = getFileType(extensionType),
-                fullFileName = fileName + extensionType
+                extension = extensionType
             )
         }
 
@@ -411,9 +409,8 @@ data class SafeFiles(
             safeMasterKey: String,
             safeAbsolutePath: String
         ): Boolean {
-            // TODO: implement, use key
             val safeFile = getFile(fileAbsolutePath)
-            val file = File("$root/$fileAbsolutePath")
+            val file = File("$rootDirectory/$fileAbsolutePath")
             val originalFileByteArray = ByteArray(
                 Files.readAttributes(file.toPath(), BasicFileAttributes::class.java).size().toInt()
             )
@@ -421,7 +418,7 @@ data class SafeFiles(
                 this.read(originalFileByteArray, 0, originalFileByteArray.size);this.close();
             }
             val destination = safeAbsolutePath + "/" +
-                    safeDataFolder + "/" +
+                    safeDataDirectory + "/" +
                     safeFile.fileNameUpperCase.uppercase(Locale.getDefault())
             val gsonValue = GsonBuilder().setPrettyPrinting().create().toJson(safeFile)
             Log.d(TAG, "gson created = \n$gsonValue\ndestination = $destination")
@@ -432,7 +429,7 @@ data class SafeFiles(
                 if (!this.exists()) {
                     this.mkdirs()
                 } else {
-                    // TODO: return with warning
+                    return false
                 }
                 val encryptedArray = encrypt(originalFileByteArray, stringToKey(safeMasterKey))
 
@@ -451,10 +448,10 @@ data class SafeFiles(
             safeAbsolutePath: String,
             safeFile: SafeFiles
         ) {
-            // TODO: implement
             val encryptedFile = File(
-                root + safeAbsolutePath + "/" +
-                        safeDataFolder + "/" +
+                rootDirectory + "/" +
+                        safeAbsolutePath + "/" +
+                        safeDataDirectory + "/" +
                         safeFile.fileNameUpperCase + "/" +
                         encryptedFileName
             )
@@ -464,8 +461,6 @@ data class SafeFiles(
                     .size()
                     .toInt()
             )
-            // TODO: save bytes from file to encrypted byte array
-
             try {
                 val buf = BufferedInputStream(FileInputStream(encryptedFile))
                 buf.read(encryptedByteArray, 0, encryptedByteArray.size)
@@ -473,18 +468,14 @@ data class SafeFiles(
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             }
-
-
             val originalByteArray = decrypt(encryptedByteArray, stringToKey(safeMasterKey))
-
             val cache = File(
                 Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$cacheDirectory"
             )
-            if (!cache.exists()) {
-                // TODO: generate cache at init
-                cache.mkdirs()
-            }
-            File(cache, "decryptedFileName.txt").writeBytes(originalByteArray!!)
+            File(
+                cache,
+                "${decryptedFileName}.${safeFile.extension}"
+            ).writeBytes(originalByteArray!!)
         }
 
         private fun test(masterKey: SecretKey) {
@@ -504,6 +495,10 @@ data class SafeFiles(
         }
 
         fun deleteSafe() {
+            // TODO: implement
+        }
+
+        fun clearCache() {
             // TODO: implement
         }
     }
