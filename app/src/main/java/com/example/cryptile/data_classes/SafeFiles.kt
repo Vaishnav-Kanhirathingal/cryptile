@@ -5,12 +5,10 @@ import android.util.Log
 import com.example.cryptile.app_data.room_files.SafeData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.io.*
 import java.nio.charset.StandardCharsets
-import java.security.SecureRandom
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
@@ -22,12 +20,15 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import com.example.cryptile.data_classes.SafeFiles.Companion.safeDataFolder as safeDataFolder2
 
+
 private const val TAG = "SafeFiles"
 
 data class SafeFiles(
     val fileName: String,
-    val fileCreated: String,
-    val fileSize: String
+    val fileAdded: String,
+    val fileSize: String,
+    val fileType: FileType,
+    val fullFileName: String,
 ) {
     companion object {
         const val root = "/storage/emulated/0/"
@@ -165,6 +166,7 @@ data class SafeFiles(
          * list can be later used to display encrypted files as a list in the viewer fragment.
          */
         fun getDataFileList(safeAbsolutePath: String): List<String> {
+            // TODO: has to return files as list of SafeFiles
             val directory = File(
                 Environment.getExternalStorageDirectory(), "${safeAbsolutePath}/$safeDataFolder"
             )
@@ -212,13 +214,6 @@ data class SafeFiles(
          * length to be a key Use this function twice if required.
          */
         fun createRandomPartialKey(): String {
-            //remove from here
-            CoroutineScope(Dispatchers.IO).launch {
-                val salt = ByteArray(32)
-                SecureRandom().nextBytes(salt)
-                test(salt)
-            }
-            //to here
             var originalKey: SecretKey
             KeyGenerator.getInstance("AES").apply {
                 init(256)
@@ -275,8 +270,8 @@ data class SafeFiles(
             val key = stringToKey(partialKey)
             val ecp = encrypt(
                 passwordOne.toByteArray(StandardCharsets.UTF_8),
-                key
-            ) + encrypt(passwordTwo.toByteArray(StandardCharsets.UTF_8), key)
+                generateKeyFromPassword(passwordTwo, salt)
+            )!!
             val returnable = generateKeyFromPassword(ecp, salt)
             Log.d(TAG, "key - ${keyToString(returnable)}")
             return returnable
@@ -315,29 +310,102 @@ data class SafeFiles(
          * to store the encrypted file inside the safe.
          */
         fun importFileToSafe(
-            absoluteFilePath: String,
+            fileAbsolutePath: String,
             safeMasterKey: String,
             safeAbsolutePath: String
-        ) {
-            // TODO: implement
+        ): Boolean {
+            // TODO: implement, use key
+            val pointerIndex = fileAbsolutePath.lastIndexOf('.')
+            val slashIndex = fileAbsolutePath.lastIndexOf('/')
+            val extensionType = fileAbsolutePath.substring(pointerIndex, fileAbsolutePath.length)
+            val fileName = fileAbsolutePath.substring(slashIndex + 1, pointerIndex)
+            val destination =
+                safeAbsolutePath + "/" +
+                        safeDataFolder + "/" +
+                        fileName.uppercase(Locale.getDefault())
+            val safeFile = SafeFiles(
+                fileName = fileName,
+                fileAdded = SimpleDateFormat("yyyy/MM/dd").format(System.currentTimeMillis()),
+                fileSize = getSize(
+                    Files.readAttributes(
+                        File("$root/$fileAbsolutePath").toPath(),
+                        BasicFileAttributes::class.java
+                    ).size()
+                ),
+                fileType = getFileType(extensionType),
+                fullFileName = fileName + extensionType
+            )
+            val gsonValue = GsonBuilder().setPrettyPrinting().create().toJson(safeFile)
+            Log.d(TAG, "gson created = \n$gsonValue\ndestination = $destination")
+            return true
+        }
+
+        private fun getSize(size: Long): String {
+            var x = size
+            val measureLimit: Long = 1000
+            var i = 0
+            val typeArray = listOf("B", "KB", "MB", "GB", "TB")
+            var afterPoint = 0
+            while (x > measureLimit && i < 5) {
+                Log.d(TAG, "x = $x, i = $i")
+                i++
+                afterPoint = (x % 100).toInt()
+                x /= measureLimit
+            }
+            return "${x}.$afterPoint ${typeArray[i]}"
+        }
+
+        private fun getFileType(extension: String): FileType {
+            when (extension.uppercase(Locale.getDefault())) {
+                in listOf(
+                    ".WEBM", ".MPG", ".MPEG", ".MPV", ".OGG", ".MP4", ".AVI", ".MOV", ".SWF"
+                ) -> {
+                    return FileType.VIDEO
+                }
+                in listOf(
+                    ".M4A", ".FLAC", ".MP3", ".WAV", ".AAC",
+                    ".PCM", ".AIFF", ".OGG", ".WMA", ".ALAC"
+                ) -> {
+                    return FileType.AUDIO
+                }
+                in listOf(
+                    ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW",
+                    ".BMP", ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS", ".PDF"
+                ) -> {
+                    return FileType.IMAGE
+                }
+                in listOf(
+                    ".PDF", ".WORDX", ".XLS", ".XLSX", ".XLSB", ".DOC", ".DOCX"
+                ) -> {
+                    return FileType.DOCUMENT
+                }
+                in listOf(
+                    ".ZIP", ".7Z", ".ARJ", ".DEB", ".PKG", ".RAR", ".RPM", ".TAR", ".GZ", ".Z"
+                ) -> {
+                    return FileType.COMPRESSED
+                }
+                in listOf(".TXT") -> {
+                    return FileType.TEXT
+                }
+                else -> {
+                    return FileType.UNKNOWN
+                }
+            }
         }
 
         fun openFile(key: SecretKey, actualName: String, safeAbsolutePath: String) {
+            // TODO: implement
             val filePath = "$root$safeAbsolutePath/$safeDataFolder/$actualName"
-        }
-
-        private fun test(salt: ByteArray) {
-            val regen =
-                String(salt, StandardCharsets.ISO_8859_1).toByteArray(StandardCharsets.ISO_8859_1)
-            Log.d(
-                TAG, "salts are ${
-                    if (regen.contentEquals(salt)) "" else "un"
-                }equal"
-            )
+            Log.d(TAG, "file path = $filePath")
         }
 
         fun deleteSafe() {
             // TODO: implement
         }
     }
+}
+
+
+enum class FileType {
+    UNKNOWN, IMAGE, VIDEO, AUDIO, DOCUMENT, COMPRESSED, TEXT,
 }

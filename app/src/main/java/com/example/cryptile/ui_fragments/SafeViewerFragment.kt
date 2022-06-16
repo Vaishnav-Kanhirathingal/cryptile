@@ -78,12 +78,12 @@ class SafeViewerFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         try {
             val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
-            Log.d(TAG, "Safe Path = $path")
+            Log.d(TAG, "File Path = $path")
             if (path.isBlank()) {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
             } else {
                 SafeFiles.importFileToSafe(
-                    absoluteFilePath = path,
+                    fileAbsolutePath = path,
                     safeMasterKey = key,
                     safeAbsolutePath = safeData.safeAbsoluteLocation
                 )

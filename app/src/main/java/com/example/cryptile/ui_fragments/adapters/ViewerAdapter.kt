@@ -16,7 +16,7 @@ class ViewerAdapter :
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
                 fileNameTextView.text = safeFiles.fileName
-                fileDateTextView.text = safeFiles.fileCreated
+                fileDateTextView.text = safeFiles.fileAdded
                 fileSizeTextView.text = safeFiles.fileSize
             }
         }
@@ -33,7 +33,7 @@ class ViewerAdapter :
                 oldItem.fileName == newItem.fileName
 
             override fun areContentsTheSame(oldItem: SafeFiles, newItem: SafeFiles) =
-                ((oldItem.fileName == newItem.fileName) && (oldItem.fileCreated == newItem.fileCreated) && (oldItem.fileSize == newItem.fileSize))
+                ((oldItem.fileName == newItem.fileName) && (oldItem.fileAdded == newItem.fileAdded) && (oldItem.fileSize == newItem.fileSize))
         }
     }
 
