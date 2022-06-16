@@ -16,7 +16,7 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
-import com.example.cryptile.data_classes.SafeFiles
+import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.databinding.PromptSignInBinding
@@ -197,7 +197,7 @@ class MainFragment : Fragment() {
                     requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
                 ).show()
             } else {
-                viewModel.insert(SafeFiles.readMetaData(path))
+                viewModel.insert(SafeData.load(path))
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)

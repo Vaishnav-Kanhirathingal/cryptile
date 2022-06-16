@@ -119,28 +119,22 @@ class CreateSafeFragment : Fragment() {
                 safeAbsoluteLocation = safePath,
                 safeSalt = String(salt, StandardCharsets.ISO_8859_1),
             )
-            SafeFiles.saveChangesToMetadata(safeData)
-            SafeFiles.saveChangesToLogFile(
-                "\t\t\t\t-------------safe-created-------------\n", safePath, safeData.safeName
-            )
-            SafeFiles.generateTestFilesAndStorageDirectory(
+            safeData.saveChangesToMetadata()
+            safeData.saveChangesToLogFile("\t\t\t\t-------------safe-created-------------\n")
+            safeData.generateTestFilesAndStorageDirectory(
                 safePath,
                 if (safeData.safeUsesMultiplePassword) {
-                    SafeFiles.keyToString(
-                        SafeFiles.getKey(
-                            salt = String(salt, StandardCharsets.ISO_8859_1),
+                    SafeData.keyToString(
+                        safeData.getKey(
                             safeIsPersonal = personalAccessOnly,
-                            partialKey = partialKey,
                             passwordOne = binding.safePasswordOneInputLayout.editText!!.text.toString(),
                             passwordTwo = binding.safePasswordTwoInputLayout.editText!!.text.toString(),
                         )
                     )
                 } else {
-                    SafeFiles.keyToString(
-                        SafeFiles.getKey(
-                            salt = String(salt, StandardCharsets.ISO_8859_1),
+                    SafeData.keyToString(
+                        safeData.getKey(
                             safeIsPersonal = personalAccessOnly,
-                            partialKey = partialKey,
                             passwordOne = binding.safePasswordOneInputLayout.editText!!.text.toString()
                         )
                     )

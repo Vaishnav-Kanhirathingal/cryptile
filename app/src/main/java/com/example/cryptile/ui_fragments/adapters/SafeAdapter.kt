@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData
-import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
 import com.example.cryptile.ui_fragments.MainFragmentDirections
@@ -80,29 +79,25 @@ class SafeAdapter(
                 cancelButton.setOnClickListener { dialogBox.dismiss() }
                 openButton.setOnClickListener {
                     val key = if (safeData.safeUsesMultiplePassword) {
-                        SafeFiles.getKey(
+                        safeData.getKey(
                             passwordOne = passwordOneTextLayout.editText!!.text.toString(),
                             passwordTwo = passwordTwoTextLayout.editText!!.text.toString(),
-                            partialKey = safeData.safePartialKey,
                             safeIsPersonal = safeData.personalAccessOnly,
-                            salt = safeData.safeSalt,
                         )
                     } else {
-                        SafeFiles.getKey(
+                        safeData.getKey(
                             passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                            partialKey = safeData.safePartialKey,
                             safeIsPersonal = safeData.personalAccessOnly,
-                            salt = safeData.safeSalt,
                         )
                     }
                     val keyIsCorrect: Boolean =
-                        SafeFiles.checkKeyGenerated(key, safeData.safeAbsoluteLocation)
+                        safeData.checkKeyGenerated(key)
                     if (keyIsCorrect) {
                         navController.navigate(
                             MainFragmentDirections
                                 .actionMainFragmentToSafeViewerFragment(
                                     safeData.id,
-                                    SafeFiles.keyToString(key)
+                                    SafeData.keyToString(key)
                                 )
                         )
                     } else {

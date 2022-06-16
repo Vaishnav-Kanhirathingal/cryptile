@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
-import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.ui_fragments.adapters.ViewerAdapter
 import com.example.cryptile.view_models.AppViewModel
@@ -83,11 +82,7 @@ class SafeViewerFragment : Fragment() {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
             } else {
                 // TODO: if false, file already exists.
-                SafeFiles.importFileToSafe(
-                    fileAbsolutePath = path,
-                    safeMasterKey = key,
-                    safeAbsolutePath = safeData.safeAbsoluteLocation
-                )
+                safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)
