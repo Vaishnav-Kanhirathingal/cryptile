@@ -145,9 +145,11 @@ data class SafeFiles(
 
                 for (i in 0..testSizeLimit) {
                     val generatedString = UUID.randomUUID().toString()
-                    val cipher = encrypt(
-                        generatedString.toByteArray(StandardCharsets.ISO_8859_1),
-                        stringToKey(masterKey)
+                    val cipher = Base64.getEncoder().encodeToString(
+                        encrypt(
+                            generatedString.toByteArray(StandardCharsets.ISO_8859_1),
+                            stringToKey(masterKey)
+                        )
                     )
                     plainWriter.append("$generatedString\n")
                     cipherWriter.append("$cipher\n")
@@ -182,13 +184,14 @@ data class SafeFiles(
         }
 
         /**
-         * encrypts byte array using key given
+         * encrypts byte array using key given. use Base64.getEncoder().encodeToString() to convert
+         * to string
          */
-        private fun encrypt(byteArray: ByteArray, key: SecretKey): String? {
+        private fun encrypt(byteArray: ByteArray, key: SecretKey): ByteArray? {
             try {
                 val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                 cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
-                return Base64.getEncoder().encodeToString(cipher.doFinal(byteArray))
+                return cipher.doFinal(byteArray)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -196,13 +199,13 @@ data class SafeFiles(
         }
 
         /**
-         * decrypts encrypted byte array using key given
+         * decrypts encrypted byte array using key given. use String() to convert to string
          */
-        private fun decrypt(byteArray: ByteArray, key: SecretKey): String? {
+        private fun decrypt(byteArray: ByteArray, key: SecretKey): ByteArray? {
             try {
                 val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
                 cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
-                return String(cipher.doFinal(Base64.getDecoder().decode(byteArray)))
+                return cipher.doFinal(Base64.getDecoder().decode(byteArray))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -251,7 +254,8 @@ data class SafeFiles(
         ): SecretKey {
             // TODO: implement personal
             val key = stringToKey(partialKey)
-            val ecp = encrypt(passwordOne.toByteArray(StandardCharsets.UTF_8), key) ?: passwordOne
+            val ecp = Base64.getEncoder()
+                .encodeToString(encrypt(passwordOne.toByteArray(StandardCharsets.UTF_8), key))
             return generateKeyFromPassword(ecp, salt)
         }
 
@@ -268,10 +272,12 @@ data class SafeFiles(
         ): SecretKey {
             // TODO: implement personal
             val key = stringToKey(partialKey)
-            val ecp = encrypt(
-                passwordOne.toByteArray(StandardCharsets.UTF_8),
-                generateKeyFromPassword(passwordTwo, salt)
-            )!!
+            val ecp = Base64.getEncoder().encodeToString(
+                encrypt(
+                    passwordOne.toByteArray(StandardCharsets.UTF_8),
+                    generateKeyFromPassword(passwordTwo, salt)
+                )!!
+            )
             val returnable = generateKeyFromPassword(ecp, salt)
             Log.d(TAG, "key - ${keyToString(returnable)}")
             return returnable
@@ -291,7 +297,7 @@ data class SafeFiles(
                 val plain = plainReader.readLine()
                 val cipher = cipherReader.readLine()
                 val extractedText =
-                    decrypt(cipher.toByteArray(StandardCharsets.ISO_8859_1), masterKey)
+                    String(decrypt(cipher.toByteArray(StandardCharsets.ISO_8859_1), masterKey)!!)
                 if (plain == extractedText) {
                     Log.d(TAG, "text matches for line $i")
                 } else {
