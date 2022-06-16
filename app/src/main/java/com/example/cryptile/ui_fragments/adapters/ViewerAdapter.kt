@@ -15,7 +15,7 @@ class ViewerAdapter :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
-                fileNameTextView.text = safeFiles.fileName
+                fileNameTextView.text = safeFiles.fileNameUpperCase
                 fileDateTextView.text = safeFiles.fileAdded
                 fileSizeTextView.text = safeFiles.fileSize
             }
@@ -30,10 +30,10 @@ class ViewerAdapter :
     companion object {
         val diffCallBack = object : DiffUtil.ItemCallback<SafeFiles>() {
             override fun areItemsTheSame(oldItem: SafeFiles, newItem: SafeFiles) =
-                oldItem.fileName == newItem.fileName
+                oldItem.fileNameUpperCase == newItem.fileNameUpperCase
 
             override fun areContentsTheSame(oldItem: SafeFiles, newItem: SafeFiles) =
-                ((oldItem.fileName == newItem.fileName) && (oldItem.fileAdded == newItem.fileAdded) && (oldItem.fileSize == newItem.fileSize))
+                ((oldItem.fileNameUpperCase == newItem.fileNameUpperCase) && (oldItem.fileAdded == newItem.fileAdded) && (oldItem.fileSize == newItem.fileSize))
         }
     }
 
