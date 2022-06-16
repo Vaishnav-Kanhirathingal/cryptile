@@ -464,12 +464,24 @@ data class SafeFiles(
                     .size()
                     .toInt()
             )
+            // TODO: save bytes from file to encrypted byte array
+
+            try {
+                val buf = BufferedInputStream(FileInputStream(encryptedFile))
+                buf.read(encryptedByteArray, 0, encryptedByteArray.size)
+                buf.close()
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            }
+
+
             val originalByteArray = decrypt(encryptedByteArray, stringToKey(safeMasterKey))
 
             val cache = File(
                 Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$cacheDirectory"
             )
             if (!cache.exists()) {
+                // TODO: generate cache at init
                 cache.mkdirs()
             }
             File(cache, "decryptedFileName.txt").writeBytes(originalByteArray!!)
