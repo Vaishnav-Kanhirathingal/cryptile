@@ -3,8 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add_files"
+        android:id="@+id/add_file"
         android:icon="@drawable/add_24"
-        android:title="Cancel"
-        app:showAsAction="always" />
+        android:title="Add Files"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/safe_settings"
+        android:icon="@drawable/settings_24"
+        android:title="Safe Settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/clear_cache"
+        android:icon="@drawable/cancel_24"
+        android:title="Clear Cache"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/send_log_files"
+        android:icon="@drawable/open_in_new_24"
+        android:title="Send Logs"
+        app:showAsAction="never" />
 </menu>

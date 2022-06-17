@@ -2,14 +2,7 @@ package com.example.cryptile.data_classes
 
 import android.util.Log
 import com.example.cryptile.app_data.room_files.SafeData.Companion.ivSpec
-import com.example.cryptile.app_data.room_files.SafeData.Companion.rootDirectory
 import com.google.gson.Gson
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.nio.file.Files
-import java.nio.file.attribute.BasicFileAttributes
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -24,6 +17,7 @@ data class SafeFiles(
     val fileAdded: String,
     val fileSize: String,
     val fileType: FileType,
+    val fileDirectory: String
 ) {
     companion object {
 
@@ -32,40 +26,26 @@ data class SafeFiles(
          * enum file types.
          */
         fun getFileType(extension: String): FileType {
-            when (extension.uppercase(Locale.getDefault())) {
+            return when (extension.uppercase(Locale.getDefault())) {
                 in listOf(
                     ".WEBM", ".MPG", ".MPEG", ".MPV", ".OGG", ".MP4", ".AVI", ".MOV", ".SWF"
-                ) -> {
-                    return FileType.VIDEO
-                }
+                ) -> FileType.VIDEO
                 in listOf(
-                    ".M4A", ".FLAC", ".MP3", ".WAV", ".AAC",
-                    ".PCM", ".AIFF", ".OGG", ".WMA", ".ALAC"
-                ) -> {
-                    return FileType.AUDIO
-                }
+                    ".M4A", ".FLAC", ".MP3", ".WAV", ".AAC", ".PCM", ".AIFF", ".OGG", ".WMA",
+                    ".ALAC"
+                ) -> FileType.AUDIO
                 in listOf(
-                    ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW",
-                    ".BMP", ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS", ".PDF"
-                ) -> {
-                    return FileType.IMAGE
-                }
+                    ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW", ".BMP",
+                    ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS", ".PDF"
+                ) -> FileType.IMAGE
                 in listOf(
                     ".PDF", ".WORDX", ".XLS", ".XLSX", ".XLSB", ".DOC", ".DOCX"
-                ) -> {
-                    return FileType.DOCUMENT
-                }
+                ) -> FileType.DOCUMENT
                 in listOf(
                     ".ZIP", ".7Z", ".ARJ", ".DEB", ".PKG", ".RAR", ".RPM", ".TAR", ".GZ", ".Z"
-                ) -> {
-                    return FileType.COMPRESSED
-                }
-                in listOf(".TXT") -> {
-                    return FileType.TEXT
-                }
-                else -> {
-                    return FileType.UNKNOWN
-                }
+                ) -> return FileType.COMPRESSED
+                in listOf(".TXT") -> FileType.TEXT
+                else -> FileType.UNKNOWN
             }
         }
 
@@ -114,32 +94,6 @@ data class SafeFiles(
                 x /= measureLimit
             }
             return "${x}.$afterPoint ${typeArray[i]}"
-        }
-
-        /**
-         * takes file's absolute path and returns a SafeFiles object
-         */
-        fun getSafeFileEnum(fileAbsolutePath: String): SafeFiles {
-            val pointerIndex = fileAbsolutePath.lastIndexOf('.')
-            val extensionType = fileAbsolutePath.substring(pointerIndex, fileAbsolutePath.length)
-            val fileName =
-                fileAbsolutePath.substring(fileAbsolutePath.lastIndexOf('/') + 1, pointerIndex)
-            val file = File("$rootDirectory/$fileAbsolutePath")
-            val size = Files.readAttributes(file.toPath(), BasicFileAttributes::class.java).size()
-            val bytes = ByteArray(size.toInt())
-            BufferedInputStream(FileInputStream(file)).apply {
-                this.read(bytes, 0, bytes.size)
-                this.close()
-            }
-            return SafeFiles(
-                fileNameUpperCase = fileName.uppercase(Locale.getDefault()),
-                fileAdded = SimpleDateFormat("yyyy/MM/dd").format(System.currentTimeMillis()),
-                fileSize = getSize(
-                    size
-                ),
-                fileType = getFileType(extensionType),
-                extension = extensionType
-            )
         }
 
         //-----------------------------------------------------------------------------above-working

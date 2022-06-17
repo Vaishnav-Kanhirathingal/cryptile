@@ -8,8 +8,6 @@ import androidx.room.PrimaryKey
 import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.data_classes.SafeFiles.Companion.decrypt
 import com.example.cryptile.data_classes.SafeFiles.Companion.encrypt
-import com.example.cryptile.data_classes.SafeFiles.Companion.getSafeFileEnum
-import com.example.cryptile.data_classes.SafeFiles.Companion.test
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.*
@@ -41,6 +39,7 @@ class SafeData(
     @ColumnInfo(name = "safe_salt") var safeSalt: String,
 ) {
     companion object {
+        const val DEFAULT_PASSWORD = "DEFAULT"// TODO: remove since password wont be empty
         const val rootDirectory = "/storage/emulated/0"
         const val metaDataFileName = "META_DATA.txt"
         const val safeDataDirectory = "DATA"
@@ -49,12 +48,14 @@ class SafeData(
         const val unencryptedTestFileName = "U_ETF_CRYPTILE.txt"
         const val encryptedTestFileName = "ETF_CRYPTILE.txt"
         const val cacheDirectory = ".CACHE"
+        const val safeDataFileName = ".SAFE_FILES_META.txt"
+        val decryptedFileName = UUID.randomUUID().toString()
+        const val encryptedFileName = "ENC_FILE.TXT"
+
         val ivSpec =
             IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
         // TODO: check below this
-        val decryptedFileName = UUID.randomUUID().toString()
-        const val encryptedFileName = "ENC_FILE.TXT"
         const val testSizeLimit = 50
 
 
@@ -234,10 +235,11 @@ class SafeData(
     ): SecretKey {
         // TODO: implement personal
         val key = stringToKey(safePartialKey)
+        Log.d(TAG, "parameters = $passwordOne, $passwordTwo")
         val ecp = String(
             encrypt(
                 passwordOne.toByteArray(StandardCharsets.UTF_8),
-                generateKeyFromPassword(passwordTwo)
+                generateKeyFromPassword(passwordTwo.ifEmpty { DEFAULT_PASSWORD })
             )!!
         )
         val returnable = generateKeyFromPassword(ecp)
@@ -276,13 +278,11 @@ class SafeData(
         val salt = safeSalt.toByteArray(StandardCharsets.ISO_8859_1)
         val saltString = Base64.getEncoder().encodeToString(salt)
         return SecretKeySpec(
-            SecretKeyFactory
-                .getInstance("PBKDF2WithHmacSHA256")
-                .generateSecret(
-                    PBEKeySpec(
-                        password.toCharArray(), saltString.toByteArray(), 65536, 256
-                    )
-                ).encoded, "AES"
+            SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(
+                PBEKeySpec(
+                    password.toCharArray(), saltString.toByteArray(), 65536, 256
+                )
+            ).encoded, "AES"
         )
     }
 
@@ -322,10 +322,8 @@ class SafeData(
      * takes absolute file path of the selected file, safe master key for encryption, safe path
      * to store the encrypted file inside the safe.
      */
-    fun importFileToSafe(
-        fileAbsolutePath: String,
-        safeMasterKey: String
-    ): Boolean {
+    fun importFileToSafe(fileAbsolutePath: String, safeMasterKey: String) {
+        // TODO: add safe files content inside the folder
         val safeFile = getSafeFileEnum(fileAbsolutePath)
         val file = File("${rootDirectory}/$fileAbsolutePath")
         val originalFileByteArray = ByteArray(
@@ -334,46 +332,33 @@ class SafeData(
         BufferedInputStream(FileInputStream(file)).apply {
             this.read(originalFileByteArray, 0, originalFileByteArray.size);this.close()
         }
-        val destination = safeAbsoluteLocation + "/" +
-                safeDataDirectory + "/" +
-                safeFile.fileNameUpperCase.uppercase(Locale.getDefault())
-        val gsonValue = GsonBuilder().setPrettyPrinting().create().toJson(safeFile)
-        Log.d(TAG, "gson created = \n$gsonValue\ndestination = $destination")
-        Log.d(TAG, "size = ${originalFileByteArray.size}\nbyte array = ")
-        File(
-            Environment.getExternalStorageDirectory(), destination
-        ).apply {
-            if (!this.exists()) {
-                this.mkdirs()
-            } else {
-                return false
-            }
-            val encryptedArray =
-                encrypt(originalFileByteArray, stringToKey(safeMasterKey))
+        val destination = "$safeAbsoluteLocation/$safeDataDirectory/${safeFile.fileDirectory}"
+        val destinationDirectory = File(Environment.getExternalStorageDirectory(), destination)
+        destinationDirectory.mkdirs()
 
-            File(
-                File(Environment.getExternalStorageDirectory(), destination),
-                encryptedFileName
-            ).writeBytes(encryptedArray!!)
+        File(
+            File(Environment.getExternalStorageDirectory(), destination), encryptedFileName
+        ).writeBytes(encrypt(originalFileByteArray, stringToKey(safeMasterKey))!!)
+        // TODO: add safeFiles gson
+
+
+        FileWriter(File(destinationDirectory, safeDataFileName)).apply {
+            append(GsonBuilder().setPrettyPrinting().create().toJson(safeFile));flush();close()
         }
-        //
-        test(stringToKey(safeMasterKey))
-        openFile(safeMasterKey, safeAbsoluteLocation, safeFile)
         saveChangesToLogFile("File imported - ${safeFile.toString()}")
-        return true
+        //
+        openFile(safeMasterKey, safeFile)
+        deleteSafe()
     }
 
     fun openFile(
         safeMasterKey: String,
-        safeAbsolutePath: String,
         safeFile: SafeFiles
     ) {
+        // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val encryptedFile = File(
-            rootDirectory + "/" +
-                    safeAbsolutePath + "/" +
-                    safeDataDirectory + "/" +
-                    safeFile.fileNameUpperCase + "/" +
-                    encryptedFileName
+            Environment.getExternalStorageDirectory(),
+            "${safeAbsoluteLocation}/$safeDataDirectory/${safeFile.fileDirectory}/$encryptedFileName"
         )
         val encryptedByteArray = ByteArray(
             Files
@@ -382,29 +367,70 @@ class SafeData(
                 .toInt()
         )
         try {
-            val buf = BufferedInputStream(FileInputStream(encryptedFile))
-            buf.read(encryptedByteArray, 0, encryptedByteArray.size)
-            buf.close()
+            BufferedInputStream(FileInputStream(encryptedFile)).apply {
+                this.read(encryptedByteArray, 0, encryptedByteArray.size)
+                this.close()
+            }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
-        val originalByteArray = decrypt(encryptedByteArray, stringToKey(safeMasterKey))
-        val cache = File(
-            Environment.getExternalStorageDirectory(), "$safeAbsolutePath/$cacheDirectory"
-        )
+
         File(
-            cache,
-            "${decryptedFileName}.${safeFile.extension}"
-        ).writeBytes(originalByteArray!!)
+            Environment.getExternalStorageDirectory(),
+            "$safeAbsoluteLocation/$cacheDirectory/${decryptedFileName}.${safeFile.extension}"
+        ).writeBytes(decrypt(encryptedByteArray, stringToKey(safeMasterKey))!!)
         saveChangesToLogFile("File opened - ${safeFile.toString()}")
     }
 
-    fun deleteSafe() {
-        // TODO: implement
+    /**
+     * takes file's absolute path and returns a SafeFiles object
+     */
+    private fun getSafeFileEnum(fileAbsolutePath: String): SafeFiles {
+        val pointerIndex = fileAbsolutePath.lastIndexOf('.')
+        val extensionType = fileAbsolutePath.substring(pointerIndex, fileAbsolutePath.length)
+        val fileName =
+            fileAbsolutePath.substring(fileAbsolutePath.lastIndexOf('/') + 1, pointerIndex)
+        val file = File("$rootDirectory/$fileAbsolutePath")
+        val size = Files.readAttributes(file.toPath(), BasicFileAttributes::class.java).size()
+        val bytes = ByteArray(size.toInt())
+        BufferedInputStream(FileInputStream(file)).apply {
+            this.read(bytes, 0, bytes.size)
+            this.close()
+        }
+        var randomDirectoryName: String
+        do randomDirectoryName = UUID.randomUUID().toString() while (
+            File(
+                Environment.getExternalStorageDirectory(),
+                "$safeAbsoluteLocation/$safeDataDirectory/$randomDirectoryName"
+            ).exists()
+        )
+        return SafeFiles(
+            fileNameUpperCase = fileName.uppercase(Locale.getDefault()),
+            fileAdded = SimpleDateFormat("yyyy/MM/dd").format(System.currentTimeMillis()),
+            fileSize = SafeFiles.getSize(size),
+            fileType = SafeFiles.getFileType(extensionType),
+            extension = extensionType,
+            fileDirectory = randomDirectoryName
+        )
     }
 
+    fun deleteSafe() {
+        // TODO: check
+        val x = File(
+            Environment.getExternalStorageDirectory(),
+            safeAbsoluteLocation
+        )
+        x.deleteRecursively()
+//        Files.delete(x.toPath())
+    }
+
+    /**
+     * Clears content of '.CACHE' directory within the safe. Does not delete the directory.
+     */
     fun clearCache() {
+        for (child in File("$rootDirectory/$safeAbsoluteLocation/$cacheDirectory").listFiles()!!) {
+            child.delete()
+        }
         saveChangesToLogFile("cache cleared from cache file.")
-        // TODO: implement
     }
 }

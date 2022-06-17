@@ -55,14 +55,24 @@ class SafeViewerFragment : Fragment() {
         binding.apply {
             topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.add_files -> {
-                        // TODO: open intent to add files
-                        val intent = Intent(Intent.ACTION_GET_CONTENT)
-                        intent.type = "text/plain"
-                        startActivityForResult(intent, 1)
+                    R.id.add_file -> {
+                        addFile()
                         true
                     }
-                    else -> true
+                    R.id.safe_settings -> {
+                        // TODO: open a settings prompt
+                        true
+                    }
+                    R.id.clear_cache -> {
+                        safeData.clearCache()
+                        Toast.makeText(requireContext(), "cache cleared", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.send_log_files -> {
+                        // TODO: start an intent to share logs to email
+                        true
+                    }
+                    else -> false
                 }
             }
             topAppBar.setNavigationOnClickListener {
@@ -70,7 +80,14 @@ class SafeViewerFragment : Fragment() {
             }
             val viewerAdapter = ViewerAdapter()
             fileListRecyclerView.adapter = viewerAdapter
+            addFileBottomButton.setOnClickListener { addFile() }
         }
+    }
+
+    private fun addFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "text/plain"
+        startActivityForResult(intent, 1)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
