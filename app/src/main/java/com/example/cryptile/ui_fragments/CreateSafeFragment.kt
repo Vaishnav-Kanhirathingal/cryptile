@@ -120,6 +120,7 @@ class CreateSafeFragment : Fragment() {
                     else -> "three"
                 },
                 safeCreated = System.currentTimeMillis(),
+                hideSafePath = !pathHiddenSwitch.isChecked,// TODO: change
                 safeAbsoluteLocation = currentPath.value + "/" +
                         safeNameInputLayout.editText!!.text.toString().ifEmpty {
                             "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())

@@ -38,8 +38,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sign_up_vertical"
-                android:hint="Full Name"
-                app:helperText="First-Name Middle-Name Last-Name"
+                android:hint="New User Name"
+                app:helperText="This will be displayed as the account name."
                 app:startIconDrawable="@drawable/account_24">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -67,7 +67,7 @@
                 app:counterEnabled="true"
                 app:counterMaxLength="32"
                 app:endIconMode="password_toggle"
-                app:helperText="This Will Be Used To Access The App"
+                app:helperText="Set a new account password"
                 app:startIconDrawable="@drawable/password_24">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sign_up_vertical"
                 android:backgroundTint="@color/card_background"
-                app:cardCornerRadius="10dp">
+                app:cardCornerRadius="@dimen/sign_up_corner">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -124,6 +124,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Phone Number"
+                        app:endIconDrawable="@drawable/check_circle_24"
+                        app:endIconMode="custom"
                         app:startIconDrawable="@drawable/phone_24">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -197,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sign_up_vertical"
                 android:backgroundTint="@color/card_background"
-                app:cardCornerRadius="10dp">
+                app:cardCornerRadius="@dimen/sign_up_corner">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -211,6 +213,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Email Address"
+                        app:endIconDrawable="@drawable/check_circle_24"
+                        app:endIconMode="custom"
                         app:startIconDrawable="@drawable/email_24">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -286,14 +290,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/sign_up_vertical"
-                android:backgroundTint="@color/card_background">
+                android:backgroundTint="@color/card_background"
+                app:cardCornerRadius="@dimen/sign_up_corner">
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/user_use_fingerprint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:text="Use Fingerprint" />
+                    android:layout_marginStart="@dimen/sign_up_horizontal"
+                    android:text="Login using fingerprint" />
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.divider.MaterialDivider

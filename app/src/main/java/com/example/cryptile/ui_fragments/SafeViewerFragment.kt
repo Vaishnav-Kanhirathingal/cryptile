@@ -19,6 +19,9 @@ import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.ui_fragments.adapters.ViewerAdapter
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "SafeViewerFragment"
 
@@ -60,7 +63,7 @@ class SafeViewerFragment : Fragment() {
                         true
                     }
                     R.id.safe_settings -> {
-                        // TODO: open a settings prompt
+                        openSafeSettings()
                         true
                     }
                     R.id.clear_cache -> {
@@ -96,6 +99,10 @@ class SafeViewerFragment : Fragment() {
         startActivityForResult(intent, 1)
     }
 
+    private fun openSafeSettings() {
+        // TODO: open a settings prompt
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try {
@@ -105,8 +112,11 @@ class SafeViewerFragment : Fragment() {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
             } else {
                 // TODO: if false, file already exists.
-                safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
-                viewerAdapter.submitList(safeData.getDataFileList())
+                CoroutineScope(Dispatchers.IO).launch {
+                    safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
+                    val list = safeData.getDataFileList()
+                    CoroutineScope(Dispatchers.Main).launch { viewerAdapter.submitList(list) }
+                }
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)

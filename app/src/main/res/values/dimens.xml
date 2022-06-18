@@ -17,4 +17,5 @@
     <dimen name="safe_details_size">11sp</dimen>
     <dimen name="card_padding">10dp</dimen>
     <dimen name="padding_recycler_safe">4dp</dimen>
+    <dimen name="sign_up_corner">10dp</dimen>
 </resources>

@@ -35,6 +35,7 @@ class SafeData(
     @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
     @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
+    @ColumnInfo(name = "hide_safe_path") var hideSafePath: Boolean,
     @ColumnInfo(name = "safe_absolute_location") var safeAbsoluteLocation: String,
     @ColumnInfo(name = "safe_salt") var safeSalt: String,
 ) {
@@ -240,9 +241,7 @@ class SafeData(
                 )!!, key
             )!!
         )
-        val returnable = generateKeyFromPassword(ecp)
-        Log.d(TAG, "key - ${keyToString(returnable)}")
-        return returnable
+        return generateKeyFromPassword(ecp)
     }
 
 
@@ -266,7 +265,6 @@ class SafeData(
                 )
             }
         }
-        Log.d(TAG, GsonBuilder().setPrettyPrinting().create().toJson(finalList))
         return finalList
     }
 

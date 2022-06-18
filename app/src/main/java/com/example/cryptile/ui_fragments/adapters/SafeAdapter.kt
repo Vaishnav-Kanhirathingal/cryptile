@@ -17,6 +17,9 @@ import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
 import com.example.cryptile.ui_fragments.MainFragmentDirections
 import com.example.cryptile.view_models.AppViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "SafeAdapter"
 
@@ -38,7 +41,8 @@ class SafeAdapter(
                 fileNameTextView.text = safeData.safeName
                 safeTypeImageView.setImageResource(if (safeData.personalAccessOnly) R.drawable.personal_safe_24 else R.drawable.lock_24)
                 safeOwnerTextView.text = safeData.safeOwner
-                safeAbsolutePathTextView.text = safeData.safeAbsoluteLocation
+                safeAbsolutePathTextView.text =
+                    if (safeData.hideSafePath) safeData.safeAbsoluteLocation else "Safe Path Hidden"
                 safeIsMultiPasswordTextView.text =
                     if (safeData.safeUsesMultiplePassword) "YES" else "no"
                 safeIsPrivateTextView.text = if (safeData.personalAccessOnly) {
@@ -62,8 +66,16 @@ class SafeAdapter(
                 safeNameTextView.text = safeData.safeName
                 passwordTwoTextLayout.isEnabled = safeData.safeUsesMultiplePassword
                 resetImageButton.setOnClickListener {
-                    passwordOneTextLayout.isEnabled = true
-                    passwordTwoTextLayout.isEnabled = safeData.safeUsesMultiplePassword
+                    passwordOneTextLayout.apply {
+                        isEnabled = true
+                        isErrorEnabled = false
+                        editText!!.setText("")
+                    }
+                    passwordTwoTextLayout.apply {
+                        isEnabled = safeData.safeUsesMultiplePassword
+                        isErrorEnabled = false
+                        editText!!.setText("")
+                    }
                 }
                 removeImageButton.setOnClickListener { viewModel.delete(safeData);dialogBox.dismiss() }
                 deleteImageButton.setOnClickListener {
@@ -78,37 +90,46 @@ class SafeAdapter(
                 }
                 cancelButton.setOnClickListener { dialogBox.dismiss() }
                 openButton.setOnClickListener {
-                    val key = if (safeData.safeUsesMultiplePassword) {
-                        safeData.getKey(
-                            passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                            passwordTwo = passwordTwoTextLayout.editText!!.text.toString(),
-                            safeIsPersonal = safeData.personalAccessOnly,
-                        )
-                    } else {
-                        safeData.getKey(
-                            passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                            safeIsPersonal = safeData.personalAccessOnly,
-                        )
-                    }
-                    val keyIsCorrect: Boolean =
-                        safeData.checkKeyGenerated(key)
-                    if (keyIsCorrect) {
-                        navController.navigate(
-                            MainFragmentDirections
-                                .actionMainFragmentToSafeViewerFragment(
-                                    safeData.id,
-                                    SafeData.keyToString(key)
+                    openButton.isEnabled = false
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val key = if (safeData.safeUsesMultiplePassword) {
+                            safeData.getKey(
+                                passwordOne = passwordOneTextLayout.editText!!.text.toString(),
+                                passwordTwo = passwordTwoTextLayout.editText!!.text.toString(),
+                                safeIsPersonal = safeData.personalAccessOnly,
+                            )
+                        } else {
+                            safeData.getKey(
+                                passwordOne = passwordOneTextLayout.editText!!.text.toString(),
+                                safeIsPersonal = safeData.personalAccessOnly,
+                            )
+                        }
+                        val keyIsCorrect: Boolean = try {
+                            safeData.checkKeyGenerated(key)
+                        } catch (e: Exception) {
+                            e.printStackTrace();false
+                        }
+                        CoroutineScope(Dispatchers.Main).launch {
+                            if (keyIsCorrect) {
+                                dialogBox.dismiss()
+                                navController.navigate(
+                                    MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
+                                        safeData.id, SafeData.keyToString(key)
+                                    )
                                 )
-                        )
-                    } else {
-                        passwordOneTextLayout.apply {
-                            error = "Password might be incorrect"; isErrorEnabled = true
-                        }
-                        passwordTwoTextLayout.apply {
-                            error = "Password might be incorrect"; isErrorEnabled = true
+
+                            } else {
+                                passwordOneTextLayout.apply {
+                                    error = "Password might be incorrect"; isErrorEnabled = true
+                                }
+                                passwordTwoTextLayout.apply {
+                                    if (safeData.safeUsesMultiplePassword) error =
+                                        "Password might be incorrect"; isErrorEnabled = true
+                                }
+                            }
+                            openButton.isEnabled = true
                         }
                     }
-                    dialogBox.dismiss()
                 }
             }
             dialogBox.apply {
