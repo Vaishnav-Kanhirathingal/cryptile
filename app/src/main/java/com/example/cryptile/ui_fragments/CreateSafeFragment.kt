@@ -2,7 +2,6 @@ package com.example.cryptile.ui_fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +17,6 @@ import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentCreateSafeBinding
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
-import java.io.File
-import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
@@ -66,83 +63,88 @@ class CreateSafeFragment : Fragment() {
             }
             confirmButton.setOnClickListener {
                 // TODO: change provided values for test function.
-                val usesMultiPasswords = useMultiplePasswordsSwitch.isChecked
-                createSafeFiles(
-                    safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
-                        "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
-                    },
-                    safeOwner = "get from datastore",
-                    usesMultiplePasswords = usesMultiPasswords,
-                    partialKey = SafeFiles.createRandomPartialKey(),
-                    personalAccessOnly = personalAccessOnlySwitch.isChecked,
-                    encryptionAlgorithmUsed = when (encryptionLevelSlider.value) {
-                        1.0f -> "one"
-                        2.0f -> "two"
-                        else -> "three"
+
+                val p1Check = safePasswordOneInputLayout.editText!!.text.toString().length > 7
+                val p2Check = safePasswordTwoInputLayout.editText!!.text.toString().length > 7
+                val conditionCheck = (p1Check && p2Check)
+                // TODO: replace with condition chech
+                if (true) {
+                    val x = createSafe(
+                        safePasswordOneInputLayout.editText!!.text.toString(),
+                        safePasswordTwoInputLayout.editText!!.text.toString()
+                    )
+                    if (x) {
+                        Toast.makeText(
+                            requireContext(), "Files generated Successfully", Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
+                    } else {
+                        Toast.makeText(
+                            requireContext(), "Encountered errors while creation of safe, a " +
+                                    "folder the same name as the safe name already exists at the" +
+                                    " designated location",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-                )
-                //findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
+
+                } else {
+                    safePasswordOneInputLayout.isErrorEnabled = p1Check
+                    safePasswordTwoInputLayout.isErrorEnabled = p2Check
+                    "password length should be between 8 and 32".apply {
+                        safePasswordOneInputLayout.error = this
+                        safePasswordTwoInputLayout.error = this
+                    }
+                }
             }
         }
     }
 
-    private fun createSafeFiles(
-        safeName: String,
-        safeOwner: String,
-        usesMultiplePasswords: Boolean,
-        partialKey: String,
-        personalAccessOnly: Boolean,
-        encryptionAlgorithmUsed: String
-    ) {
-        try {
-            val safePath = "${currentPath.value}/$safeName"
-            val fileDirectory = File(Environment.getExternalStorageDirectory(), safePath)
-            if (!fileDirectory.exists()) {
-                fileDirectory.mkdirs()
-                /**
-                 * making a directory is necessary since the 'saveChangesToMetadata'
-                 * function used below doesn't create a directory.
-                 */
-            } else {
-                // TODO: throw a warning toast and return
-            }
+    private fun createSafe(
+        passwordOne: String,
+        passwordTwo: String
+    ): Boolean {
+        binding.apply {
             val salt = ByteArray(32)
             SecureRandom().nextBytes(salt)
             val safeData = SafeData(
-                safeName = safeName,
-                safeOwner = safeOwner,
-                safeUsesMultiplePassword = usesMultiplePasswords,
-                safePartialKey = partialKey,
-                personalAccessOnly = personalAccessOnly,
-                encryptionAlgorithm = encryptionAlgorithmUsed,
+                safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                    "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
+                },
+                safeOwner = "get from data store",// TODO: get from data store
+                safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
+                safePartialKey = SafeFiles.createRandomPartialKey(),
+                personalAccessOnly = personalAccessOnlySwitch.isChecked,
+                encryptionAlgorithm = when (encryptionLevelSlider.value) {
+                    1.0f -> "one"
+                    2.0f -> "two"
+                    else -> "three"
+                },
                 safeCreated = System.currentTimeMillis(),
-                safeAbsoluteLocation = safePath,
-                safeSalt = String(salt, StandardCharsets.ISO_8859_1),
+                safeAbsoluteLocation = currentPath.value + "/" +
+                        safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                            "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
+
+                        },
+                safeSalt = String(salt, StandardCharsets.ISO_8859_1)
             )
-            safeData.saveChangesToMetadata()
-            safeData.saveChangesToLogFile("\t\t\t\t-------------safe-created-------------\n")
-            safeData.generateTestFilesAndStorageDirectory(
-                safePath,
+            val fileGenerationStatus = safeData.generateDirectories(
                 if (safeData.safeUsesMultiplePassword) {
-                    SafeData.keyToString(
-                        safeData.getKey(
-                            safeIsPersonal = personalAccessOnly,
-                            passwordOne = binding.safePasswordOneInputLayout.editText!!.text.toString(),
-                            passwordTwo = binding.safePasswordTwoInputLayout.editText!!.text.toString(),
-                        )
+                    safeData.getKey(
+                        safeIsPersonal = safeData.personalAccessOnly,
+                        passwordOne = passwordOne,
+                        passwordTwo = passwordTwo,
                     )
                 } else {
-                    SafeData.keyToString(
-                        safeData.getKey(
-                            safeIsPersonal = personalAccessOnly,
-                            passwordOne = binding.safePasswordOneInputLayout.editText!!.text.toString()
-                        )
+                    safeData.getKey(
+                        safeIsPersonal = safeData.personalAccessOnly,
+                        passwordOne = passwordOne
                     )
                 }
             )
-            viewModel.insert(safeData)
-        } catch (e: IOException) {
-            e.printStackTrace()
+            safeData.saveChangesToMetadata()
+            safeData.saveChangesToLogFile("\t\t\t\t-------------safe-created-------------\n")
+            if (fileGenerationStatus) viewModel.insert(safeData)
+            return fileGenerationStatus
         }
     }
 

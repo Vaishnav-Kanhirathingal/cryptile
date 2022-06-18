@@ -106,6 +106,7 @@ class SafeViewerFragment : Fragment() {
             } else {
                 // TODO: if false, file already exists.
                 safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
+                viewerAdapter.submitList(safeData.getDataFileList())
             }
         } catch (e: Exception) {
             Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)

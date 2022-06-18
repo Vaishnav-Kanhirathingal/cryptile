@@ -132,7 +132,7 @@ class SafeData(
             val writer = FileWriter(
                 File(
                     File(
-                        Environment.getExternalStorageDirectory(), this.safeAbsoluteLocation
+                        Environment.getExternalStorageDirectory(), safeAbsoluteLocation
                     ),
                     metaDataFileName
                 )
@@ -175,10 +175,13 @@ class SafeData(
      * Then, encrypts the string and stores it into the encrypted file. This is also responsible
      * for generating data path to store encrypted files.
      */
-    fun generateTestFilesAndStorageDirectory(safeAbsolutePath: String, masterKey: String) {
+    fun generateDirectories(masterKey: SecretKey): Boolean {
+        val fileDirectory = File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation)
+        if (fileDirectory.exists()) return false else fileDirectory.mkdirs()
+
+
         File(
-            Environment.getExternalStorageDirectory(),
-            "$safeAbsolutePath/${testDirectory}"
+            Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectory}"
         ).apply {
             if (!this.exists()) {
                 this.mkdirs()
@@ -191,7 +194,7 @@ class SafeData(
                 val cipher = String(
                     encrypt(
                         generatedString.toByteArray(StandardCharsets.ISO_8859_1),
-                        stringToKey(masterKey)
+                        masterKey
                     )!!
                 )
                 plainWriter.append("$generatedString\n")
@@ -203,12 +206,13 @@ class SafeData(
         }
         File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsolutePath/${safeDataDirectory}"
+            "$safeAbsoluteLocation/${safeDataDirectory}"
         ).apply { if (!this.exists()) this.mkdirs() }
         File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsolutePath/${cacheDirectory}"
+            "$safeAbsoluteLocation/${cacheDirectory}"
         ).apply { if (!this.exists()) this.mkdirs() }
+        return true
     }
 
     /**
@@ -352,15 +356,12 @@ class SafeData(
             "${safeAbsoluteLocation}/$safeDataDirectory/${safeFile.fileDirectory}/$encryptedFileName"
         )
         val encryptedByteArray = ByteArray(
-            Files
-                .readAttributes(encryptedFile.toPath(), BasicFileAttributes::class.java)
-                .size()
-                .toInt()
+            Files.readAttributes(encryptedFile.toPath(), BasicFileAttributes::class.java)
+                .size().toInt()
         )
         try {
             BufferedInputStream(FileInputStream(encryptedFile)).apply {
-                this.read(encryptedByteArray, 0, encryptedByteArray.size)
-                this.close()
+                read(encryptedByteArray, 0, encryptedByteArray.size);close()
             }
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
@@ -409,6 +410,9 @@ class SafeData(
         )
     }
 
+    /**
+     * deletes safe directories entirely
+     */
     fun deleteSafe() {
         File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation).deleteRecursively()
     }
