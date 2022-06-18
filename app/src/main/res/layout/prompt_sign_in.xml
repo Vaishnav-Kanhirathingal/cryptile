@@ -49,7 +49,6 @@
             app:counterEnabled="true"
             app:counterMaxLength="32"
             app:endIconMode="password_toggle"
-            app:passwordToggleEnabled="true"
             app:startIconDrawable="@drawable/password_24">
 
             <com.google.android.material.textfield.TextInputEditText

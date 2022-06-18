@@ -5,25 +5,40 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cryptile.R
+import com.example.cryptile.data_classes.FileType
 import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.ListItemFileExplorerBinding
 
-class ViewerAdapter :
+private const val TAG = "ViewerAdapter"
+
+class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
     ListAdapter<SafeFiles, ViewerAdapter.ViewerAdapterViewHolder>(diffCallBack) {
 
-    class ViewerAdapterViewHolder(private val binding: ListItemFileExplorerBinding) :
+    class ViewerAdapterViewHolder(
+        private val openFile: (SafeFiles) -> Unit,
+        private val binding: ListItemFileExplorerBinding
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
                 fileNameTextView.text = safeFiles.fileNameUpperCase
-                fileDateTextView.text = safeFiles.fileAdded
-                fileSizeTextView.text = safeFiles.fileSize
+                fileDetailsTextView.text = "${safeFiles.fileAdded} | ${safeFiles.fileSize}"
+                fileImageView.setImageResource(
+                    when (safeFiles.fileType) {
+                        FileType.UNKNOWN -> R.drawable.file_24
+                        FileType.IMAGE -> R.drawable.image_24
+                        FileType.VIDEO -> R.drawable.play_24
+                        FileType.AUDIO -> R.drawable.audiotrack_24
+                        FileType.DOCUMENT -> R.drawable.file_24
+                        FileType.COMPRESSED -> R.drawable.archive_24
+                        FileType.TEXT -> R.drawable.text_snippet_24
+                    }
+                )
             }
         }
 
-        fun onClick() {
-            // TODO: extract data using key and open in respective app
-        }
+        fun onClick(safeFiles: SafeFiles): Unit = openFile(safeFiles)
     }
 
 
@@ -38,11 +53,13 @@ class ViewerAdapter :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewerAdapterViewHolder(
-        ListItemFileExplorerBinding.inflate(LayoutInflater.from(parent.context))
+        openFile,
+        ListItemFileExplorerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: ViewerAdapterViewHolder, position: Int) {
-        holder.bind(getItem(position))
-        holder.itemView.setOnClickListener { holder.onClick() }
+        val x = getItem(position)
+        holder.bind(x)
+        holder.itemView.setOnClickListener { holder.onClick(x) }
     }
 }

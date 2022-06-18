@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/padding_recycler_safe"
     app:cardCornerRadius="@dimen/file_list_padding"
+    app:cardUseCompatPadding="true"
     tools:backgroundTint="#f0f0f0">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,7 +105,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Multi-Password"
+                android:text="Account Locked"
                 android:textSize="@dimen/safe_details_size" />
 
             <TextView

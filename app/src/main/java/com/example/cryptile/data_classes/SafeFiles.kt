@@ -96,28 +96,6 @@ data class SafeFiles(
             return "${x}.$afterPoint ${typeArray[i]}"
         }
 
-        //-----------------------------------------------------------------------------above-working
-        //-----------------------------------------------------------------------------above-working
-        //-----------------------------------------------------------------------------above-working
-
-
-        // TODO: remove
-        fun test(masterKey: SecretKey) {
-            val byteArray = ByteArray(20) { (it).toByte() }
-            val encrypted = encrypt(byteArray, masterKey)
-            Log.d(TAG, "encrypted - ${String(encrypted!!)}")
-            val unencrypted = decrypt(encrypted, masterKey)
-            if (byteArray.contentEquals(unencrypted)) {
-                Log.d(TAG, "test passed, enc, denc correct")
-            } else {
-                Log.d(
-                    TAG, "test fail, enc, denc incorrect, values -" +
-                            "\n1 - $byteArray" +
-                            "\n2 - $unencrypted"
-                )
-            }
-        }
-
         /**
          * creates a random string of some fixed length.This can be used to get a string of required
          * length to be a key Use this function twice if required.

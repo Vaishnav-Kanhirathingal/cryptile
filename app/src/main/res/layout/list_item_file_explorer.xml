@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/file_list_padding"
+    android:layout_marginTop="@dimen/file_list_padding"
     android:orientation="vertical"
-    tools:background="#eeeeee"
-    tools:layout_margin="@dimen/file_list_padding">
+    app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/file_list_padding">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/file_image_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_margin="@dimen/file_list_padding"
             android:src="@drawable/file_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1"
@@ -30,39 +31,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/file_list_padding"
-            android:text="File Name"
+            android:layout_marginTop="@dimen/file_list_padding"
             app:layout_constraintLeft_toRightOf="@id/file_image_view"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="File Name" />
+
 
         <TextView
-            android:id="@+id/file_date_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/file_list_padding"
-            android:text="01-02-2022"
-            android:textSize="@dimen/safe_details_size"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/file_image_view"
-            app:layout_constraintTop_toBottomOf="@id/file_name_text_view" />
-
-        <TextView
-            android:id="@+id/file_size_text_view"
+            android:id="@+id/file_details_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/file_list_padding"
-            android:text="79.64 MB"
-            android:textSize="@dimen/safe_details_size"
+            android:layout_marginBottom="@dimen/file_list_padding"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/file_date_text_view"
+            app:layout_constraintLeft_toRightOf="@id/file_image_view"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/file_name_text_view" />
-
+            app:layout_constraintTop_toBottomOf="@id/file_name_text_view"
+            tools:text="10/2/22 | 79.64 MB" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/black"
-        app:dividerThickness="1px" />
-</LinearLayout>
+</androidx.cardview.widget.CardView>

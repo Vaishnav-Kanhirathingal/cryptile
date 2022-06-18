@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
+import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.ui_fragments.adapters.ViewerAdapter
 import com.example.cryptile.view_models.AppViewModel
@@ -29,6 +30,8 @@ class SafeViewerFragment : Fragment() {
     private lateinit var key: String
     private lateinit var safeData: SafeData
     private lateinit var binding: FragmentSafeViewerBinding
+    private lateinit var viewerAdapter: ViewerAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,9 +48,6 @@ class SafeViewerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getById(id!!).asLiveData().observe(viewLifecycleOwner) {
-            safeData = it
-        }
         applyBindings()
     }
 
@@ -78,8 +78,14 @@ class SafeViewerFragment : Fragment() {
             topAppBar.setNavigationOnClickListener {
                 findNavController().navigate(SafeViewerFragmentDirections.actionSafeViewerFragmentToMainFragment())
             }
-            val viewerAdapter = ViewerAdapter()
+
+            val opener: (SafeFiles) -> Unit = { safeData.openFile(key, it) }
+            viewerAdapter = ViewerAdapter(opener)
             fileListRecyclerView.adapter = viewerAdapter
+            viewModel.getById(id!!).asLiveData().observe(viewLifecycleOwner) {
+                safeData = it
+                viewerAdapter.submitList(it.getDataFileList())
+            }
             addFileBottomButton.setOnClickListener { addFile() }
         }
     }
