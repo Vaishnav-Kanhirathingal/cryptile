@@ -36,14 +36,15 @@ class AppDataStore(val context: Context) {
 
     //----------------------------------------------------------------------------------------mapper
     /**
-     * mappers are used to return corresponding values of their respective data type. i.e.
      * string mapper is used to access every string stored in the data store.
-     * similarly, boolean mapper is used to access every boolean from the data store
      */
     private fun stringMapper(key: Preferences.Key<String>): Flow<String> {
         return context.dataStore.data.catch { it.printStackTrace() }.map { it[key] ?: default }
     }
 
+    /**
+     * boolean mapper is used to access every boolean stored in the data store.
+     */
     private fun booleanMapper(key: Preferences.Key<Boolean>): Flow<Boolean> {
         return context.dataStore.data.catch { it.printStackTrace() }.map { it[key] ?: false }
     }
@@ -51,11 +52,10 @@ class AppDataStore(val context: Context) {
     //---------------------------------------------------------------------------------------setters
     /**
      * savers are used to save the values they get as parameters to the datastore. String saver is
-     * used to store string values while boolean saver is used to store boolean values.
-     * storeString and storeBoolean are enums which are used to decide, under what key name the
-     * value is to be stored
+     * used to store string values. StoreString is an enum which is used to decide, under what key
+     * name the value is to be stored.
      */
-    suspend fun stringSaver(string: String, context: Context, storeString: StoreString) {
+    suspend fun stringSaver(string: String, storeString: StoreString) {
         context.dataStore.edit {
             it[when (storeString) {
                 StoreString.USER_NAME -> userNameKey
@@ -66,7 +66,12 @@ class AppDataStore(val context: Context) {
         }
     }
 
-    suspend fun booleanSaver(boolean: Boolean, context: Context, storeBoolean: StoreBoolean) {
+    /**
+     * savers are used to save the values they get as parameters to the datastore. boolean saver is
+     * used to store boolean values. storeBoolean is an enum which is used to decide, under what
+     * key name the value is to be stored.
+     */
+    suspend fun booleanSaver(boolean: Boolean, storeBoolean: StoreBoolean) {
         context.dataStore.edit {
             it[when (storeBoolean) {
                 StoreBoolean.USER_USES_FINGERPRINT -> userUsesFingerprintKey
@@ -81,7 +86,7 @@ class AppDataStore(val context: Context) {
 
 //---------------------------------------------------------------------------------------------enums
 /**
- * the enums discussed above in the saver section
+ * these enums are used by saver functions to decide where the provided value is to be stored
  */
 enum class StoreString {
     USER_NAME,
@@ -89,6 +94,9 @@ enum class StoreString {
     USER_PHONE
 }
 
+/**
+ * these enums are used by saver functions to decide where the provided value is to be stored
+ */
 enum class StoreBoolean {
     USER_USES_FINGERPRINT,
     USER_LOGGED_IN
