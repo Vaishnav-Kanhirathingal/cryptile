@@ -112,7 +112,6 @@ class CreateSafeFragment : Fragment() {
                 },
                 safeOwner = "get from data store",// TODO: get from data store
                 safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
-                safePartialKey = SafeFiles.createRandomPartialKey(),
                 personalAccessOnly = personalAccessOnlySwitch.isChecked,
                 encryptionAlgorithm = when (encryptionLevelSlider.value) {
                     1.0f -> "one"

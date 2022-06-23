@@ -95,9 +95,7 @@ class SafeViewerFragment : Fragment() {
             val opener: (SafeFiles) -> Unit = { safeData.openFile(key, it) }
             viewerAdapter = ViewerAdapter(opener)
             fileListRecyclerView.adapter = viewerAdapter
-            Log.d(TAG, "observer is being initialized")
             viewModel.getById(id!!).asLiveData().observe(viewLifecycleOwner) {
-                Log.d(TAG, "safe data is being initialized")
                 safeData = it
                 viewerAdapter.submitList(it.getDataFileList())
             }

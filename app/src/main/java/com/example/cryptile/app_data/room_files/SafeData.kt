@@ -31,7 +31,6 @@ class SafeData(
     @ColumnInfo(name = "safe_name") var safeName: String,
     @ColumnInfo(name = "safe_owner") var safeOwner: String,
     @ColumnInfo(name = "safe_uses_multiple_password") var safeUsesMultiplePassword: Boolean,
-    @ColumnInfo(name = "safe_partial_key") var safePartialKey: String,
     @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
     @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
@@ -112,7 +111,6 @@ class SafeData(
                     safeName == x.safeName &&
                     safeOwner == x.safeOwner &&
                     safeUsesMultiplePassword == x.safeUsesMultiplePassword &&
-                    safePartialKey == x.safePartialKey &&
                     personalAccessOnly == x.personalAccessOnly &&
                     encryptionAlgorithm == x.encryptionAlgorithm &&
                     safeCreated == x.safeCreated &&
@@ -233,7 +231,7 @@ class SafeData(
         // TODO: implement personal
         return mutableListOf(
             generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }),
-            generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD })
+            generateKeyFromPassword(passwordTwo.ifEmpty { DEFAULT_PASSWORD })
         )
     }
 

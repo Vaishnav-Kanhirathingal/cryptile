@@ -2,6 +2,7 @@ package com.example.cryptile.data_classes
 
 import android.util.Log
 import com.example.cryptile.app_data.room_files.SafeData.Companion.ivSpec
+import com.example.cryptile.app_data.room_files.SafeData.Companion.keyToString
 import com.google.gson.Gson
 import java.util.*
 import javax.crypto.Cipher
@@ -76,7 +77,7 @@ data class SafeFiles(
                 for (i in key.reversed()) {
                     val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
                     cipher.init(Cipher.DECRYPT_MODE, i, ivSpec)
-                    returnable = cipher.doFinal(Base64.getDecoder().decode(byteArray))
+                    returnable = cipher.doFinal(Base64.getDecoder().decode(returnable))
                 }
                 return returnable
             } catch (e: Exception) {
