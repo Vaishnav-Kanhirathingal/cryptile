@@ -14,12 +14,15 @@ import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.app_data.data_store_files.StoreString
 import com.example.cryptile.databinding.FragmentSignUpBinding
+import com.example.cryptile.firebase.UserDataConstants
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +40,8 @@ class SignUpFragment : Fragment() {
     private lateinit var googleSignInClient: GoogleSignInClient
     private val GOOGLE_REQUEST_CODE = 1
 
+    private lateinit var database: FirebaseFirestore
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,6 +58,8 @@ class SignUpFragment : Fragment() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id)).requestEmail().build()
         googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+
+        database = Firebase.firestore
 
         mainBinding()
     }
@@ -162,21 +169,53 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    private fun signInUsingGoogle(id: String?) {
+    private suspend fun signInUsingGoogle(id: String?) {
+        // TODO: donot generate a key in case the user is already present.
         Log.d(TAG, "google sign-in function started")
         val credential = GoogleAuthProvider.getCredential(id, null)
-        auth.signInWithCredential(credential)
-        val firebaseUser = auth.currentUser
-        Log.d(TAG, "user name - ${firebaseUser?.displayName}, email - ${firebaseUser?.email}")
+        auth.signInWithCredential(credential).addOnSuccessListener {
+            if (it.additionalUserInfo!!.isNewUser) {
+                Log.d(TAG, "user is new")
+                val firebaseUser = auth.currentUser
+                Log.d(
+                    TAG, "user name - ${firebaseUser?.displayName}, " +
+                            "email - ${firebaseUser?.email}"
+                )
+                val user = hashMapOf(
+                    UserDataConstants.userDisplayName to firebaseUser!!.displayName!!,
+                    UserDataConstants.userEmail to firebaseUser.email!!,
+                    UserDataConstants.userKey to "Some Randomly Generated Key test",// TODO: generate a unique key
+                    UserDataConstants.userPhotoUrl to firebaseUser.photoUrl!!.toString()
+                )
+                database.collection(UserDataConstants.tableName).add(user)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "adding to database successful")
+                    }
+                    .addOnFailureListener { e: Exception ->
+                        Log.d(TAG, "adding to database unsuccessful");e.printStackTrace()
+                    }
+            } else {
+                Log.d(TAG, "user was already registered")
+            }
+            // TODO: nav
+            CoroutineScope(Dispatchers.Main).launch {
+                findNavController().navigate(SignUpFragmentDirections.actionSignUpFragmentToMainFragment())
+            }
+        }.addOnFailureListener {
+            Toast.makeText(requireContext(), "Sign-in failed", Toast.LENGTH_SHORT).show()
+            it.printStackTrace()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_REQUEST_CODE) {
             try {
-                Log.d(TAG, "google sign-in started")
-                val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
-                signInUsingGoogle(account.idToken)
+                CoroutineScope(Dispatchers.IO).launch {
+                    Log.d(TAG, "google sign-in started")
+                    val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
+                    signInUsingGoogle(account.idToken)
+                }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
             }
