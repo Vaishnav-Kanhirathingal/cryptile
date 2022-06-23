@@ -20,10 +20,22 @@ import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.databinding.PromptSignInBinding
+import com.example.cryptile.firebase.SignInFunctions
 import com.example.cryptile.ui_fragments.adapters.SafeAdapter
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "MainFragment"
 
@@ -33,6 +45,15 @@ class MainFragment : Fragment() {
     }
     private lateinit var binding: FragmentMainBinding
     private lateinit var menu: NavigationView
+
+    private lateinit var signInDialog: Dialog
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var firebaseFirestore: FirebaseFirestore
+
+    private val IMPORT_REQUEST_CODE = 1
+    private val GOOGLE_REQUEST_CODE = 2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +65,13 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        auth = Firebase.auth
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.web_client_id)).requestEmail().build()
+        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        firebaseFirestore = Firebase.firestore
+
         mainBinding();sideBinding();getPermissions()
     }
 
@@ -64,7 +92,7 @@ class MainFragment : Fragment() {
                 importSafeButton.setOnClickListener {
                     val intent = Intent(Intent.ACTION_GET_CONTENT)
                     intent.type = "text/plain"
-                    startActivityForResult(intent, 1)
+                    startActivityForResult(intent, IMPORT_REQUEST_CODE)
                     dialogBox.dismiss()
                 }
                 cancelButton.setOnClickListener { dialogBox.dismiss() }
@@ -114,11 +142,10 @@ class MainFragment : Fragment() {
                     true
                 }
                 R.id.account_sign_up -> {
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToSignUpFragment())
-                    true
-                }
-                R.id.account_remove -> {
-                    // TODO: prompt
+                    findNavController().navigate(
+                        MainFragmentDirections
+                            .actionMainFragmentToSignUpFragment()
+                    )
                     true
                 }
                 R.id.safe_remove_all -> {
@@ -127,19 +154,31 @@ class MainFragment : Fragment() {
                     true
                 }
                 R.id.settings -> {
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
+                    findNavController().navigate(
+                        MainFragmentDirections
+                            .actionMainFragmentToSettingsFragment()
+                    )
                     true
                 }
                 R.id.permission_manager -> {
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToPermissionsFragment())
+                    findNavController().navigate(
+                        MainFragmentDirections
+                            .actionMainFragmentToPermissionsFragment()
+                    )
                     true
                 }
                 R.id.app_about -> {
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToAboutFragment())
+                    findNavController().navigate(
+                        MainFragmentDirections
+                            .actionMainFragmentToAboutFragment()
+                    )
                     true
                 }
                 R.id.app_manual -> {
-                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToDocumentationFragment())
+                    findNavController().navigate(
+                        MainFragmentDirections
+                            .actionMainFragmentToDocumentationFragment()
+                    )
                     true
                 }
                 R.id.app_exit -> {
@@ -156,17 +195,20 @@ class MainFragment : Fragment() {
     //---------------------------------------------------------------------------------------prompts
     private fun signInPrompt() {
         val promptSignInBinding = PromptSignInBinding.inflate(layoutInflater)
-        val dialogBox = Dialog(requireContext())
+        signInDialog = Dialog(requireContext())
         promptSignInBinding.apply {
             cancelSignIn.setOnClickListener {
                 Toast.makeText(requireContext(), "Sign In Failed", Toast.LENGTH_SHORT).show()
-                dialogBox.dismiss()
+                signInDialog.dismiss()
             }
             signIn.setOnClickListener {
                 // TODO: apply sign in bindings
             }
+            googleSignInButton.setOnClickListener {
+                startActivityForResult(googleSignInClient.signInIntent, GOOGLE_REQUEST_CODE)
+            }
         }
-        dialogBox.apply {
+        signInDialog.apply {
             setContentView(promptSignInBinding.root)
             window!!.setLayout(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -189,20 +231,48 @@ class MainFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        try {
-            val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
-            Log.d(TAG, "Safe Path = $path")
-            if (path.isNullOrBlank() || !path.endsWith(".txt")) {
-                Toast.makeText(
-                    requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                viewModel.insert(SafeData.load(path))
+        when (requestCode) {
+            IMPORT_REQUEST_CODE -> {
+                try {
+                    val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
+                    Log.d(TAG, "Safe Path = $path")
+                    if (path.isNullOrBlank() || !path.endsWith(".txt")) {
+                        Toast.makeText(
+                            requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        viewModel.insert(SafeData.load(path))
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        requireContext(),
+                        "System Error, Reselect File",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                    e.printStackTrace()
+                }
             }
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)
-                .show()
-            e.printStackTrace()
+            GOOGLE_REQUEST_CODE -> {
+                try {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Log.d(TAG, "google sign-in started")
+                        SignInFunctions.signInUsingGoogle(
+                            id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
+                            context = requireContext(),
+                            auth = auth,
+                            database = firebaseFirestore
+                        ) {
+                            Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
+                                .show()
+                            signInDialog.dismiss()
+                        }
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+            else -> Log.e(TAG, "request code didn't match")
         }
     }
 }

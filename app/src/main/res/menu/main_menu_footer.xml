@@ -17,10 +17,6 @@
                 android:id="@+id/account_sign_up"
                 android:icon="@drawable/account_add_24"
                 android:title="Sign Up" />
-            <item
-                android:id="@+id/account_remove"
-                android:icon="@drawable/account_remove_24"
-                android:title="Remove Account" />
         </menu>
     </item>
     <item android:title="Safe">
