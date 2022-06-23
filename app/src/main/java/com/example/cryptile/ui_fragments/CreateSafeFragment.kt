@@ -128,20 +128,19 @@ class CreateSafeFragment : Fragment() {
                         },
                 safeSalt = String(salt, StandardCharsets.ISO_8859_1)
             )
-            val fileGenerationStatus = safeData.generateDirectories(
+            val keyList =
                 if (safeData.safeUsesMultiplePassword) {
                     safeData.getKey(
-                        safeIsPersonal = safeData.personalAccessOnly,
                         passwordOne = passwordOne,
                         passwordTwo = passwordTwo,
                     )
                 } else {
                     safeData.getKey(
-                        safeIsPersonal = safeData.personalAccessOnly,
                         passwordOne = passwordOne
                     )
                 }
-            )
+            // TODO: add personal key if necessary
+            val fileGenerationStatus = safeData.generateDirectories(keyList)
             safeData.saveChangesToMetadata()
             safeData.saveChangesToLogFile("\t\t\t\t-------------safe-created-------------\n")
             if (fileGenerationStatus) viewModel.insert(safeData)

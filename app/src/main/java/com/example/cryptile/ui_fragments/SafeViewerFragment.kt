@@ -19,9 +19,11 @@ import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.ui_fragments.adapters.ViewerAdapter
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.crypto.SecretKey
 
 private const val TAG = "SafeViewerFragment"
 
@@ -30,7 +32,7 @@ class SafeViewerFragment : Fragment() {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
     var id: Int? = null
-    private lateinit var key: String
+    private lateinit var key: List<SecretKey>
     private lateinit var safeData: SafeData
     private lateinit var binding: FragmentSafeViewerBinding
     private lateinit var viewerAdapter: ViewerAdapter
@@ -46,7 +48,15 @@ class SafeViewerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         id = arguments!!.getInt("id")
-        key = arguments!!.getString("key")!!
+        val gson = arguments!!.getString("key")!!
+        val list = Gson().fromJson(gson, mutableListOf<String>()::class.java)
+        Log.d(TAG, "list recieved = $gson")
+        val keyList = mutableListOf<SecretKey>()
+        for (i in list) {
+            keyList.add(SafeData.stringToKey(i))
+        }
+        // TODO: get list keys from gson and assign
+        key = keyList
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,7 +95,9 @@ class SafeViewerFragment : Fragment() {
             val opener: (SafeFiles) -> Unit = { safeData.openFile(key, it) }
             viewerAdapter = ViewerAdapter(opener)
             fileListRecyclerView.adapter = viewerAdapter
+            Log.d(TAG, "observer is being initialized")
             viewModel.getById(id!!).asLiveData().observe(viewLifecycleOwner) {
+                Log.d(TAG, "safe data is being initialized")
                 safeData = it
                 viewerAdapter.submitList(it.getDataFileList())
             }

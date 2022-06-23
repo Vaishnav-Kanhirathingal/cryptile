@@ -52,11 +52,15 @@ data class SafeFiles(
         /**
          * encrypts byte array using key given.
          */
-        fun encrypt(byteArray: ByteArray, key: SecretKey): ByteArray? {
+        fun encrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
             try {
-                val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-                cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
-                return Base64.getEncoder().encode(cipher.doFinal(byteArray))
+                var returnable = byteArray
+                for (i in key) {
+                    val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                    cipher.init(Cipher.ENCRYPT_MODE, i, ivSpec)
+                    returnable = Base64.getEncoder().encode(cipher.doFinal(returnable))
+                }
+                return returnable
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -66,11 +70,15 @@ data class SafeFiles(
         /**
          * decrypts encrypted byte array using key given.
          */
-        fun decrypt(byteArray: ByteArray, key: SecretKey): ByteArray? {
+        fun decrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
             try {
-                val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
-                cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
-                return cipher.doFinal(Base64.getDecoder().decode(byteArray))
+                var returnable = byteArray
+                for (i in key.reversed()) {
+                    val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+                    cipher.init(Cipher.DECRYPT_MODE, i, ivSpec)
+                    returnable = cipher.doFinal(Base64.getDecoder().decode(byteArray))
+                }
+                return returnable
             } catch (e: Exception) {
                 e.printStackTrace()
             }

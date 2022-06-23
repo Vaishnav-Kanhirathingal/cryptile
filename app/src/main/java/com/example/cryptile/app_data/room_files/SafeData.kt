@@ -50,8 +50,9 @@ class SafeData(
         const val encryptedTestFileName = "ETF_CRYPTILE.txt"
         const val cacheDirectory = ".CACHE"
         const val safeDataFileName = ".SAFE_FILES_META.txt"
-        val decryptedFileName = UUID.randomUUID().toString()
         const val encryptedFileName = "ENC_FILE.CRYPTILE"
+        const val exportDirectoryName = "EXPORTED_FILES"
+        val decryptedFileName = UUID.randomUUID().toString()
 
         val ivSpec =
             IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
@@ -176,7 +177,7 @@ class SafeData(
      * Then, encrypts the string and stores it into the encrypted file. This is also responsible
      * for generating data path to store encrypted files.
      */
-    fun generateDirectories(masterKey: SecretKey): Boolean {
+    fun generateDirectories(masterKey: List<SecretKey>): Boolean {
         val fileDirectory = File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation)
         if (fileDirectory.exists()) return false else fileDirectory.mkdirs()
 
@@ -219,29 +220,21 @@ class SafeData(
     /**
      * decrypt the partial key using given password and return the result as key.
      */
-    fun getKey(safeIsPersonal: Boolean, passwordOne: String): SecretKey {
+    fun getKey(passwordOne: String): List<SecretKey> {
         // TODO: implement personal
-        val key = stringToKey(safePartialKey)
-        val ecp = String(encrypt(passwordOne.toByteArray(StandardCharsets.UTF_8), key)!!)
-        return generateKeyFromPassword(ecp)
+        return listOf(generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }))
     }
 
     /**
      * generates key one and key two using the method mentioned in get-key function. Once
      * generated, encrypt key-two using key one to get final key to be returned.
      */
-    fun getKey(safeIsPersonal: Boolean, passwordOne: String, passwordTwo: String): SecretKey {
+    fun getKey(passwordOne: String, passwordTwo: String): MutableList<SecretKey> {
         // TODO: implement personal
-        val key = stringToKey(safePartialKey)
-        val ecp = String(
-            encrypt(
-                encrypt(
-                    passwordOne.toByteArray(StandardCharsets.UTF_8),
-                    generateKeyFromPassword(passwordTwo.ifEmpty { DEFAULT_PASSWORD })
-                )!!, key
-            )!!
+        return mutableListOf(
+            generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }),
+            generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD })
         )
-        return generateKeyFromPassword(ecp)
     }
 
 
@@ -289,7 +282,7 @@ class SafeData(
      * it, then checks if the encrypted string is the same as the encrypted test file content.
      * if same, returns true else false
      */
-    fun checkKeyGenerated(masterKey: SecretKey): Boolean {
+    fun checkKeyGenerated(masterKey: List<SecretKey>): Boolean {
         val cipherReader =
             BufferedReader(FileReader(File("${rootDirectory}/$safeAbsoluteLocation/${testDirectory}/${encryptedTestFileName}")))
         val plainReader =
@@ -319,7 +312,7 @@ class SafeData(
      * takes absolute file path of the selected file, safe master key for encryption, safe path
      * to store the encrypted file inside the safe.
      */
-    fun importFileToSafe(fileAbsolutePath: String, safeMasterKey: String) {
+    fun importFileToSafe(fileAbsolutePath: String, safeMasterKey: List<SecretKey>) {
         // TODO: add safe files content inside the folder
         val safeFile = getSafeFileEnum(fileAbsolutePath)
         val file = File("${rootDirectory}/$fileAbsolutePath")
@@ -335,7 +328,7 @@ class SafeData(
 
         File(
             File(Environment.getExternalStorageDirectory(), destination), encryptedFileName
-        ).writeBytes(encrypt(originalFileByteArray, stringToKey(safeMasterKey))!!)
+        ).writeBytes(encrypt(originalFileByteArray, safeMasterKey)!!)
         FileWriter(File(destinationDirectory, safeDataFileName)).apply {
             append(GsonBuilder().setPrettyPrinting().create().toJson(safeFile));flush();close()
         }
@@ -347,7 +340,7 @@ class SafeData(
         )
     }
 
-    fun openFile(safeMasterKey: String, safeFile: SafeFiles) {
+    fun openFile(safeMasterKey: List<SecretKey>, safeFile: SafeFiles) {
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val encryptedFile = File(
             Environment.getExternalStorageDirectory(),
@@ -368,7 +361,7 @@ class SafeData(
         File(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/$cacheDirectory/${decryptedFileName}.${safeFile.extension}"
-        ).writeBytes(decrypt(encryptedByteArray, stringToKey(safeMasterKey))!!)
+        ).writeBytes(decrypt(encryptedByteArray, safeMasterKey)!!)
         saveChangesToLogFile(
             "File opened - ${safeFile.fileDirectory}, " +
                     "file extension ${safeFile.fileDirectory}, " +

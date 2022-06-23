@@ -17,6 +17,7 @@ import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
 import com.example.cryptile.ui_fragments.MainFragmentDirections
 import com.example.cryptile.view_models.AppViewModel
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -95,29 +96,30 @@ class SafeAdapter(
                         val key = if (safeData.safeUsesMultiplePassword) {
                             safeData.getKey(
                                 passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                                passwordTwo = passwordTwoTextLayout.editText!!.text.toString(),
-                                safeIsPersonal = safeData.personalAccessOnly,
+                                passwordTwo = passwordTwoTextLayout.editText!!.text.toString()
                             )
                         } else {
                             safeData.getKey(
-                                passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                                safeIsPersonal = safeData.personalAccessOnly,
+                                passwordOne = passwordOneTextLayout.editText!!.text.toString()
                             )
-                        }
+                        }.toMutableList()
+                        // TODO: append personal key if required to key
                         val keyIsCorrect: Boolean = try {
                             safeData.checkKeyGenerated(key)
                         } catch (e: Exception) {
                             e.printStackTrace();false
                         }
+                        val stringList = mutableListOf<String>()
+                        for (i in key) stringList.add(SafeData.keyToString(i))
+
+                        val gson = Gson().toJson(stringList)
                         CoroutineScope(Dispatchers.Main).launch {
                             if (keyIsCorrect) {
                                 dialogBox.dismiss()
                                 navController.navigate(
-                                    MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
-                                        safeData.id, SafeData.keyToString(key)
-                                    )
+                                    MainFragmentDirections
+                                        .actionMainFragmentToSafeViewerFragment(safeData.id, gson)
                                 )
-
                             } else {
                                 passwordOneTextLayout.apply {
                                     error = "Password might be incorrect"; isErrorEnabled = true
