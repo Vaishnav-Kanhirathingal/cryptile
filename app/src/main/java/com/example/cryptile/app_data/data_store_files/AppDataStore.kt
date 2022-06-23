@@ -21,7 +21,6 @@ class AppDataStore(val context: Context) {
     //------------------------------------------------------------------------------------------keys
     private val userNameKey = stringPreferencesKey("user_name_key")
     private val userEmailKey = stringPreferencesKey("user_email_key")
-    private val userPhoneKey = stringPreferencesKey("user_phone_key")
 
     private val userUsesFingerprintKey = booleanPreferencesKey("user_uses_fingerprint_key")
     private val userLoggedInKey = booleanPreferencesKey("user_logged_in_key")
@@ -29,7 +28,6 @@ class AppDataStore(val context: Context) {
     //------------------------------------------------------------------------------------value-flow
     val userNameFlow: Flow<String> = stringMapper(userNameKey)
     val userEmailFlow: Flow<String> = stringMapper(userEmailKey)
-    val userPhoneFlow: Flow<String> = stringMapper(userPhoneKey)
 
     val userUsesFingerprintFlow: Flow<Boolean> = booleanMapper(userUsesFingerprintKey)
     val userLoggedInFlow: Flow<Boolean> = booleanMapper(userLoggedInKey)
@@ -60,7 +58,6 @@ class AppDataStore(val context: Context) {
             it[when (storeString) {
                 StoreString.USER_NAME -> userNameKey
                 StoreString.USER_EMAIL -> userEmailKey
-                StoreString.USER_PHONE -> userPhoneKey
                 else -> throw IllegalArgumentException("string type not specified in data store")
             }] = string
         }
@@ -91,7 +88,6 @@ class AppDataStore(val context: Context) {
 enum class StoreString {
     USER_NAME,
     USER_EMAIL,
-    USER_PHONE
 }
 
 /**

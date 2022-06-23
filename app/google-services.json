@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "52037316332",
+    "project_id": "cryptile-1446d",
+    "storage_bucket": "cryptile-1446d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52037316332:android:4cd0f61d996d8de448ffc9",
+        "android_client_info": {
+          "package_name": "com.example.cryptile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "52037316332-715s58328hk1etfq22e2a7gi2tr0gpk4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiMbI2OiCes5irKFj8NVzjGfZ-PUARjs0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "52037316332-715s58328hk1etfq22e2a7gi2tr0gpk4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
