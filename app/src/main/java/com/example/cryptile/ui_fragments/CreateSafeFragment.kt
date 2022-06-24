@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
-import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentCreateSafeBinding
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory

@@ -139,6 +139,8 @@ class MainFragment : Fragment() {
                 }
                 R.id.account_sign_out -> {
                     // TODO: prompt
+                    auth.signOut()
+                    Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.account_sign_up -> {

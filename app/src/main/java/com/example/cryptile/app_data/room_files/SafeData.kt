@@ -6,8 +6,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.cryptile.data_classes.SafeFiles
-import com.example.cryptile.data_classes.SafeFiles.Companion.decrypt
-import com.example.cryptile.data_classes.SafeFiles.Companion.encrypt
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.*
@@ -16,6 +14,8 @@ import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
@@ -73,6 +73,53 @@ class SafeData(
          * the string outputted
          */
         fun keyToString(key: SecretKey) = Base64.getEncoder().encodeToString(key.encoded)!!
+
+        /**
+         * creates a random string of some fixed length.This can be used to get a string of required
+         * length to be a key Use this function twice if required.
+         */
+        fun createRandomPartialKey(): String {
+            KeyGenerator.getInstance("AES").apply {
+                init(256)
+                return Base64.getEncoder().encodeToString(generateKey().encoded)
+            }
+        }
+
+        /**
+         * encrypts byte array using key given.
+         */
+        fun encrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
+            try {
+                var returnable = byteArray
+                for (i in key) {
+                    val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
+                    cipher.init(Cipher.ENCRYPT_MODE, i, ivSpec)
+                    returnable = Base64.getEncoder().encode(cipher.doFinal(returnable))
+                }
+                return returnable
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        /**
+         * decrypts encrypted byte array using key given.
+         */
+        fun decrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
+            try {
+                var returnable = byteArray
+                for (i in key.reversed()) {
+                    val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+                    cipher.init(Cipher.DECRYPT_MODE, i, ivSpec)
+                    returnable = cipher.doFinal(Base64.getDecoder().decode(returnable))
+                }
+                return returnable
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
 
 
         /**

@@ -1,13 +1,8 @@
 package com.example.cryptile.data_classes
 
 import android.util.Log
-import com.example.cryptile.app_data.room_files.SafeData.Companion.ivSpec
-import com.example.cryptile.app_data.room_files.SafeData.Companion.keyToString
 import com.google.gson.Gson
 import java.util.*
-import javax.crypto.Cipher
-import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
 
 
 private const val TAG = "SafeFiles"
@@ -21,7 +16,6 @@ data class SafeFiles(
     val fileDirectory: String
 ) {
     companion object {
-
         /**
          * gets extension string. eg - ".mp4", ".acc", etc. then categorizes it into one of multiple
          * enum file types.
@@ -51,42 +45,6 @@ data class SafeFiles(
         }
 
         /**
-         * encrypts byte array using key given.
-         */
-        fun encrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
-            try {
-                var returnable = byteArray
-                for (i in key) {
-                    val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-                    cipher.init(Cipher.ENCRYPT_MODE, i, ivSpec)
-                    returnable = Base64.getEncoder().encode(cipher.doFinal(returnable))
-                }
-                return returnable
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
-        /**
-         * decrypts encrypted byte array using key given.
-         */
-        fun decrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
-            try {
-                var returnable = byteArray
-                for (i in key.reversed()) {
-                    val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
-                    cipher.init(Cipher.DECRYPT_MODE, i, ivSpec)
-                    returnable = cipher.doFinal(Base64.getDecoder().decode(returnable))
-                }
-                return returnable
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
-
-        /**
          * gets size of file as long and outputs human readable size formats.
          * example - 123456789 gives 123.45 MB
          */
@@ -103,17 +61,6 @@ data class SafeFiles(
                 x /= measureLimit
             }
             return "${x}.$afterPoint ${typeArray[i]}"
-        }
-
-        /**
-         * creates a random string of some fixed length.This can be used to get a string of required
-         * length to be a key Use this function twice if required.
-         */
-        fun createRandomPartialKey(): String {
-            KeyGenerator.getInstance("AES").apply {
-                init(256)
-                return Base64.getEncoder().encodeToString(generateKey().encoded)
-            }
         }
     }
 

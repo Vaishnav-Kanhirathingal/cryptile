@@ -32,8 +32,6 @@ private const val TAG = "SignUpFragment"
 class SignUpFragment : Fragment() {
     private lateinit var dataStore: AppDataStore
     private lateinit var binding: FragmentSignUpBinding
-    private var emailVerified = false
-    private var accountNameVerified = false
 
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -62,7 +60,6 @@ class SignUpFragment : Fragment() {
     }
 
     private fun mainBinding() {
-        emailCardBinding()
         binding.apply {
             topAppBar.setNavigationOnClickListener {
                 findNavController()
@@ -73,22 +70,12 @@ class SignUpFragment : Fragment() {
             }
             signUpButton.setOnClickListener {
                 var userName: String
-                var userEmail: String
                 userNameTextLayout.apply {
                     userName = this.editText!!.text.toString()
-                    accountNameVerified = userName.length in 7..33
                     this.error = "Account Name length should be 8-32 characters"
-                    this.isErrorEnabled = !accountNameVerified
+                    this.isErrorEnabled = userName.length !in 7..33
                 }
-                userEmailTextLayout.apply {
-                    userEmail = this.editText!!.text.toString()
-                    if (emailVerified) {
-                        this.isErrorEnabled = false
-                    } else {
-                        this.isErrorEnabled = true
-                        this.error = "Email not set"
-                    }
-                }
+                val userEmail: String = userEmailTextLayout.editText!!.text.toString()
                 val userUsesFingerprint: Boolean = userUseFingerprint.isChecked
                 val passOne = userSetPasswordTextLayout.editText!!.text.toString()
                 val passTwo = userRepeatPasswordTextLayout.editText!!.text.toString()
@@ -98,25 +85,30 @@ class SignUpFragment : Fragment() {
                     userSetPasswordTextLayout.isErrorEnabled = true
                 } else {
                     userSetPasswordTextLayout.isErrorEnabled = false
-                    if (passOne == passTwo && emailVerified && accountNameVerified) {
-                        // TODO: store values
-                        CoroutineScope(Dispatchers.IO).launch {
-                            dataStore.apply {
-                                stringSaver(userName, StoreString.USER_NAME)
-                                stringSaver(userEmail, StoreString.USER_EMAIL)
-                                booleanSaver(
-                                    userUsesFingerprint,
-                                    StoreBoolean.USER_USES_FINGERPRINT
-                                )
-                                booleanSaver(true, StoreBoolean.USER_LOGGED_IN)
-                            }
-                            CoroutineScope(Dispatchers.Main).launch {
-                                findNavController()
-                                    .navigate(
-                                        SignUpFragmentDirections
-                                            .actionSignUpFragmentToMainFragment()
+                    if (passOne == passTwo && userName.length in 7..33) {
+                        SignInFunctions.signUpWithEmail(
+                            email = userEmailTextLayout.editText!!.text.toString(),
+                            password = userSetPasswordTextLayout.editText!!.text.toString(),
+                            auth = auth,
+                            context = requireContext(),
+                        ) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                dataStore.apply {
+                                    stringSaver(userName, StoreString.USER_NAME)
+                                    stringSaver(userEmail, StoreString.USER_EMAIL)
+                                    booleanSaver(
+                                        userUsesFingerprint,
+                                        StoreBoolean.USER_USES_FINGERPRINT
                                     )
+                                    booleanSaver(true, StoreBoolean.USER_LOGGED_IN)
+                                }
                             }
+                            Toast.makeText(
+                                requireContext(), "verification complete", Toast.LENGTH_SHORT
+                            ).show()
+                            findNavController().navigate(
+                                SignUpFragmentDirections.actionSignUpFragmentToMainFragment()
+                            )
                         }
                     }
                 }
@@ -127,50 +119,6 @@ class SignUpFragment : Fragment() {
                         SignUpFragmentDirections
                             .actionSignUpFragmentToMainFragment()
                     )
-            }
-        }
-    }
-
-    private fun emailCardBinding() {
-        binding.apply {
-            var emailOTP = "0"
-            userEmailTextLayout.apply {
-                this.setEndIconOnClickListener {
-                    this.isEnabled = false
-                    emailOTP = "1111"// TODO: send a request to generate otp and receive otp
-                }
-            }
-            verifyEmailOtp.apply {
-                this.setOnClickListener {
-                    val otp =
-                        userEmailOtpTextLayout.editText!!.text.toString()
-                    if (otp == emailOTP && otp.length == 4) {
-                        emailVerified = true
-                        this.isEnabled = false
-                        userEmailTextLayout.isEnabled = false
-                        userEmailTextLayout.isErrorEnabled = false
-                        userEmailOtpTextLayout.isEnabled = false
-                        userEmailOtpTextLayout.isErrorEnabled = false
-                    } else {
-                        userEmailOtpTextLayout.error = "OTP does not match"
-                        userEmailOtpTextLayout.isErrorEnabled = true
-                    }
-
-                }
-            }
-            clearEmailOtp.setOnClickListener {
-                emailOTP = "0"
-                emailVerified = false
-                userEmailTextLayout.apply {
-                    this.editText!!.setText("")
-                    this.isEnabled = true
-                }
-                userEmailOtpTextLayout.apply {
-                    this.editText!!.setText("")
-                    this.isEnabled = true
-                    this.isErrorEnabled = false
-                    verifyEmailOtp.isEnabled = true
-                }
             }
         }
     }
