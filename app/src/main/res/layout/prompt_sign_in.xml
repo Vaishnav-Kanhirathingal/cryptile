@@ -24,7 +24,7 @@
             android:textSize="36sp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/user_name_text_layout"
+            android:id="@+id/user_email_text_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -36,7 +36,6 @@
             app:startIconDrawable="@drawable/email_24">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/user_name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress" />

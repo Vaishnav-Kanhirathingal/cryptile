@@ -33,9 +33,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private const val TAG = "MainFragment"
 
@@ -71,7 +68,6 @@ class MainFragment : Fragment() {
             .requestIdToken(getString(R.string.web_client_id)).requestEmail().build()
         googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
         firebaseFirestore = Firebase.firestore
-
         mainBinding();sideBinding();getPermissions()
     }
 
@@ -209,16 +205,24 @@ class MainFragment : Fragment() {
                 userPasswordTextLayout.isErrorEnabled =
                     if (pass.length in 7..33) {
                         SignInFunctions.signInWithEmail(
-                            email = userNameTextLayout.editText!!.text.toString(),
+                            email = userEmailTextLayout.editText!!.text.toString(),
                             password = pass,
                             auth = auth,
                             context = requireContext(),
                             layoutInflater = layoutInflater,
-                        ) {
-                            Toast.makeText(context, "You have been logged in", Toast.LENGTH_SHORT)
-                                .show()
-                            signInDialog.dismiss()
-                        }
+                            {
+                                Toast.makeText(
+                                    context,
+                                    "You have been logged in",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                                signInDialog.dismiss()
+                            }, { error: String ->
+                                // TODO: on error
+                                Log.e(TAG, error)
+                            }
+                        )
                         false
                     } else {
                         userPasswordTextLayout.error = "password isn't 8-32 characters long"
@@ -276,18 +280,16 @@ class MainFragment : Fragment() {
             }
             GOOGLE_REQUEST_CODE -> {
                 try {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        Log.d(TAG, "google sign-in started")
-                        SignInFunctions.signInUsingGoogle(
-                            id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
-                            context = requireContext(),
-                            auth = auth,
-                            database = firebaseFirestore
-                        ) {
-                            Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
-                                .show()
-                            signInDialog.dismiss()
-                        }
+                    Log.d(TAG, "google sign-in started")
+                    SignInFunctions.signInUsingGoogle(
+                        id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
+                        context = requireContext(),
+                        auth = auth,
+                        database = firebaseFirestore
+                    ) {
+                        Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
+                            .show()
+                        signInDialog.dismiss()
                     }
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()

@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "SignInFunctions"
 
 object SignInFunctions {
-    suspend fun signInUsingGoogle(
+    fun signInUsingGoogle(
         id: String?,
         context: Context,
         auth: FirebaseAuth,
@@ -69,7 +69,8 @@ object SignInFunctions {
         auth: FirebaseAuth,
         context: Context,
         layoutInflater: LayoutInflater,
-        onSuccess: () -> Unit
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
     ) {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             if (auth.currentUser!!.isEmailVerified) {
@@ -79,7 +80,7 @@ object SignInFunctions {
                 Log.d(TAG, "current user is not email verified")
                 auth.currentUser!!.sendEmailVerification()
                     .addOnSuccessListener {
-                        showEmailSentPrompt(context, layoutInflater)
+                        showEmailSentPrompt(context, layoutInflater) {}
                     }.addOnFailureListener {
                         Log.e(TAG, "firebase error")
                         it.printStackTrace()
@@ -92,7 +93,8 @@ object SignInFunctions {
                     }
             }
         }.addOnFailureListener {
-            Log.d(TAG, "error encountered: $it")
+            it.printStackTrace()
+            onFailure(it.message!!)
             Toast.makeText(context, "exception: $it", Toast.LENGTH_SHORT).show()
         }
     }
@@ -103,54 +105,47 @@ object SignInFunctions {
         auth: FirebaseAuth,
         context: Context,
         layoutInflater: LayoutInflater,
-        onSuccess: () -> Unit,
+        onMessageDismiss: () -> Unit,
+        onFailure: (String) -> Unit
     ) {
         Log.d(TAG, "creating account using email")
         // TODO: open a prompt with loading screen
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                Log.d(TAG, "account creation successful")
-                if (auth.currentUser != null) {
-                    auth.currentUser!!.sendEmailVerification().addOnCompleteListener { task ->
-                        Log.d(TAG, "evaluating email")
-                        if (task.isSuccessful) {
-                            Log.d(TAG, "verification email sent")
-                            Toast.makeText(
-                                context,
-                                "verification email sent, check inbox",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            showEmailSentPrompt(context, layoutInflater)
-                            auth.signOut()
-                            // TODO: add values to database.
-                        } else {
-                            Log.d(
-                                TAG,
-                                "verification email generation failed, login and try again"
-                            )
-                            Toast.makeText(
-                                context,
-                                "verification email generation failed, login and try again",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            auth.signOut()
-                        }
-                    }
+        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+            Log.d(TAG, "account creation successful")
+            if (auth.currentUser != null) {
+                auth.currentUser!!.sendEmailVerification().addOnSuccessListener {
+                    Log.d(TAG, "verification email sent")
+                    auth.signOut()
+                    showEmailSentPrompt(context, layoutInflater, onMessageDismiss)
+                    // TODO: add values to database.
+                }.addOnFailureListener {
+                    it.printStackTrace()
+                    onFailure(it.message!!)
+                    auth.signOut()
+                    Toast.makeText(
+                        context,
+                        "Verification email generation failed, try again later. Reason: ${it.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-            }.addOnFailureListener {
-                Log.e(TAG, "firebase error detected")
-                it.printStackTrace()
-                Toast.makeText(
-                    context,
-                    "registration failed try again later.\nReason - ${it.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
-        auth.addAuthStateListener {
+        }.addOnFailureListener {
+            // TODO: warning about failing to create user
+            it.printStackTrace()
+            onFailure(it.message!!)
+            Toast.makeText(
+                context,
+                "Account generation failed. Reason: ${it.message}",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
-    private fun showEmailSentPrompt(context: Context, layoutInflater: LayoutInflater) {
+    private fun showEmailSentPrompt(
+        context: Context,
+        layoutInflater: LayoutInflater,
+        onDismiss: () -> Unit
+    ) {
         val alertDialog = Dialog(context)
         val binding = PromptMessageBinding.inflate(layoutInflater)
         alertDialog.apply {
@@ -164,7 +159,10 @@ object SignInFunctions {
         }
         binding.apply {
             messageTextView.setText(R.string.email_sent_message)
-            dismissButton.setOnClickListener { alertDialog.dismiss() }
+            dismissButton.setOnClickListener {
+                alertDialog.dismiss()
+                onDismiss()
+            }
         }
     }
 }
