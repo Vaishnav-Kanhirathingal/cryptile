@@ -91,6 +91,7 @@ class SignUpFragment : Fragment() {
                             password = userSetPasswordTextLayout.editText!!.text.toString(),
                             auth = auth,
                             context = requireContext(),
+                            layoutInflater = layoutInflater,
                         ) {
                             CoroutineScope(Dispatchers.IO).launch {
                                 dataStore.apply {

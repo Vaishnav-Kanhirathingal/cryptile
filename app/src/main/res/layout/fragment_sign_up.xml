@@ -166,7 +166,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                    android:text="Login using fingerprint" />
+                    android:text="Fingerprint lock" />
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.divider.MaterialDivider

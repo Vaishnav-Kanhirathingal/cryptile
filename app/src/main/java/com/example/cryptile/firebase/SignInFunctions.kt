@@ -1,9 +1,14 @@
 package com.example.cryptile.firebase
 
+import android.app.Dialog
 import android.content.Context
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.Toast
+import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData.Companion.createRandomPartialKey
+import com.example.cryptile.databinding.PromptMessageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -58,43 +63,77 @@ object SignInFunctions {
         }
     }
 
+    fun signInWithEmail(
+        email: String,
+        password: String,
+        auth: FirebaseAuth,
+        context: Context,
+        layoutInflater: LayoutInflater,
+        onSuccess: () -> Unit
+    ) {
+        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+            if (auth.currentUser!!.isEmailVerified) {
+                Log.d(TAG, "current user is email verified")
+                onSuccess()
+            } else {
+                Log.d(TAG, "current user is not email verified")
+                auth.currentUser!!.sendEmailVerification()
+                    .addOnSuccessListener {
+                        showEmailSentPrompt(context, layoutInflater)
+                    }.addOnFailureListener {
+                        Log.e(TAG, "firebase error")
+                        it.printStackTrace()
+                        Toast.makeText(
+                            context,
+                            "verification link generation failed. Reason: ${it.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        auth.signOut()
+                    }
+            }
+        }.addOnFailureListener {
+            Log.d(TAG, "error encountered: $it")
+            Toast.makeText(context, "exception: $it", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun signUpWithEmail(
         email: String,
         password: String,
         auth: FirebaseAuth,
         context: Context,
+        layoutInflater: LayoutInflater,
         onSuccess: () -> Unit,
     ) {
         Log.d(TAG, "creating account using email")
         // TODO: open a prompt with loading screen
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Log.d(TAG, "account creation successful")
-                    if (auth.currentUser != null) {
-                        auth.currentUser!!.sendEmailVerification().addOnCompleteListener { task ->
-                            Log.d(TAG, "evaluating email")
-                            if (task.isSuccessful) {
-                                Log.d(TAG, "verification email sent")
-                                Toast.makeText(
-                                    context,
-                                    "verification email sent, check inbox",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                // TODO: add values to database.
-                            } else {
-                                Log.d(
-                                    TAG,
-                                    "verification email generation failed, login and try again"
-                                )
-                                Toast.makeText(
-                                    context,
-                                    "verification email generation failed, login and try again",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                auth.signOut()
-                            }
+            .addOnSuccessListener {
+                Log.d(TAG, "account creation successful")
+                if (auth.currentUser != null) {
+                    auth.currentUser!!.sendEmailVerification().addOnCompleteListener { task ->
+                        Log.d(TAG, "evaluating email")
+                        if (task.isSuccessful) {
+                            Log.d(TAG, "verification email sent")
+                            Toast.makeText(
+                                context,
+                                "verification email sent, check inbox",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            showEmailSentPrompt(context, layoutInflater)
+                            auth.signOut()
+                            // TODO: add values to database.
+                        } else {
+                            Log.d(
+                                TAG,
+                                "verification email generation failed, login and try again"
+                            )
+                            Toast.makeText(
+                                context,
+                                "verification email generation failed, login and try again",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            auth.signOut()
                         }
                     }
                 }
@@ -107,52 +146,25 @@ object SignInFunctions {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        CoroutineScope(Dispatchers.IO).launch {
-            Log.d(TAG, "new thread launched")
-            Thread.sleep(40000)
-            Log.d(TAG, "new thread continued after sleep")
-            if (auth.currentUser!!.isEmailVerified) {
-//                onSuccess()
-                Log.d(TAG, "email verified finally 1234")
-            } else {
-                Log.d(TAG, "email not verified finally 1234")
-            }
-        }
         auth.addAuthStateListener {
         }
     }
 
-    fun signInWithEmail(email: String, password: String, auth: FirebaseAuth, context: Context) {
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) {
-                if (auth.currentUser!!.isEmailVerified) {
-                    Toast.makeText(context, "You have been logged in", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(
-                        context, "Your email hasn't been verified yet", Toast.LENGTH_SHORT
-                    ).show()
-                    auth.currentUser!!.sendEmailVerification().addOnCompleteListener { task ->
-                        CoroutineScope(Dispatchers.Main).launch {
-                            if (task.isSuccessful) {
-                                Toast.makeText(context, "verification complete", Toast.LENGTH_SHORT)
-                                    .show()
-                            } else {
-                                // TODO: logout
-                                Toast.makeText(
-                                    context,
-                                    "verification incomplete, login and try again",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                auth.signOut()
-                            }
-                        }
-                    }
-                }
-            } else {
-                Log.d(TAG, "error encountered: ${it.exception}")
-                Toast.makeText(context, "exception: ${it.exception}", Toast.LENGTH_SHORT).show()
-            }
+    private fun showEmailSentPrompt(context: Context, layoutInflater: LayoutInflater) {
+        val alertDialog = Dialog(context)
+        val binding = PromptMessageBinding.inflate(layoutInflater)
+        alertDialog.apply {
+            setContentView(binding.root)
+            window!!.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setCancelable(true)
+            show()
+        }
+        binding.apply {
+            messageTextView.setText(R.string.email_sent_message)
+            dismissButton.setOnClickListener { alertDialog.dismiss() }
         }
     }
 }

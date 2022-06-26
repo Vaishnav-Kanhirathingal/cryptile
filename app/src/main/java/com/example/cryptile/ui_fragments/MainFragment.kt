@@ -205,6 +205,25 @@ class MainFragment : Fragment() {
             }
             signIn.setOnClickListener {
                 // TODO: apply sign in bindings
+                val pass = userPasswordTextLayout.editText!!.text.toString()
+                userPasswordTextLayout.isErrorEnabled =
+                    if (pass.length in 7..33) {
+                        SignInFunctions.signInWithEmail(
+                            email = userNameTextLayout.editText!!.text.toString(),
+                            password = pass,
+                            auth = auth,
+                            context = requireContext(),
+                            layoutInflater = layoutInflater,
+                        ) {
+                            Toast.makeText(context, "You have been logged in", Toast.LENGTH_SHORT)
+                                .show()
+                            signInDialog.dismiss()
+                        }
+                        false
+                    } else {
+                        userPasswordTextLayout.error = "password isn't 8-32 characters long"
+                        true
+                    }
             }
             googleSignInButton.setOnClickListener {
                 startActivityForResult(googleSignInClient.signInIntent, GOOGLE_REQUEST_CODE)
