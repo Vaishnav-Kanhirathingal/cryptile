@@ -5,70 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/side_menu_margin"
-    tools:background="#eeeeee">
+    android:paddingTop="@dimen/side_menu_margin">
 
     <ImageView
         android:id="@+id/user_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginVertical="@dimen/side_menu_margin"
-        android:background="@color/black"
+        android:background="@color/card_background"
+        android:src="@drawable/google"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/view_1"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginTop="@dimen/side_menu_margin"
-        android:background="@color/black"
-        app:layout_constraintTop_toBottomOf="@id/user_image"
-        tools:layout_height="1dp" />
 
-    <GridLayout
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/view_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/side_menu_margin"
-        android:columnCount="2"
-        app:layout_constraintTop_toBottomOf="@id/view_1">
+        app:dividerColor="@color/black"
+        app:dividerThickness="@dimen/divider_thickness"
+        app:layout_constraintTop_toBottomOf="@id/user_image"
+        tools:dividerThickness="1dp" />
 
-        <TextView android:text="Name" />
+    <TextView
+        android:id="@+id/email_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/view_1"
+        tools:text="somebody.someone@gmail.com" />
 
-        <TextView
-            android:id="@+id/name_text_view"
-            android:layout_columnWeight="1"
-            android:layout_marginStart="@dimen/side_menu_margin"
-            android:textAlignment="viewEnd"
-            tools:text="Name" />
-
-        <TextView android:text="Email" />
-
-        <TextView
-            android:id="@+id/email_text_view"
-            android:layout_columnWeight="1"
-            android:layout_marginStart="@dimen/side_menu_margin"
-            android:textAlignment="viewEnd"
-            tools:text="Email" />
-
-        <TextView android:text="Phone No." />
-
-        <TextView
-            android:id="@+id/phone_text_view"
-            android:layout_columnWeight="1"
-            android:layout_marginStart="@dimen/side_menu_margin"
-            android:textAlignment="viewEnd"
-            tools:text="Phone" />
-
-        <TextView android:text="Activity" />
-
-        <TextView
-            android:id="@+id/logged_in_text_view"
-            android:layout_columnWeight="1"
-            android:layout_marginStart="@dimen/side_menu_margin"
-            android:textAlignment="viewEnd"
-            tools:text="Logged In" />
-
-    </GridLayout>
+    <TextView
+        android:id="@+id/name_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/email_text_view"
+        tools:text="Some new person" />
 </androidx.constraintlayout.widget.ConstraintLayout>

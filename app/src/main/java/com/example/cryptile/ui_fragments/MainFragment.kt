@@ -122,10 +122,8 @@ class MainFragment : Fragment() {
 
         headerMenu.apply {
             // TODO: change this to actual values
-            findViewById<TextView>(R.id.name_text_view).text = "Some body"
-            findViewById<TextView>(R.id.email_text_view).text = "Some Mail"
-            findViewById<TextView>(R.id.phone_text_view).text = "Some Number"
-            findViewById<TextView>(R.id.logged_in_text_view).text = "Logged In/Out"
+            findViewById<TextView>(R.id.name_text_view).text = "Some new person"
+            findViewById<TextView>(R.id.email_text_view).text = "somebody.someone@gmail.com"
         }
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -137,12 +135,14 @@ class MainFragment : Fragment() {
                     // TODO: prompt
                     auth.signOut()
                     Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(
+                        MainFragmentDirections.actionMainFragmentToSignInFragment()
+                    )
                     true
                 }
                 R.id.account_sign_up -> {
                     findNavController().navigate(
-                        MainFragmentDirections
-                            .actionMainFragmentToSignUpFragment()
+                        MainFragmentDirections.actionMainFragmentToSignUpFragment()
                     )
                     true
                 }
@@ -153,29 +153,25 @@ class MainFragment : Fragment() {
                 }
                 R.id.settings -> {
                     findNavController().navigate(
-                        MainFragmentDirections
-                            .actionMainFragmentToSettingsFragment()
+                        MainFragmentDirections.actionMainFragmentToSettingsFragment()
                     )
                     true
                 }
                 R.id.permission_manager -> {
                     findNavController().navigate(
-                        MainFragmentDirections
-                            .actionMainFragmentToPermissionsFragment()
+                        MainFragmentDirections.actionMainFragmentToPermissionsFragment()
                     )
                     true
                 }
                 R.id.app_about -> {
                     findNavController().navigate(
-                        MainFragmentDirections
-                            .actionMainFragmentToAboutFragment()
+                        MainFragmentDirections.actionMainFragmentToAboutFragment()
                     )
                     true
                 }
-                R.id.app_manual -> {
+                R.id.documentation -> {
                     findNavController().navigate(
-                        MainFragmentDirections
-                            .actionMainFragmentToDocumentationFragment()
+                        MainFragmentDirections.actionMainFragmentToDocumentationFragment()
                     )
                     true
                 }

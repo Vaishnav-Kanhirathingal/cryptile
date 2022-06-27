@@ -265,9 +265,9 @@ class SafeData(
     /**
      * decrypt the partial key using given password and return the result as key.
      */
-    fun getKey(passwordOne: String): List<SecretKey> {
+    fun getKey(passwordOne: String): MutableList<SecretKey> {
         // TODO: implement personal
-        return listOf(generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }))
+        return mutableListOf(generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }))
     }
 
     /**

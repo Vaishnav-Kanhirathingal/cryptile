@@ -32,10 +32,6 @@ object SignInFunctions {
             if (it.additionalUserInfo!!.isNewUser) {
                 Log.d(TAG, "user is new")
                 val firebaseUser = auth.currentUser
-                Log.d(
-                    TAG, "user name - ${firebaseUser?.displayName}, " +
-                            "email - ${firebaseUser?.email}"
-                )
                 val user = hashMapOf(
                     UserDataConstants.userDisplayName to firebaseUser!!.displayName!!,
                     UserDataConstants.userEmail to firebaseUser.email!!,
@@ -63,46 +59,12 @@ object SignInFunctions {
         }
     }
 
-    fun signInWithEmail(
-        email: String,
-        password: String,
-        auth: FirebaseAuth,
-        context: Context,
-        layoutInflater: LayoutInflater,
-        onSuccess: () -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-            if (auth.currentUser!!.isEmailVerified) {
-                Log.d(TAG, "current user is email verified")
-                onSuccess()
-            } else {
-                Log.d(TAG, "current user is not email verified")
-                auth.currentUser!!.sendEmailVerification()
-                    .addOnSuccessListener {
-                        showEmailSentPrompt(context, layoutInflater) {}
-                    }.addOnFailureListener {
-                        Log.e(TAG, "firebase error")
-                        it.printStackTrace()
-                        Toast.makeText(
-                            context,
-                            "verification link generation failed. Reason: ${it.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        auth.signOut()
-                    }
-            }
-        }.addOnFailureListener {
-            it.printStackTrace()
-            onFailure(it.message!!)
-            Toast.makeText(context, "exception: $it", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     fun signUpWithEmail(
+        userName: String,
         email: String,
         password: String,
         auth: FirebaseAuth,
+        database: FirebaseFirestore,
         context: Context,
         layoutInflater: LayoutInflater,
         onMessageDismiss: () -> Unit,
@@ -112,12 +74,32 @@ object SignInFunctions {
         // TODO: open a prompt with loading screen
         auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
             Log.d(TAG, "account creation successful")
+            // TODO: add values to database.
+            if (it.additionalUserInfo!!.isNewUser) {
+                Log.d(TAG, "user is new")
+                val user = hashMapOf(
+                    UserDataConstants.userDisplayName to userName,
+                    UserDataConstants.userEmail to email,
+                    UserDataConstants.userKey to createRandomPartialKey(),
+                    UserDataConstants.userPhotoUrl to "some photo url"// TODO: set photo url correctly
+                )
+                database.collection(UserDataConstants.tableName).add(user)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "adding to database successful")
+                    }
+                    .addOnFailureListener { e: Exception ->
+                        Log.d(TAG, "adding to database unsuccessful")
+                        e.printStackTrace()
+                    }
+                Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
+            }
+
+
             if (auth.currentUser != null) {
                 auth.currentUser!!.sendEmailVerification().addOnSuccessListener {
                     Log.d(TAG, "verification email sent")
                     auth.signOut()
                     showEmailSentPrompt(context, layoutInflater, onMessageDismiss)
-                    // TODO: add values to database.
                 }.addOnFailureListener {
                     it.printStackTrace()
                     onFailure(it.message!!)
@@ -139,6 +121,40 @@ object SignInFunctions {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    fun signInWithEmail(
+        email: String,
+        password: String,
+        auth: FirebaseAuth,
+        context: Context,
+        layoutInflater: LayoutInflater,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                if (auth.currentUser!!.isEmailVerified) {
+                    Log.d(TAG, "current user is email verified")
+                    onSuccess()
+                } else {
+                    Log.d(TAG, "current user is not email verified")
+                    auth.currentUser!!.sendEmailVerification()
+                        .addOnSuccessListener {
+                            showEmailSentPrompt(context, layoutInflater) {}
+                        }.addOnFailureListener {
+                            Log.e(TAG, "firebase error")
+                            it.printStackTrace()
+                            Log.d(TAG, "verification link generation failed. Reason: ${it.message}")
+                            onFailure(it.message!!)
+                            auth.signOut()
+                        }
+                }
+            }.addOnFailureListener {
+                it.printStackTrace()
+                onFailure(it.message!!)
+                Toast.makeText(context, "exception: $it", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun showEmailSentPrompt(

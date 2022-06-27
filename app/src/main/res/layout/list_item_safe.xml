@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/padding_recycler_safe"
+    android:backgroundTint="@color/card_background"
     app:cardCornerRadius="@dimen/file_list_padding"
-    app:cardUseCompatPadding="true"
-    tools:backgroundTint="#f0f0f0">
+    app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

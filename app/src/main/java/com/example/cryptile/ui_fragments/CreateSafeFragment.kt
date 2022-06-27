@@ -16,6 +16,11 @@ import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentCreateSafeBinding
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
@@ -26,6 +31,9 @@ class CreateSafeFragment : Fragment() {
     private val viewModel: AppViewModel by activityViewModels {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firebaseFirestore: FirebaseFirestore
+
     private lateinit var binding: FragmentCreateSafeBinding
     private var currentPath: MutableLiveData<String> =
         MutableLiveData("Cryptile")
@@ -41,6 +49,8 @@ class CreateSafeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        auth = Firebase.auth
+        firebaseFirestore = Firebase.firestore
         mainBinding()
     }
 
@@ -61,8 +71,6 @@ class CreateSafeFragment : Fragment() {
                 )
             }
             confirmButton.setOnClickListener {
-                // TODO: change provided values for test function.
-
                 val p1Check = safePasswordOneInputLayout.editText!!.text.toString().length > 7
                 val p2Check = safePasswordTwoInputLayout.editText!!.text.toString().length > 7
                 val conditionCheck = (p1Check && p2Check)
@@ -137,6 +145,7 @@ class CreateSafeFragment : Fragment() {
                         passwordOne = passwordOne
                     )
                 }
+
             // TODO: add personal key if necessary
             val fileGenerationStatus = safeData.generateDirectories(keyList)
             safeData.saveChangesToMetadata()

@@ -8,14 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
-import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.databinding.FragmentSignInBinding
 import com.example.cryptile.firebase.SignInFunctions
-import com.example.cryptile.view_models.AppViewModel
-import com.example.cryptile.view_models.AppViewModelFactory
+import com.example.cryptile.firebase.UserDataConstants
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -38,7 +35,6 @@ class SignInFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         auth = Firebase.auth
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.web_client_id)).requestEmail().build()
@@ -63,7 +59,6 @@ class SignInFragment : Fragment() {
     private fun applyBindings() {
         binding.apply {
             loginButton.setOnClickListener {
-                // TODO: apply sign in bindings
                 val pass = userPasswordTextLayout.editText!!.text.toString()
                 val passCorrect = pass.length in 7..33
                 userPasswordTextLayout.error = "password isn't 8-32 characters long"
@@ -90,7 +85,6 @@ class SignInFragment : Fragment() {
                             findNavController().navigate(
                                 SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             )
-                            // TODO: navigate to main screen, also an on failure to show error text layout
                         },
                         onFailure = {
                             Log.e(TAG, it)
@@ -113,6 +107,17 @@ class SignInFragment : Fragment() {
                 findNavController().navigate(
                     SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
                 )
+            }
+            testButton.setOnClickListener {
+                firebaseFirestore.collection(UserDataConstants.tableName).get()
+                    .addOnSuccessListener {
+                        for (results in it) {
+                            Log.d(TAG, "data derived for [${results.id}] = [${results.data}]")
+                        }
+                    }.addOnFailureListener {
+                        it.printStackTrace()
+                    }
+                Log.d(TAG,"uid= ${auth.currentUser!!.uid}")
             }
         }
     }

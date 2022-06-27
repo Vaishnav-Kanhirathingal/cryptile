@@ -91,6 +91,7 @@ class SignUpFragment : Fragment() {
 
                 if (userNameCorrect && userEmailCorrect && passwordCorrect) {
                     SignInFunctions.signUpWithEmail(
+                        userName = userName,
                         email = userEmail,
                         password = passOne,
                         auth = auth,
@@ -100,10 +101,11 @@ class SignUpFragment : Fragment() {
                             findNavController().navigate(
                                 SignUpFragmentDirections.actionSignUpFragmentToSignInFragment()
                             )
-                        }, onFailure ={
+                        }, onFailure = {
                             userEmailTextLayout.error = it
                             userEmailTextLayout.isErrorEnabled = true
-                        }
+                        },
+                        database = firebaseFirestore
                     )
                 }
             }

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/file_list_padding"
     android:layout_marginTop="@dimen/file_list_padding"
+    android:backgroundTint="@color/card_background"
     android:orientation="vertical"
     app:cardUseCompatPadding="true">
 

@@ -22,15 +22,15 @@ class AppDataStore(val context: Context) {
     private val userNameKey = stringPreferencesKey("user_name_key")
     private val userEmailKey = stringPreferencesKey("user_email_key")
 
-    private val userUsesFingerprintKey = booleanPreferencesKey("user_uses_fingerprint_key")
-    private val userLoggedInKey = booleanPreferencesKey("user_logged_in_key")
+    private val fingerprintAppLockKey = booleanPreferencesKey("fingerprint_app_lock_key")
+    private val keepMeSignedInKey = booleanPreferencesKey("keep_me_signed_in_key")
 
     //------------------------------------------------------------------------------------value-flow
     val userNameFlow: Flow<String> = stringMapper(userNameKey)
     val userEmailFlow: Flow<String> = stringMapper(userEmailKey)
 
-    val userUsesFingerprintFlow: Flow<Boolean> = booleanMapper(userUsesFingerprintKey)
-    val userLoggedInFlow: Flow<Boolean> = booleanMapper(userLoggedInKey)
+    val fingerprintAppLockFlow: Flow<Boolean> = booleanMapper(fingerprintAppLockKey)
+    val keepMeSignedInFlow: Flow<Boolean> = booleanMapper(keepMeSignedInKey)
 
     //----------------------------------------------------------------------------------------mapper
     /**
@@ -71,8 +71,8 @@ class AppDataStore(val context: Context) {
     suspend fun booleanSaver(boolean: Boolean, storeBoolean: StoreBoolean) {
         context.dataStore.edit {
             it[when (storeBoolean) {
-                StoreBoolean.USER_USES_FINGERPRINT -> userUsesFingerprintKey
-                StoreBoolean.USER_LOGGED_IN -> userLoggedInKey
+                StoreBoolean.USER_USES_FINGERPRINT -> fingerprintAppLockKey
+                StoreBoolean.KEEP_ME_SIGNED_IN -> keepMeSignedInKey
                 else -> {
                     throw IllegalArgumentException("boolean type not specified in data store")
                 }
@@ -95,5 +95,5 @@ enum class StoreString {
  */
 enum class StoreBoolean {
     USER_USES_FINGERPRINT,
-    USER_LOGGED_IN
+    KEEP_ME_SIGNED_IN
 }

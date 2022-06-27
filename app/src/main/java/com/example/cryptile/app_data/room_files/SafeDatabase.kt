@@ -16,6 +16,7 @@ abstract class SafeDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var instance: SafeDatabase? = null
+
         /**
          * here, if the instance is not initialized, it gets initialized and then returned
          */
