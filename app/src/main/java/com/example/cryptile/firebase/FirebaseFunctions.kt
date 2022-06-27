@@ -24,39 +24,35 @@ object SignInFunctions {
         context: Context,
         auth: FirebaseAuth,
         database: FirebaseFirestore,
-        actionOnSuccess: () -> Unit
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit,
     ) {
         Log.d(TAG, "google sign-in function started")
         val credential = GoogleAuthProvider.getCredential(id, null)
-        auth.signInWithCredential(credential).addOnSuccessListener {
-            if (it.additionalUserInfo!!.isNewUser) {
-                Log.d(TAG, "user is new")
-                val firebaseUser = auth.currentUser
-                val user = hashMapOf(
-                    UserDataConstants.userDisplayName to firebaseUser!!.displayName!!,
-                    UserDataConstants.userEmail to firebaseUser.email!!,
-                    UserDataConstants.userKey to createRandomPartialKey(),
-                    UserDataConstants.userPhotoUrl to firebaseUser.photoUrl!!.toString()
-                )
-                database.collection(UserDataConstants.tableName).add(user)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "adding to database successful")
-                    }
-                    .addOnFailureListener { e: Exception ->
-                        Log.d(TAG, "adding to database unsuccessful")
-                        e.printStackTrace()
-                    }
-                Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
-            } else {
-                Log.d(TAG, "user was already registered")
-                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+        auth.signInWithCredential(credential)
+            .addOnSuccessListener {
+                if (it.additionalUserInfo!!.isNewUser) {
+                    Log.d(TAG, "user is new")
+                    val firebaseUser = auth.currentUser
+                    addToDatabase(
+                        userName = firebaseUser!!.displayName!!,
+                        email = firebaseUser.email!!,
+                        database = database,
+                        photoURL = firebaseUser.photoUrl!!.toString(),
+                        uid = firebaseUser.uid,
+                        onFailure = onFailure
+                    )
+                    Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.d(TAG, "user was already registered")
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                }
+                CoroutineScope(Dispatchers.Main).launch { onSuccess() }
+            }.addOnFailureListener {
+                it.printStackTrace()
+                Toast.makeText(context, "Sign-in failed", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "addOnFailureListener")
             }
-            CoroutineScope(Dispatchers.Main).launch { actionOnSuccess() }
-        }.addOnFailureListener {
-            it.printStackTrace()
-            Toast.makeText(context, "Sign-in failed", Toast.LENGTH_SHORT).show()
-            Log.e(TAG, "addOnFailureListener")
-        }
     }
 
     fun signUpWithEmail(
@@ -77,20 +73,14 @@ object SignInFunctions {
             // TODO: add values to database.
             if (it.additionalUserInfo!!.isNewUser) {
                 Log.d(TAG, "user is new")
-                val user = hashMapOf(
-                    UserDataConstants.userDisplayName to userName,
-                    UserDataConstants.userEmail to email,
-                    UserDataConstants.userKey to createRandomPartialKey(),
-                    UserDataConstants.userPhotoUrl to "some photo url"// TODO: set photo url correctly
+                addToDatabase(
+                    userName = userName,
+                    email = email,
+                    database = database,
+                    photoURL = "some photo url",
+                    uid = auth.uid!!,
+                    onFailure = onFailure
                 )
-                database.collection(UserDataConstants.tableName).add(user)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "adding to database successful")
-                    }
-                    .addOnFailureListener { e: Exception ->
-                        Log.d(TAG, "adding to database unsuccessful")
-                        e.printStackTrace()
-                    }
                 Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
             }
 
@@ -100,13 +90,13 @@ object SignInFunctions {
                     Log.d(TAG, "verification email sent")
                     auth.signOut()
                     showEmailSentPrompt(context, layoutInflater, onMessageDismiss)
-                }.addOnFailureListener {
-                    it.printStackTrace()
-                    onFailure(it.message!!)
+                }.addOnFailureListener { e: Exception ->
+                    e.printStackTrace()
+                    onFailure(e.message!!)
                     auth.signOut()
                     Toast.makeText(
                         context,
-                        "Verification email generation failed, try again later. Reason: ${it.message}",
+                        "Verification email generation failed, try again later. Reason: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -121,6 +111,35 @@ object SignInFunctions {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    private fun addToDatabase(
+        userName: String,
+        email: String,
+        database: FirebaseFirestore,
+        photoURL: String,
+        uid: String,
+        onFailure: (String) -> Unit,
+    ) {
+        val user = hashMapOf(
+            UserDataConstants.userDisplayName to userName,
+            UserDataConstants.userEmail to email,
+            UserDataConstants.userKey to createRandomPartialKey(),
+            UserDataConstants.userPhotoUrl to photoURL
+        )
+        Log.d(TAG, "uid = $uid")
+        database
+            .collection(UserDataConstants.tableName)
+            .document(uid)
+            .set(user)
+            .addOnSuccessListener {
+                Log.d(TAG, "adding to database successful")
+            }
+            .addOnFailureListener {
+                Log.d(TAG, "adding to database unsuccessful")
+                it.printStackTrace()
+                onFailure(it.message!!)
+            }
     }
 
     fun signInWithEmail(

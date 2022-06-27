@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentCreateSafeBinding
+import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -21,9 +22,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
+import javax.crypto.SecretKey
 
 private const val TAG = "CreateSafeFragment"
 
@@ -31,8 +36,8 @@ class CreateSafeFragment : Fragment() {
     private val viewModel: AppViewModel by activityViewModels {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
-    private lateinit var auth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var binding: FragmentCreateSafeBinding
     private var currentPath: MutableLiveData<String> =
@@ -49,8 +54,8 @@ class CreateSafeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        auth = Firebase.auth
         firebaseFirestore = Firebase.firestore
+        auth = Firebase.auth
         mainBinding()
     }
 
@@ -74,26 +79,50 @@ class CreateSafeFragment : Fragment() {
                 val p1Check = safePasswordOneInputLayout.editText!!.text.toString().length > 7
                 val p2Check = safePasswordTwoInputLayout.editText!!.text.toString().length > 7
                 val conditionCheck = (p1Check && p2Check)
-                // TODO: replace with condition chech
+                // TODO: replace with condition check
                 if (true) {
-                    val x = createSafe(
-                        safePasswordOneInputLayout.editText!!.text.toString(),
-                        safePasswordTwoInputLayout.editText!!.text.toString()
-                    )
-                    if (x) {
-                        Toast.makeText(
-                            requireContext(), "Files generated Successfully", Toast.LENGTH_SHORT
-                        ).show()
-                        findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
-                    } else {
-                        Toast.makeText(
-                            requireContext(), "Encountered errors while creation of safe, a " +
-                                    "folder the same name as the safe name already exists at the" +
-                                    " designated location",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-
+                    firebaseFirestore
+                        .collection(UserDataConstants.tableName)
+                        .document(auth.currentUser!!.uid)
+                        .get()
+                        .addOnSuccessListener {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val x = createSafe(
+                                    passwordOne = safePasswordOneInputLayout.editText!!.text.toString(),
+                                    passwordTwo = safePasswordTwoInputLayout.editText!!.text.toString(),
+                                    personalKey = SafeData.stringToKey(
+                                        it.get(UserDataConstants.userKey).toString()
+                                    )
+                                )
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    if (x) {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Files generated Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        findNavController().navigate(
+                                            CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
+                                        )
+                                    } else {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Encountered errors while creation of safe, a " +
+                                                    "folder the same name as the safe name already " +
+                                                    "exists at the designated location",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                            }
+                        }.addOnFailureListener {
+                            it.printStackTrace()
+                            Toast.makeText(
+                                requireContext(),
+                                "safe creation error has occourred: ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                 } else {
                     safePasswordOneInputLayout.isErrorEnabled = p1Check
                     safePasswordTwoInputLayout.isErrorEnabled = p2Check
@@ -108,7 +137,8 @@ class CreateSafeFragment : Fragment() {
 
     private fun createSafe(
         passwordOne: String,
-        passwordTwo: String
+        passwordTwo: String,
+        personalKey: SecretKey
     ): Boolean {
         binding.apply {
             val salt = ByteArray(32)
@@ -145,12 +175,19 @@ class CreateSafeFragment : Fragment() {
                         passwordOne = passwordOne
                     )
                 }
-
             // TODO: add personal key if necessary
+            if (personalAccessOnlySwitch.isChecked) {
+                keyList.add(personalKey)
+            }
             val fileGenerationStatus = safeData.generateDirectories(keyList)
             safeData.saveChangesToMetadata()
             safeData.saveChangesToLogFile("\t\t\t\t-------------safe-created-------------\n")
-            if (fileGenerationStatus) viewModel.insert(safeData)
+            if (fileGenerationStatus) viewModel.insert(safeData) else {
+                Log.e(
+                    TAG,
+                    "File generation for safe failed, directory ${safeData.safeAbsoluteLocation} already exists"
+                )
+            }
             return fileGenerationStatus
         }
     }

@@ -21,6 +21,7 @@ import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.databinding.PromptSignInBinding
 import com.example.cryptile.firebase.SignInFunctions
+import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.adapters.SafeAdapter
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
@@ -41,7 +42,6 @@ class MainFragment : Fragment() {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
     private lateinit var binding: FragmentMainBinding
-    private lateinit var menu: NavigationView
 
     private lateinit var signInDialog: Dialog
 
@@ -65,10 +65,12 @@ class MainFragment : Fragment() {
 
         auth = Firebase.auth
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.web_client_id)).requestEmail().build()
+            .requestIdToken(getString(R.string.web_client_id))
+            .requestEmail()
+            .build()
         googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
         firebaseFirestore = Firebase.firestore
-        mainBinding();sideBinding();getPermissions()
+        mainBinding();sideMenuBinding();getPermissions();setValues()
     }
 
     private fun mainBinding() {
@@ -103,7 +105,6 @@ class MainFragment : Fragment() {
                 show()
             }
         }
-        // TODO: add adapter for safe recycler
         val safeAdapter = SafeAdapter(
             viewModel = viewModel,
             lifeCycle = viewLifecycleOwner,
@@ -116,14 +117,17 @@ class MainFragment : Fragment() {
         binding.includedSubLayout.safeRecycler
     }
 
-    private fun sideBinding() {
-        menu = binding.navigationViewMainScreen
+    private fun sideMenuBinding() {
+        val menu = binding.navigationViewMainScreen
         val headerMenu = menu.getHeaderView(0)
 
         headerMenu.apply {
-            // TODO: change this to actual values
-            findViewById<TextView>(R.id.name_text_view).text = "Some new person"
-            findViewById<TextView>(R.id.email_text_view).text = "somebody.someone@gmail.com"
+            viewModel.userDisplayName.observe(viewLifecycleOwner) {
+                findViewById<TextView>(R.id.name_text_view).text = it
+            }
+            viewModel.userEmail.observe(viewLifecycleOwner) {
+                findViewById<TextView>(R.id.email_text_view).text = it
+            }
         }
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -186,7 +190,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    //---------------------------------------------------------------------------------------prompts
     private fun signInPrompt() {
         val promptSignInBinding = PromptSignInBinding.inflate(layoutInflater)
         signInDialog = Dialog(requireContext())
@@ -196,7 +199,6 @@ class MainFragment : Fragment() {
                 signInDialog.dismiss()
             }
             signIn.setOnClickListener {
-                // TODO: apply sign in bindings
                 val pass = userPasswordTextLayout.editText!!.text.toString()
                 userPasswordTextLayout.isErrorEnabled =
                     if (pass.length in 7..33) {
@@ -240,7 +242,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    //----------------------------------------------------------------------------permission-manager
     private fun getPermissions() {
         val permission = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -248,6 +249,23 @@ class MainFragment : Fragment() {
         )
         Log.d(TAG, "requesting permissions")
         requireActivity().requestPermissions(permission, 100)
+    }
+
+    private fun setValues() {
+        firebaseFirestore
+            .collection(UserDataConstants.tableName)
+            .document(auth.currentUser!!.uid)
+            .get()
+            .addOnSuccessListener {
+                viewModel.setData(
+                    displayName = it.get(UserDataConstants.userDisplayName).toString(),
+                    email = it.get(UserDataConstants.userEmail).toString(),
+                    photoUrl = it.get(UserDataConstants.userPhotoUrl).toString(),
+                )
+            }.addOnFailureListener {
+                it.printStackTrace()
+            }
+        Log.d(TAG, "uid= ${auth.currentUser!!.uid}")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -281,12 +299,17 @@ class MainFragment : Fragment() {
                         id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
                         context = requireContext(),
                         auth = auth,
-                        database = firebaseFirestore
-                    ) {
-                        Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
-                            .show()
-                        signInDialog.dismiss()
-                    }
+                        database = firebaseFirestore,
+                        onSuccess = {
+                            Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
+                                .show()
+                            signInDialog.dismiss()
+                        },
+                        onFailure = {
+                            Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    )
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
                 }

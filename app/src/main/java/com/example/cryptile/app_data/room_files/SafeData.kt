@@ -226,7 +226,6 @@ class SafeData(
         val fileDirectory = File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation)
         if (fileDirectory.exists()) return false else fileDirectory.mkdirs()
 
-
         File(
             Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectory}"
         ).apply {

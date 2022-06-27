@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
@@ -15,8 +16,12 @@ import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
+import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.MainFragmentDirections
 import com.example.cryptile.view_models.AppViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,46 +97,69 @@ class SafeAdapter(
                 cancelButton.setOnClickListener { dialogBox.dismiss() }
                 openButton.setOnClickListener {
                     openButton.isEnabled = false
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val key = if (safeData.safeUsesMultiplePassword) {
-                            safeData.getKey(
-                                passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                                passwordTwo = passwordTwoTextLayout.editText!!.text.toString()
-                            )
-                        } else {
-                            safeData.getKey(
-                                passwordOne = passwordOneTextLayout.editText!!.text.toString()
-                            )
-                        }.toMutableList()
-                        // TODO: append personal key if required to key
-                        val keyIsCorrect: Boolean = try {
-                            safeData.checkKeyGenerated(key)
-                        } catch (e: Exception) {
-                            e.printStackTrace();false
-                        }
-                        val stringList = mutableListOf<String>()
-                        for (i in key) stringList.add(SafeData.keyToString(i))
-
-                        val gson = Gson().toJson(stringList)
-                        CoroutineScope(Dispatchers.Main).launch {
-                            if (keyIsCorrect) {
-                                dialogBox.dismiss()
-                                navController.navigate(
-                                    MainFragmentDirections
-                                        .actionMainFragmentToSafeViewerFragment(safeData.id, gson)
-                                )
-                            } else {
-                                passwordOneTextLayout.apply {
-                                    error = "Password might be incorrect"; isErrorEnabled = true
+                    Firebase.firestore
+                        .collection(UserDataConstants.tableName)
+                        .document(Firebase.auth.currentUser!!.uid)
+                        .get()
+                        .addOnSuccessListener {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val keyList = if (safeData.safeUsesMultiplePassword) {
+                                    safeData.getKey(
+                                        passwordOne = passwordOneTextLayout.editText!!.text.toString(),
+                                        passwordTwo = passwordTwoTextLayout.editText!!.text.toString()
+                                    )
+                                } else {
+                                    safeData.getKey(
+                                        passwordOne = passwordOneTextLayout.editText!!.text.toString()
+                                    )
                                 }
-                                passwordTwoTextLayout.apply {
-                                    if (safeData.safeUsesMultiplePassword) error =
-                                        "Password might be incorrect"; isErrorEnabled = true
+                                if (safeData.personalAccessOnly) {
+                                    keyList.add(
+                                        SafeData.stringToKey(
+                                            it.get(UserDataConstants.userKey).toString()
+                                        )
+                                    )
+                                }
+                                val keyIsCorrect: Boolean = try {
+                                    safeData.checkKeyGenerated(keyList)
+                                } catch (e: Exception) {
+                                    e.printStackTrace();false
+                                }
+                                val stringList = mutableListOf<String>()
+                                for (i in keyList) stringList.add(SafeData.keyToString(i))
+
+
+                                val gson = Gson().toJson(stringList)
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    if (keyIsCorrect) {
+                                        dialogBox.dismiss()
+                                        navController.navigate(
+                                            MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
+                                                safeData.id,
+                                                gson
+                                            )
+                                        )
+                                    } else {
+                                        passwordOneTextLayout.apply {
+                                            error = "Password might be incorrect"; isErrorEnabled =
+                                            true
+                                        }
+                                        passwordTwoTextLayout.apply {
+                                            if (safeData.safeUsesMultiplePassword) error =
+                                                "Password might be incorrect"; isErrorEnabled = true
+                                        }
+                                    }
+                                    openButton.isEnabled = true
                                 }
                             }
-                            openButton.isEnabled = true
+                        }.addOnFailureListener {
+                            it.printStackTrace()
+                            Toast.makeText(
+                                context,
+                                "an error has occurred: ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    }
                 }
             }
             dialogBox.apply {

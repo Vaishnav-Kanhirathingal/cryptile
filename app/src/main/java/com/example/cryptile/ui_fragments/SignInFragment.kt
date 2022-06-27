@@ -8,11 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
+import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.databinding.FragmentSignInBinding
 import com.example.cryptile.firebase.SignInFunctions
 import com.example.cryptile.firebase.UserDataConstants
+import com.example.cryptile.view_models.AppViewModel
+import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -108,17 +112,6 @@ class SignInFragment : Fragment() {
                     SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
                 )
             }
-            testButton.setOnClickListener {
-                firebaseFirestore.collection(UserDataConstants.tableName).get()
-                    .addOnSuccessListener {
-                        for (results in it) {
-                            Log.d(TAG, "data derived for [${results.id}] = [${results.data}]")
-                        }
-                    }.addOnFailureListener {
-                        it.printStackTrace()
-                    }
-                Log.d(TAG,"uid= ${auth.currentUser!!.uid}")
-            }
         }
     }
 
@@ -133,18 +126,26 @@ class SignInFragment : Fragment() {
                         id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
                         context = requireContext(),
                         auth = auth,
-                        database = firebaseFirestore
-                    ) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Google Login Successful",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        findNavController().navigate(
-                            SignInFragmentDirections.actionSignInFragmentToMainFragment()
-                        )
-                    }
+                        database = firebaseFirestore,
+                        onSuccess = {
+                            Toast.makeText(
+                                requireContext(),
+                                "Google Login Successful",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            findNavController().navigate(
+                                SignInFragmentDirections.actionSignInFragmentToMainFragment()
+                            )
+                        },
+                        onFailure = {
+                            Toast.makeText(
+                                requireContext(),
+                                "an error has occurred: $it",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    )
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
                 }

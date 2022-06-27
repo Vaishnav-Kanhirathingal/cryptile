@@ -1,5 +1,8 @@
 package com.example.cryptile.view_models
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.cryptile.app_data.room_files.SafeDao
@@ -9,7 +12,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
+private const val TAG = "AppViewModel"
+
 class AppViewModel(private val safeDao: SafeDao) : ViewModel() {
+
+    private val default = "UNKNOWN"
+    private var _userDisplayName = MutableLiveData(default)
+    private var _userEmail = MutableLiveData(default)
+    private var _userPhotoUrl = MutableLiveData(default)
+
+    val userDisplayName: LiveData<String> get() = _userDisplayName
+    val userEmail: LiveData<String> get() = _userEmail
+    val userPhotoUrl: LiveData<String> get() = _userPhotoUrl
+
+    fun setData(displayName: String, email: String, photoUrl: String) {
+        this._userDisplayName.value = displayName
+        this._userEmail.value = email
+        this._userPhotoUrl.value = photoUrl
+        Log.d(TAG, "displayName = $displayName, email = $email, photoUrl = $photoUrl")
+    }
+
     fun getListOfIds(): Flow<List<Int>> {
         return safeDao.getListOfIds()
     }
