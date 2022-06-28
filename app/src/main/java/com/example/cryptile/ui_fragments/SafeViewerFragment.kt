@@ -88,10 +88,7 @@ class SafeViewerFragment : Fragment() {
                     else -> false
                 }
             }
-            topAppBar.setNavigationOnClickListener {
-                findNavController().navigate(SafeViewerFragmentDirections.actionSafeViewerFragmentToMainFragment())
-            }
-
+            topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
             val opener: (SafeFiles) -> Unit = { safeData.openFile(key, it) }
             viewerAdapter = ViewerAdapter(opener)
             fileListRecyclerView.adapter = viewerAdapter

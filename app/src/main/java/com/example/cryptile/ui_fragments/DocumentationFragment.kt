@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.cryptile.databinding.FragmentDocumentationBinding
 
 class DocumentationFragment : Fragment() {
@@ -24,5 +25,14 @@ class DocumentationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        applyBinding()
+    }
+
+    private fun applyBinding() {
+        binding.apply {
+            topAppBar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
     }
 }

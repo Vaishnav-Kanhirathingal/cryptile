@@ -13,10 +13,6 @@
                 android:id="@+id/account_sign_out"
                 android:icon="@drawable/account_sign_out_24"
                 android:title="Sign Out" />
-            <item
-                android:id="@+id/account_sign_up"
-                android:icon="@drawable/account_add_24"
-                android:title="Sign Up" />
         </menu>
     </item>
     <item android:title="Safe">

@@ -19,16 +19,10 @@ import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
-import com.example.cryptile.databinding.PromptSignInBinding
-import com.example.cryptile.firebase.SignInFunctions
 import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.adapters.SafeAdapter
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -43,14 +37,10 @@ class MainFragment : Fragment() {
     }
     private lateinit var binding: FragmentMainBinding
 
-    private lateinit var signInDialog: Dialog
-
     private lateinit var auth: FirebaseAuth
-    private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseFirestore: FirebaseFirestore
 
     private val IMPORT_REQUEST_CODE = 1
-    private val GOOGLE_REQUEST_CODE = 2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,11 +54,6 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         auth = Firebase.auth
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.web_client_id))
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
         firebaseFirestore = Firebase.firestore
         mainBinding();sideMenuBinding();getPermissions();setValues()
     }
@@ -132,7 +117,9 @@ class MainFragment : Fragment() {
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.account_sign_in -> {
-                    signInPrompt()
+                    findNavController().navigate(
+                        MainFragmentDirections.actionMainFragmentToSignInFragment()
+                    )
                     true
                 }
                 R.id.account_sign_out -> {
@@ -141,12 +128,6 @@ class MainFragment : Fragment() {
                     Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(
                         MainFragmentDirections.actionMainFragmentToSignInFragment()
-                    )
-                    true
-                }
-                R.id.account_sign_up -> {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToSignUpFragment()
                     )
                     true
                 }
@@ -190,58 +171,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun signInPrompt() {
-        val promptSignInBinding = PromptSignInBinding.inflate(layoutInflater)
-        signInDialog = Dialog(requireContext())
-        promptSignInBinding.apply {
-            cancelSignIn.setOnClickListener {
-                Toast.makeText(requireContext(), "Sign In Failed", Toast.LENGTH_SHORT).show()
-                signInDialog.dismiss()
-            }
-            signIn.setOnClickListener {
-                val pass = userPasswordTextLayout.editText!!.text.toString()
-                userPasswordTextLayout.isErrorEnabled =
-                    if (pass.length in 7..33) {
-                        SignInFunctions.signInWithEmail(
-                            email = userEmailTextLayout.editText!!.text.toString(),
-                            password = pass,
-                            auth = auth,
-                            context = requireContext(),
-                            layoutInflater = layoutInflater,
-                            {
-                                Toast.makeText(
-                                    context,
-                                    "You have been logged in",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                                signInDialog.dismiss()
-                            }, { error: String ->
-                                // TODO: on error
-                                Log.e(TAG, error)
-                            }
-                        )
-                        false
-                    } else {
-                        userPasswordTextLayout.error = "password isn't 8-32 characters long"
-                        true
-                    }
-            }
-            googleSignInButton.setOnClickListener {
-                startActivityForResult(googleSignInClient.signInIntent, GOOGLE_REQUEST_CODE)
-            }
-        }
-        signInDialog.apply {
-            setContentView(promptSignInBinding.root)
-            window!!.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            setCancelable(false)
-            show()
-        }
-    }
-
     private fun getPermissions() {
         val permission = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -265,7 +194,6 @@ class MainFragment : Fragment() {
             }.addOnFailureListener {
                 it.printStackTrace()
             }
-        Log.d(TAG, "uid= ${auth.currentUser!!.uid}")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -274,8 +202,7 @@ class MainFragment : Fragment() {
             IMPORT_REQUEST_CODE -> {
                 try {
                     val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
-                    Log.d(TAG, "Safe Path = $path")
-                    if (path.isNullOrBlank() || !path.endsWith(".txt")) {
+                    if (path.isBlank() || !path.endsWith(".txt")) {
                         Toast.makeText(
                             requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
                         ).show()
@@ -283,35 +210,10 @@ class MainFragment : Fragment() {
                         viewModel.insert(SafeData.load(path))
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(
-                        requireContext(),
-                        "System Error, Reselect File",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
                     e.printStackTrace()
-                }
-            }
-            GOOGLE_REQUEST_CODE -> {
-                try {
-                    Log.d(TAG, "google sign-in started")
-                    SignInFunctions.signInUsingGoogle(
-                        id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
-                        context = requireContext(),
-                        auth = auth,
-                        database = firebaseFirestore,
-                        onSuccess = {
-                            Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
-                                .show()
-                            signInDialog.dismiss()
-                        },
-                        onFailure = {
-                            Toast.makeText(requireContext(), "Login Successful", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    )
-                } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(), "System Error: ${e.message}", Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             else -> Log.e(TAG, "request code didn't match")

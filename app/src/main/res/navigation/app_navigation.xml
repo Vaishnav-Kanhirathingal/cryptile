@@ -9,32 +9,17 @@
         android:id="@+id/aboutFragment"
         android:name="com.example.cryptile.ui_fragments.AboutFragment"
         android:label="fragment_about"
-        tools:layout="@layout/fragment_about">
-        <action
-            android:id="@+id/action_aboutFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_about"/>
     <fragment
         android:id="@+id/documentationFragment"
         android:name="com.example.cryptile.ui_fragments.DocumentationFragment"
         android:label="fragment_documentation"
-        tools:layout="@layout/fragment_documentation">
-        <action
-            android:id="@+id/action_documentationFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_documentation"/>
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.cryptile.ui_fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main">
-        <action
-            android:id="@+id/action_mainFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
         <action
             android:id="@+id/action_mainFragment_to_documentationFragment"
             app:destination="@id/documentationFragment" />
@@ -63,34 +48,17 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.cryptile.ui_fragments.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up">
-        <action
-            android:id="@+id/action_signUpFragment_to_signInFragment"
-            app:destination="@id/signInFragment"
-            app:popUpTo="@id/signInFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_sign_up"/>
     <fragment
         android:id="@+id/createSafeFragment"
         android:name="com.example.cryptile.ui_fragments.CreateSafeFragment"
         android:label="fragment_create_safe"
-        tools:layout="@layout/fragment_create_safe">
-        <action
-            android:id="@+id/action_createSafeFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_create_safe"/>
     <fragment
         android:id="@+id/safeViewerFragment"
         android:name="com.example.cryptile.ui_fragments.SafeViewerFragment"
         android:label="fragment_safe_viewer"
         tools:layout="@layout/fragment_safe_viewer">
-        <action
-            android:id="@+id/action_safeViewerFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
         <argument
             android:name="id"
             app:argType="integer" />
@@ -102,24 +70,12 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.cryptile.ui_fragments.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings">
-        <action
-            android:id="@+id/action_settingsFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_settings"/>
     <fragment
         android:id="@+id/permissionsFragment"
         android:name="com.example.cryptile.ui_fragments.PermissionsFragment"
         android:label="fragment_permissions"
-        tools:layout="@layout/fragment_permissions">
-        <action
-            android:id="@+id/action_permissionsFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_permissions"/>
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.cryptile.ui_fragments.SignInFragment"

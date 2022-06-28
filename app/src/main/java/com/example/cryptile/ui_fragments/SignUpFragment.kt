@@ -98,9 +98,7 @@ class SignUpFragment : Fragment() {
                         context = requireContext(),
                         layoutInflater = layoutInflater,
                         onMessageDismiss = {
-                            findNavController().navigate(
-                                SignUpFragmentDirections.actionSignUpFragmentToSignInFragment()
-                            )
+                            findNavController().navigateUp()
                         }, onFailure = {
                             userEmailTextLayout.error = it
                             userEmailTextLayout.isErrorEnabled = true
@@ -110,9 +108,7 @@ class SignUpFragment : Fragment() {
                 }
             }
             cancelLogin.setOnClickListener {
-                findNavController().navigate(
-                    SignUpFragmentDirections.actionSignUpFragmentToSignInFragment()
-                )
+                findNavController().navigateUp()
             }
         }
     }

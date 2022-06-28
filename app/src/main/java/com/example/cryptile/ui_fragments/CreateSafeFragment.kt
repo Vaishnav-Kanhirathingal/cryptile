@@ -36,8 +36,8 @@ class CreateSafeFragment : Fragment() {
     private val viewModel: AppViewModel by activityViewModels {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
-    private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+    private lateinit var firebaseFirestore: FirebaseFirestore
 
     private lateinit var binding: FragmentCreateSafeBinding
     private var currentPath: MutableLiveData<String> =
@@ -54,15 +54,15 @@ class CreateSafeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        firebaseFirestore = Firebase.firestore
         auth = Firebase.auth
+        firebaseFirestore = Firebase.firestore
         mainBinding()
     }
 
     private fun mainBinding() {
         binding.apply {
             topAppBar.setNavigationOnClickListener {
-                findNavController().navigate(CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment())
+                findNavController().navigateUp()
             }
             useMultiplePasswordsSwitch
                 .setOnCheckedChangeListener { _, status -> useMultiplePasswords.value = status }
@@ -71,9 +71,7 @@ class CreateSafeFragment : Fragment() {
             selectDirectoryImageButton.setOnClickListener { selectDirectory() }
             currentPath.observe(viewLifecycleOwner) { currentSafeDirectory.text = it }
             cancelButton.setOnClickListener {
-                findNavController().navigate(
-                    CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
-                )
+                findNavController().navigateUp()
             }
             confirmButton.setOnClickListener {
                 val p1Check = safePasswordOneInputLayout.editText!!.text.toString().length > 7
@@ -101,9 +99,7 @@ class CreateSafeFragment : Fragment() {
                                             "Files generated Successfully",
                                             Toast.LENGTH_SHORT
                                         ).show()
-                                        findNavController().navigate(
-                                            CreateSafeFragmentDirections.actionCreateSafeFragmentToMainFragment()
-                                        )
+                                        findNavController().navigateUp()
                                     } else {
                                         Toast.makeText(
                                             requireContext(),
@@ -147,7 +143,7 @@ class CreateSafeFragment : Fragment() {
                 safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
                     "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
                 },
-                safeOwner = "get from data store",// TODO: get from data store
+                safeOwner = viewModel.userDisplayName.value.toString(),
                 safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
                 personalAccessOnly = personalAccessOnlySwitch.isChecked,
                 encryptionAlgorithm = when (encryptionLevelSlider.value) {
@@ -156,7 +152,7 @@ class CreateSafeFragment : Fragment() {
                     else -> "three"
                 },
                 safeCreated = System.currentTimeMillis(),
-                hideSafePath = !pathHiddenSwitch.isChecked,// TODO: change
+                hideSafePath = !pathHiddenSwitch.isChecked,
                 safeAbsoluteLocation = currentPath.value + "/" +
                         safeNameInputLayout.editText!!.text.toString().ifEmpty {
                             "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())

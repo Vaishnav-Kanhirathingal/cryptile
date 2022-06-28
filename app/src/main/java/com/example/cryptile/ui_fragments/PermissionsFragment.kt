@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.cryptile.databinding.FragmentPermissionsBinding
 
 class PermissionsFragment : Fragment() {
@@ -24,13 +25,14 @@ class PermissionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //code
-        topBinding()
-        mainBinding()
+        applyBinding()
     }
 
-    private fun topBinding() {
-    }
-
-    private fun mainBinding() {
+    private fun applyBinding() {
+        binding.apply {
+            topAppBar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
     }
 }

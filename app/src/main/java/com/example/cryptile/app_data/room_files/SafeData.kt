@@ -59,7 +59,6 @@ class SafeData(
         // TODO: check below this
         const val testSizeLimit = 50
 
-
         /**
          * takes key converted to string as parameter and converts it back to the initial key.
          */
@@ -86,7 +85,7 @@ class SafeData(
         }
 
         /**
-         * encrypts byte array using key given.
+         * encrypts byte array using key list given.
          */
         fun encrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
             try {
@@ -104,7 +103,8 @@ class SafeData(
         }
 
         /**
-         * decrypts encrypted byte array using key given.
+         * decrypts encrypted byte array using key list given. the order of the keys are reversed.
+         * So, the keys should be in the same order as when provided for encryption
          */
         fun decrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
             try {
@@ -194,10 +194,8 @@ class SafeData(
     }
 
     /**
-     * takes the safe root path from the safe-data variable. Appends the value of variable
-     * safeDataFolder and logFile to the rootPath provided. This gives the location of the log
-     * file. Then, it takes the string and add it to the end of the log file after appropriate
-     * formatting.
+     * this function is a logging function which takes a string as parameter then, appends it to the
+     * end of a string with the current time and safeName and writes it to the log text file.
      */
     fun saveChangesToLogFile(string: String) {
         FileWriter(
@@ -217,21 +215,22 @@ class SafeData(
     }
 
     /**
-     * takes safe path to store test files at appropriate locations. Uses master key for
-     * encryption. Generates a long string for encryption and stores it in the unencrypted file.
-     * Then, encrypts the string and stores it into the encrypted file. This is also responsible
-     * for generating data path to store encrypted files.
+     * this function generates necessary directories for all safe files. these directories include
+     * the cache, export and the data directories. an additional test directory with one plain test
+     * and it's corresponding cipher text is also generated to check if the key received is correct.
+     * these are generated using the masterkey list provided
      */
     fun generateDirectories(masterKey: List<SecretKey>): Boolean {
         val fileDirectory = File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation)
         if (fileDirectory.exists()) return false else fileDirectory.mkdirs()
-
+        File(
+            Environment.getExternalStorageDirectory(),
+            "$safeAbsoluteLocation/${exportDirectoryName}"
+        ).mkdirs()
         File(
             Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectory}"
         ).apply {
-            if (!this.exists()) {
-                this.mkdirs()
-            }
+            this.mkdirs()
             val plainWriter = FileWriter(File(this, unencryptedTestFileName))
             val cipherWriter = FileWriter(File(this, encryptedTestFileName))
 
@@ -265,7 +264,6 @@ class SafeData(
      * decrypt the partial key using given password and return the result as key.
      */
     fun getKey(passwordOne: String): MutableList<SecretKey> {
-        // TODO: implement personal
         return mutableListOf(generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }))
     }
 
@@ -274,7 +272,6 @@ class SafeData(
      * generated, encrypt key-two using key one to get final key to be returned.
      */
     fun getKey(passwordOne: String, passwordTwo: String): MutableList<SecretKey> {
-        // TODO: implement personal
         return mutableListOf(
             generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }),
             generateKeyFromPassword(passwordTwo.ifEmpty { DEFAULT_PASSWORD })
@@ -322,9 +319,9 @@ class SafeData(
     }
 
     /**
-     * takes master key as parameter. it then takes the test file content from safe, encrypts
+     * takes list of master key as parameter then takes the test file content from safe, encrypts
      * it, then checks if the encrypted string is the same as the encrypted test file content.
-     * if same, returns true else false
+     * if same for every line in the file, returns true else false.
      */
     fun checkKeyGenerated(masterKey: List<SecretKey>): Boolean {
         val cipherReader =
@@ -357,7 +354,6 @@ class SafeData(
      * to store the encrypted file inside the safe.
      */
     fun importFileToSafe(fileAbsolutePath: String, safeMasterKey: List<SecretKey>) {
-        // TODO: add safe files content inside the folder
         val safeFile = getSafeFileEnum(fileAbsolutePath)
         val file = File("${rootDirectory}/$fileAbsolutePath")
         val originalFileByteArray = ByteArray(
