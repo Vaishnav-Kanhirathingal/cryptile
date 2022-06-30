@@ -33,19 +33,20 @@
         tools:itemCount="8"
         tools:listitem="@layout/list_item_file_explorer" />
 
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerColor="@color/black"
+        app:dividerThickness="@dimen/divider_thickness"
+        tools:dividerThickness="1dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#eeeeee"
         android:gravity="center"
-        android:orientation="vertical">
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:dividerColor="@color/black"
-            app:dividerThickness="@dimen/divider_thickness"
-            tools:dividerThickness="1dp" />
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/add_file_bottom_button"

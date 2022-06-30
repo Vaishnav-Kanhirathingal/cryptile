@@ -1,7 +1,11 @@
 package com.example.cryptile.app_data.room_files
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Environment
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -21,6 +25,7 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
+
 
 private const val TAG = "SafeData"
 
@@ -214,11 +219,56 @@ class SafeData(
         }
     }
 
+    fun changeEncryption(
+        oldKey: List<SecretKey>,
+        newKey: List<SecretKey>,
+        afterIterator: (Float) -> Unit
+    ) {
+        val listOfFiles = File(
+            Environment.getExternalStorageDirectory(),
+            "${safeAbsoluteLocation}/${safeDataDirectory}"
+        ).listFiles()
+        val size = listOfFiles!!.size.toFloat()
+        var counter = 0.0f
+        if (!listOfFiles.isNullOrEmpty()) {
+            for (i in listOfFiles) {
+                // TODO: re-encrypt everything
+                val originalFile = File(i, encryptedFileName)
+                val originalByte = ByteArray(
+                    Files.readAttributes(originalFile.toPath(), BasicFileAttributes::class.java)
+                        .size().toInt()
+                )
+                BufferedInputStream(FileInputStream(originalFile)).apply {
+                    read(originalByte, 0, originalByte.size);close()
+                }
+                val newByteArray = encrypt(decrypt(originalByte, oldKey)!!, newKey)!!
+                originalFile.writeBytes(newByteArray)
+                counter++
+                afterIterator((counter / size) * 100)
+            }
+        }
+        File(
+            Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectory}"
+        ).apply {
+            val plainTextReader = BufferedReader(FileReader(File(this, unencryptedTestFileName)))
+            val cipherWriter = FileWriter(File(this, encryptedTestFileName))
+            cipherWriter.write("")
+            for (i in 0..testSizeLimit) {
+                val pt = plainTextReader.readLine()
+                val ct = String(encrypt(pt.toByteArray(StandardCharsets.ISO_8859_1), newKey)!!)
+                cipherWriter.append("$ct\n")
+                Log.d(TAG, "pt - $pt, ct - $ct")
+            }
+            plainTextReader.apply { close() }
+            cipherWriter.apply { flush();close() }
+        }
+    }
+
     /**
      * this function generates necessary directories for all safe files. these directories include
      * the cache, export and the data directories. an additional test directory with one plain test
      * and it's corresponding cipher text is also generated to check if the key received is correct.
-     * these are generated using the masterkey list provided
+     * these are generated using the master-key list provided
      */
     fun generateDirectories(masterKey: List<SecretKey>): Boolean {
         val fileDirectory = File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation)
@@ -267,6 +317,7 @@ class SafeData(
         return mutableListOf(generateKeyFromPassword(passwordOne.ifEmpty { DEFAULT_PASSWORD }))
     }
 
+
     /**
      * generates key one and key two using the method mentioned in get-key function. Once
      * generated, encrypt key-two using key one to get final key to be returned.
@@ -277,7 +328,6 @@ class SafeData(
             generateKeyFromPassword(passwordTwo.ifEmpty { DEFAULT_PASSWORD })
         )
     }
-
 
     /**
      * this returns the name of every file and folder inside the '{safePath}/DATA' folder. This
@@ -380,7 +430,7 @@ class SafeData(
         )
     }
 
-    fun openFile(safeMasterKey: List<SecretKey>, safeFile: SafeFiles) {
+    fun openFile(safeMasterKey: List<SecretKey>, safeFile: SafeFiles, context: Context) {
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val encryptedFile = File(
             Environment.getExternalStorageDirectory(),
@@ -398,15 +448,35 @@ class SafeData(
             e.printStackTrace()
         }
 
-        File(
+        val decryptedFile = File(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/$cacheDirectory/${decryptedFileName}.${safeFile.extension}"
-        ).writeBytes(decrypt(encryptedByteArray, safeMasterKey)!!)
+        )
+        decryptedFile.writeBytes(decrypt(encryptedByteArray, safeMasterKey)!!)
         saveChangesToLogFile(
             "File opened - ${safeFile.fileDirectory}, " +
                     "file extension ${safeFile.fileDirectory}, " +
                     "file size - ${safeFile.fileSize}"
         )
+
+        val uri: Uri = Uri.fromFile(decryptedFile).normalizeScheme()
+        val mime: String = getMimeType(uri.toString())!!
+        val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        intent.data = uri
+        intent.type = mime
+        context.startActivity(Intent.createChooser(intent, "Open file with"))
+
+    }
+
+    private fun getMimeType(url: String?): String? {
+        val ext = MimeTypeMap.getFileExtensionFromUrl(url)
+        return if (ext != null) {
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
+        } else {
+            null
+        }
+
     }
 
     /**
@@ -442,7 +512,7 @@ class SafeData(
     }
 
     /**
-     * deletes safe directories entirely
+     * deletes safe directories entirely using recursive deletion
      */
     fun deleteSafe() {
         File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation).deleteRecursively()

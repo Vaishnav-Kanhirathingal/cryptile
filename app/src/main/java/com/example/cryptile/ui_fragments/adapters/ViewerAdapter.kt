@@ -1,5 +1,6 @@
 package com.example.cryptile.ui_fragments.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -58,8 +59,13 @@ class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
     )
 
     override fun onBindViewHolder(holder: ViewerAdapterViewHolder, position: Int) {
-        val x = getItem(position)
-        holder.bind(x)
-        holder.itemView.setOnClickListener { holder.onClick(x) }
+        val safeFile = getItem(position)
+        holder.bind(safeFile)
+        holder.itemView.setOnLongClickListener {
+            Log.d(TAG, "long press detected")
+            // TODO: display prompt to open, export or delete the file
+            true
+        }
+        holder.itemView.setOnClickListener { holder.onClick(safeFile) }
     }
 }

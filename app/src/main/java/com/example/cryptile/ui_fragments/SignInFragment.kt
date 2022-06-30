@@ -8,15 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
-import com.example.cryptile.app_data.AppApplication
+import com.example.cryptile.app_data.data_store_files.AppDataStore
+import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.databinding.FragmentSignInBinding
 import com.example.cryptile.firebase.SignInFunctions
-import com.example.cryptile.firebase.UserDataConstants
-import com.example.cryptile.view_models.AppViewModel
-import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,6 +23,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "SignInFragment"
 
@@ -34,6 +35,8 @@ class SignInFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseFirestore: FirebaseFirestore
+
+    private lateinit var dataStore: AppDataStore
 
     private val GOOGLE_REQUEST_CODE = 3
 
@@ -57,7 +60,9 @@ class SignInFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dataStore = AppDataStore(requireContext())
         applyBindings()
+        navigateIfSignedIn()
     }
 
     private fun applyBindings() {
@@ -86,6 +91,16 @@ class SignInFragment : Fragment() {
                                 "You have been logged in",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            CoroutineScope(Dispatchers.IO).launch {
+                                dataStore.booleanSaver(
+                                    keepUserSignedInCheckbox.isChecked,
+                                    StoreBoolean.KEEP_ME_SIGNED_IN,
+                                )
+                                dataStore.booleanSaver(
+                                    binding.fingerprintLockSwitch.isChecked,
+                                    StoreBoolean.USER_USES_FINGERPRINT
+                                )
+                            }
                             findNavController().navigate(
                                 SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             )
@@ -115,6 +130,16 @@ class SignInFragment : Fragment() {
         }
     }
 
+    private fun navigateIfSignedIn() {
+        dataStore.keepMeSignedInFlow.asLiveData().observe(viewLifecycleOwner) {
+            if (it && auth.currentUser != null) {
+                findNavController().navigate(
+                    SignInFragmentDirections.actionSignInFragmentToMainFragment()
+                )
+            }
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -132,8 +157,14 @@ class SignInFragment : Fragment() {
                                 requireContext(),
                                 "Google Login Successful",
                                 Toast.LENGTH_SHORT
-                            )
-                                .show()
+                            ).show()
+                            CoroutineScope(Dispatchers.IO).launch {
+                                dataStore.booleanSaver(true, StoreBoolean.KEEP_ME_SIGNED_IN)
+                                dataStore.booleanSaver(
+                                    binding.fingerprintLockSwitch.isChecked,
+                                    StoreBoolean.USER_USES_FINGERPRINT
+                                )
+                            }
                             findNavController().navigate(
                                 SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             )

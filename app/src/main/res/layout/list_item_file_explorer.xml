@@ -38,7 +38,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="File Name" />
 
-
         <TextView
             android:id="@+id/file_details_text_view"
             android:layout_width="0dp"
@@ -51,5 +50,4 @@
             app:layout_constraintTop_toBottomOf="@id/file_name_text_view"
             tools:text="10/2/22 | 79.64 MB" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

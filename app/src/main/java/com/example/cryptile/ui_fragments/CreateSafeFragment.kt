@@ -74,8 +74,22 @@ class CreateSafeFragment : Fragment() {
                 findNavController().navigateUp()
             }
             confirmButton.setOnClickListener {
-                val p1Check = safePasswordOneInputLayout.editText!!.text.toString().length > 7
-                val p2Check = safePasswordTwoInputLayout.editText!!.text.toString().length > 7
+                val p1Check: Boolean
+                safePasswordOneInputLayout.apply {
+                    p1Check = this.editText!!.text.toString().length in 7..33
+                    this.error = "Password length should be 8-32 characters"
+                    this.isErrorEnabled = !p1Check
+                }
+                val p2Check: Boolean
+                safePasswordTwoInputLayout.apply {
+                    if (useMultiplePasswordsSwitch.isChecked) {
+                        p2Check = this.editText!!.text.toString().length in 7..33
+                        this.error = "Password length should be 8-32 characters"
+                        this.isErrorEnabled = !p2Check
+                    } else {
+                        p2Check = true
+                    }
+                }
                 val conditionCheck = (p1Check && p2Check)
                 // TODO: replace with condition check
                 if (true) {

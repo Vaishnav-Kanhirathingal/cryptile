@@ -9,12 +9,12 @@
         android:id="@+id/aboutFragment"
         android:name="com.example.cryptile.ui_fragments.AboutFragment"
         android:label="fragment_about"
-        tools:layout="@layout/fragment_about"/>
+        tools:layout="@layout/fragment_about" />
     <fragment
         android:id="@+id/documentationFragment"
         android:name="com.example.cryptile.ui_fragments.DocumentationFragment"
         android:label="fragment_documentation"
-        tools:layout="@layout/fragment_documentation"/>
+        tools:layout="@layout/fragment_documentation" />
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.cryptile.ui_fragments.MainFragment"
@@ -48,12 +48,12 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.cryptile.ui_fragments.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up"/>
+        tools:layout="@layout/fragment_sign_up" />
     <fragment
         android:id="@+id/createSafeFragment"
         android:name="com.example.cryptile.ui_fragments.CreateSafeFragment"
         android:label="fragment_create_safe"
-        tools:layout="@layout/fragment_create_safe"/>
+        tools:layout="@layout/fragment_create_safe" />
     <fragment
         android:id="@+id/safeViewerFragment"
         android:name="com.example.cryptile.ui_fragments.SafeViewerFragment"
@@ -70,12 +70,12 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.cryptile.ui_fragments.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/permissionsFragment"
         android:name="com.example.cryptile.ui_fragments.PermissionsFragment"
         android:label="fragment_permissions"
-        tools:layout="@layout/fragment_permissions"/>
+        tools:layout="@layout/fragment_permissions" />
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.cryptile.ui_fragments.SignInFragment"

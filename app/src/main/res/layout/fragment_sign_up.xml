@@ -27,8 +27,8 @@
             android:id="@+id/user_name_text_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/sign_up_vertical"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sign_up_vertical"
             android:hint="New User Name"
             app:helperText="This will be displayed as the account name."
             app:startIconDrawable="@drawable/account_24">
@@ -63,8 +63,8 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Set New Password"
             android:layout_marginTop="@dimen/sign_up_vertical"
+            android:hint="Set New Password"
             app:counterEnabled="true"
             app:counterMaxLength="32"
             app:endIconMode="password_toggle"
@@ -84,10 +84,10 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sign_up_vertical"
             android:hint="Confirm New Password"
             app:counterEnabled="true"
             app:counterMaxLength="32"
-            android:layout_marginTop="@dimen/sign_up_vertical"
             app:endIconMode="password_toggle"
             app:helperText="Repeat Password"
             app:startIconDrawable="@drawable/password_24">
@@ -111,8 +111,8 @@
             android:id="@+id/cancel_login"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/sign_up_vertical"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sign_up_vertical"
             android:text="@string/cancel" />
     </LinearLayout>
 </ScrollView>

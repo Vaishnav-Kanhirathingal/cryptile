@@ -16,6 +16,8 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
+import com.example.cryptile.app_data.data_store_files.AppDataStore
+import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.app_data.room_files.SafeData
 import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
@@ -28,6 +30,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "MainFragment"
 
@@ -39,6 +44,8 @@ class MainFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
+
+    private lateinit var dataStore: AppDataStore
 
     private val IMPORT_REQUEST_CODE = 1
 
@@ -52,7 +59,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        dataStore = AppDataStore(requireContext())
         auth = Firebase.auth
         firebaseFirestore = Firebase.firestore
         mainBinding();sideMenuBinding();getPermissions();setValues()
@@ -124,6 +131,9 @@ class MainFragment : Fragment() {
                 }
                 R.id.account_sign_out -> {
                     // TODO: prompt
+                    CoroutineScope(Dispatchers.IO).launch {
+                        dataStore.booleanSaver(false, StoreBoolean.KEEP_ME_SIGNED_IN)
+                    }
                     auth.signOut()
                     Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(
