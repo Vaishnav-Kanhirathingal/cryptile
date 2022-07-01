@@ -23,6 +23,7 @@ import com.example.cryptile.databinding.FragmentMainBinding
 import com.example.cryptile.databinding.PromptAddSafeBinding
 import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.adapters.SafeAdapter
+import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -80,10 +81,20 @@ class MainFragment : Fragment() {
                     dialogBox.dismiss()
                 }
                 importSafeButton.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    intent.type = "text/plain"
-                    startActivityForResult(intent, IMPORT_REQUEST_CODE)
-                    dialogBox.dismiss()
+                    AdditionalPrompts.confirmationPrompt(
+                        context = requireContext(),
+                        title = "Import Safe?",
+                        message = "To import an already created safe into the app, navigate to " +
+                                "the safe's folder and find the file named " +
+                                "${SafeData.metaDataFileName}. Selecting this file would import " +
+                                "the safe into the app. Continue?",
+                        onSuccess = {
+                            val intent = Intent(Intent.ACTION_GET_CONTENT)
+                            intent.type = "text/plain"
+                            startActivityForResult(intent, IMPORT_REQUEST_CODE)
+                            dialogBox.dismiss()
+                        }
+                    )
                 }
                 cancelButton.setOnClickListener { dialogBox.dismiss() }
             }
@@ -131,19 +142,32 @@ class MainFragment : Fragment() {
                 }
                 R.id.account_sign_out -> {
                     // TODO: prompt
-                    CoroutineScope(Dispatchers.IO).launch {
-                        dataStore.booleanSaver(false, StoreBoolean.KEEP_ME_SIGNED_IN)
-                    }
-                    auth.signOut()
-                    Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToSignInFragment()
+                    AdditionalPrompts.confirmationPrompt(
+                        context = requireContext(),
+                        title = "Sign Out?",
+                        message = "Sign Out from your current signed in account [${viewModel.userDisplayName.value}]?",
+                        onSuccess = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                dataStore.booleanSaver(false, StoreBoolean.KEEP_ME_SIGNED_IN)
+                            }
+                            auth.signOut()
+                            Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT)
+                                .show()
+                            findNavController().navigate(
+                                MainFragmentDirections.actionMainFragmentToSignInFragment()
+                            )
+                        }
                     )
                     true
                 }
                 R.id.safe_remove_all -> {
                     // TODO: prompt
-                    viewModel.deleteAll()
+                    AdditionalPrompts.confirmationPrompt(
+                        context = requireContext(),
+                        title = "remove list?",
+                        message = "Remove all CRYPTILE safes from the list (does not delete them)?",
+                        onSuccess = { viewModel.deleteAll() }
+                    )
                     true
                 }
                 R.id.settings -> {
@@ -172,6 +196,15 @@ class MainFragment : Fragment() {
                 }
                 R.id.app_exit -> {
                     // TODO: prompt
+                    AdditionalPrompts.confirmationPrompt(
+                        context = requireContext(),
+                        title = "Exit app?",
+                        message = "Using this option also signs you out of your account " +
+                                "regardless of whether you have enabled \'keep me signed in\'. Proceed?",
+                        onSuccess = {
+                            // TODO: sign out, exit app
+                        }
+                    )
                     true
                 }
                 else -> {

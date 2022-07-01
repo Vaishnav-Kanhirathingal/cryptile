@@ -1,6 +1,5 @@
 package com.example.cryptile.ui_fragments
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -21,6 +20,7 @@ import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.databinding.PromptSafeSettingsBinding
 import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.adapters.ViewerAdapter
+import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
 import com.google.firebase.auth.ktx.auth
@@ -94,7 +94,20 @@ class SafeViewerFragment : Fragment() {
                         true
                     }
                     R.id.send_log_files -> {
-                        // TODO: start an intent to share logs to email
+                        AdditionalPrompts.confirmationPrompt(
+                            context = requireContext(),
+                            title = "Send Log?",
+                            message = "Log files contain a list of actions that you have " +
+                                    "performed from the date of it's creation. Logs do not " +
+                                    "contain any personal information other than your accounts " +
+                                    "user name and the type of files you imported/opened/exported " +
+                                    "along with its size. (eg - extension - \'.mp4\' size - 32 MB). " +
+                                    "these files can be useful for the developer to figure out any " +
+                                    "faults within the app. Continue?",
+                            onSuccess = {
+                                // TODO: open intent to send log file
+                            }
+                        )
                         true
                     }
                     else -> false
@@ -135,7 +148,8 @@ class SafeViewerFragment : Fragment() {
             safeNameInputLayout.setEndIconOnClickListener {
                 val name = safeNameInputLayout.editText!!.text.toString()
                 if (name.length in 7..32) {
-                    confirmationPrompt(
+                    AdditionalPrompts.confirmationPrompt(
+                        context = requireContext(),
                         title = "Change Safe's name?",
                         message = "This action will change the display name of the " +
                                 "safe but, the directory name will remain the same. Continue?",
@@ -159,7 +173,8 @@ class SafeViewerFragment : Fragment() {
                 }
             }
             exportAll.setOnClickListener {
-                confirmationPrompt(
+                AdditionalPrompts.confirmationPrompt(
+                    context = requireContext(),
                     title = "Export all files?",
                     message = "This action would decrypt all files to the export folder " +
                             "and then, remove all contents from the data folder rendering" +
@@ -187,7 +202,8 @@ class SafeViewerFragment : Fragment() {
                 }
                 // TODO: replace with p1check && p2check
                 if (true) {
-                    confirmationPrompt(
+                    AdditionalPrompts.confirmationPrompt(
+                        context = requireContext(),
                         title = "Change security settings?",
                         message = "This action would re-encrypt all files in the safe to match " +
                                 "with the newly generated keys. This action can take some time " +
@@ -239,19 +255,6 @@ class SafeViewerFragment : Fragment() {
                     )
                 }
             }
-        }
-    }
-
-    private fun confirmationPrompt(title: String, message: String, onSuccess: () -> Unit) {
-        Log.d(TAG, "title : $title, message: $message")
-        // TODO: show prompt
-        val dialogBox = AlertDialog.Builder(requireContext())
-        dialogBox.apply {
-            setMessage(message)
-            setCancelable(true)
-            setNegativeButton("No") { _, _ -> }
-            setPositiveButton("Yes") { _, _ -> onSuccess() }
-            show()
         }
     }
 

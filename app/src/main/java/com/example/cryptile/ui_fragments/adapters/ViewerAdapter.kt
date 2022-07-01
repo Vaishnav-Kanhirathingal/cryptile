@@ -1,6 +1,6 @@
 package com.example.cryptile.ui_fragments.adapters
 
-import android.util.Log
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -18,9 +18,9 @@ class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
 
     class ViewerAdapterViewHolder(
         private val openFile: (SafeFiles) -> Unit,
-        private val binding: ListItemFileExplorerBinding
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+        private val binding: ListItemFileExplorerBinding,
+        private val context: Context
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
                 fileNameTextView.text = safeFiles.fileNameUpperCase
@@ -40,6 +40,10 @@ class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
         }
 
         fun onClick(safeFiles: SafeFiles): Unit = openFile(safeFiles)
+
+        fun onLongPressed(safeFiles: SafeFiles) {
+            // TODO: prompt
+        }
     }
 
 
@@ -55,17 +59,14 @@ class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewerAdapterViewHolder(
         openFile,
-        ListItemFileExplorerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        ListItemFileExplorerBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+        parent.context
     )
 
     override fun onBindViewHolder(holder: ViewerAdapterViewHolder, position: Int) {
         val safeFile = getItem(position)
         holder.bind(safeFile)
-        holder.itemView.setOnLongClickListener {
-            Log.d(TAG, "long press detected")
-            // TODO: display prompt to open, export or delete the file
-            true
-        }
+        holder.itemView.setOnLongClickListener { holder.onLongPressed(safeFile);true }
         holder.itemView.setOnClickListener { holder.onClick(safeFile) }
     }
 }

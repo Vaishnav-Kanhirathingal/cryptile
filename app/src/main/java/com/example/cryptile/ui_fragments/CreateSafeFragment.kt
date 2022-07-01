@@ -185,7 +185,6 @@ class CreateSafeFragment : Fragment() {
                         passwordOne = passwordOne
                     )
                 }
-            // TODO: add personal key if necessary
             if (personalAccessOnlySwitch.isChecked) {
                 keyList.add(personalKey)
             }
