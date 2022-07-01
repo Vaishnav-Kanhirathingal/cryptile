@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.cryptile.R
-import com.example.cryptile.app_data.room_files.SafeData.Companion.createRandomPartialKey
+import com.example.cryptile.app_data.room_files.SafeData.Companion.createRandomKey
 import com.example.cryptile.databinding.PromptMessageBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -124,7 +124,7 @@ object SignInFunctions {
         val user = hashMapOf(
             UserDataConstants.userDisplayName to userName,
             UserDataConstants.userEmail to email,
-            UserDataConstants.userKey to createRandomPartialKey(),
+            UserDataConstants.userKey to createRandomKey(),
             UserDataConstants.userPhotoUrl to photoURL
         )
         Log.d(TAG, "uid = $uid")

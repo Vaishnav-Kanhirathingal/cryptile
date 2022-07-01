@@ -1,5 +1,6 @@
 package com.example.cryptile.ui_fragments
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -132,13 +133,13 @@ class SafeViewerFragment : Fragment() {
         }
         settingsBinding.apply {
             safeNameInputLayout.setEndIconOnClickListener {
-                confirmationPrompt(
-                    title = "Change Safe's name?",
-                    message = "This action will change the display name of the " +
-                            "safe but, the directory name will remain the same. Continue?",
-                    onSuccess = {
-                        val name = safeNameInputLayout.editText!!.text.toString()
-                        if (name.length in 7..32) {
+                val name = safeNameInputLayout.editText!!.text.toString()
+                if (name.length in 7..32) {
+                    confirmationPrompt(
+                        title = "Change Safe's name?",
+                        message = "This action will change the display name of the " +
+                                "safe but, the directory name will remain the same. Continue?",
+                        onSuccess = {
                             safeData.safeName = name
                             safeData.saveChangesToMetadata()
                             viewModel.update(safeData)
@@ -147,15 +148,15 @@ class SafeViewerFragment : Fragment() {
                                 "Safe name updated successfully",
                                 Toast.LENGTH_LONG
                             ).show()
-                        } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "Safe name should be between 8-32 character long",
-                                Toast.LENGTH_LONG
-                            ).show()
                         }
-                    }
-                )
+                    )
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Safe name should be between 8-32 character long",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
             exportAll.setOnClickListener {
                 confirmationPrompt(
@@ -163,76 +164,79 @@ class SafeViewerFragment : Fragment() {
                     message = "This action would decrypt all files to the export folder " +
                             "and then, remove all contents from the data folder rendering" +
                             " the safe empty. Continue?",
-                    onSuccess = {
-                        // TODO: export all
-                    }
+                    onSuccess = { safeData.exportAll(key) }
                 )
             }
             cancelButton.setOnClickListener { dialogBox.dismiss() }
             applyButton.setOnClickListener {
-                confirmationPrompt(
-                    title = "Change security settings?",
-                    message = "This action would re-encrypt all files in the safe to match with " +
-                            "the newly generated keys. This action can take some time " +
-                            "proportional to the size of the safe. Continue?"
-                ) {
-                    val p1Check: Boolean
-                    safePasswordOneInputLayout.apply {
-                        p1Check = this.editText!!.text.toString().length in 7..33
+                val p1Check: Boolean
+                safePasswordOneInputLayout.apply {
+                    p1Check = this.editText!!.text.toString().length in 7..33
+                    this.error = "Password length should be 8-32 characters"
+                    this.isErrorEnabled = !p1Check
+                }
+                val p2Check: Boolean
+                safePasswordTwoInputLayout.apply {
+                    if (useMultiplePasswordsSwitch.isChecked) {
+                        p2Check = this.editText!!.text.toString().length in 7..33
                         this.error = "Password length should be 8-32 characters"
-                        this.isErrorEnabled = !p1Check
+                        this.isErrorEnabled = !p2Check
+                    } else {
+                        p2Check = true
                     }
-                    val p2Check: Boolean
-                    safePasswordTwoInputLayout.apply {
-                        if (useMultiplePasswordsSwitch.isChecked) {
-                            p2Check = this.editText!!.text.toString().length in 7..33
-                            this.error = "Password length should be 8-32 characters"
-                            this.isErrorEnabled = !p2Check
-                        } else {
-                            p2Check = true
-                        }
-                    }
-                    // TODO: replace with p1check && p2check
-                    if (true) {
-                        Firebase
-                            .firestore
-                            .collection(UserDataConstants.tableName)
-                            .document(Firebase.auth.currentUser!!.uid)
-                            .get().addOnSuccessListener {
-                                safeData.safeUsesMultiplePassword =
-                                    useMultiplePasswordsSwitch.isChecked
-                                safeData.personalAccessOnly = personalAccessOnlySwitch.isChecked
-                                val newKeyList =
-                                    if (useMultiplePasswordsSwitch.isChecked) {
-                                        safeData.getKey(
-                                            safePasswordOneInputLayout.editText!!.text.toString(),
-                                            safePasswordTwoInputLayout.editText!!.text.toString()
+                }
+                // TODO: replace with p1check && p2check
+                if (true) {
+                    confirmationPrompt(
+                        title = "Change security settings?",
+                        message = "This action would re-encrypt all files in the safe to match " +
+                                "with the newly generated keys. This action can take some time " +
+                                "proportional to the size of the safe. Continue?",
+                        onSuccess = {
+                            Firebase
+                                .firestore
+                                .collection(UserDataConstants.tableName)
+                                .document(Firebase.auth.currentUser!!.uid)
+                                .get().addOnSuccessListener {
+                                    safeData.safeUsesMultiplePassword =
+                                        useMultiplePasswordsSwitch.isChecked
+                                    safeData.personalAccessOnly =
+                                        personalAccessOnlySwitch.isChecked
+                                    val newKeyList =
+                                        if (useMultiplePasswordsSwitch.isChecked) {
+                                            safeData.getKey(
+                                                safePasswordOneInputLayout.editText!!.text.toString(),
+                                                safePasswordTwoInputLayout.editText!!.text.toString()
+                                            )
+                                        } else {
+                                            safeData.getKey(safePasswordOneInputLayout.editText!!.text.toString())
+                                        }
+                                    if (personalAccessOnlySwitch.isChecked) {
+                                        newKeyList.add(
+                                            SafeData.stringToKey(
+                                                it.get(UserDataConstants.userKey).toString()
+                                            )
                                         )
-                                    } else {
-                                        safeData.getKey(safePasswordOneInputLayout.editText!!.text.toString())
                                     }
-                                if (personalAccessOnlySwitch.isChecked) {
-                                    newKeyList.add(
-                                        SafeData.stringToKey(
-                                            it.get(UserDataConstants.userKey).toString()
-                                        )
-                                    )
+                                    safeData.changeEncryption(
+                                        oldKey = key,
+                                        newKey = newKeyList
+                                    ) {
+                                        // TODO: progress bar takes float
+                                        Log.d(TAG, "file added, percent: $it")
+                                    }
+                                    viewModel.update(safeData)
+                                    key = newKeyList
+                                }.addOnFailureListener {
+                                    it.printStackTrace()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "an error has occurred: ${it.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                                safeData.changeEncryption(oldKey = key, newKey = newKeyList) {
-                                    // TODO: progress bar takes float
-                                    Log.d(TAG, "file added, percent: $it")
-                                }
-                                viewModel.update(safeData)
-                                key = newKeyList
-                            }.addOnFailureListener {
-                                it.printStackTrace()
-                                Toast.makeText(
-                                    requireContext(),
-                                    "an error has occurred: ${it.message}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                    }
+                        }
+                    )
                 }
             }
         }
@@ -240,7 +244,15 @@ class SafeViewerFragment : Fragment() {
 
     private fun confirmationPrompt(title: String, message: String, onSuccess: () -> Unit) {
         Log.d(TAG, "title : $title, message: $message")
-        onSuccess()
+        // TODO: show prompt
+        val dialogBox = AlertDialog.Builder(requireContext())
+        dialogBox.apply {
+            setMessage(message)
+            setCancelable(true)
+            setNegativeButton("No") { _, _ -> }
+            setPositiveButton("Yes") { _, _ -> onSuccess() }
+            show()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
