@@ -31,7 +31,6 @@ private const val TAG = "SafeData"
 
 @Entity(tableName = "safe_database")
 class SafeData(
-    // TODO: randomize id to avoid safe conflicts
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "safe_name") var safeName: String,
     @ColumnInfo(name = "safe_owner") var safeOwner: String,
@@ -270,10 +269,11 @@ class SafeData(
      * this function is a logging function which takes a string as parameter then, appends it to the
      * end of a string with the current time and safeName and writes it to the log text file.
      */
-    fun saveChangesToLogFile(
+    private fun saveChangesToLogFile(
         action: String,
         string: String
     ) {
+        // TODO: action should be of 16 size fixed
         FileWriter(
             File(
                 File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation),
@@ -282,8 +282,8 @@ class SafeData(
             true
         ).apply {
             append(
-                SimpleDateFormat("[yyyy|MM|dd | HH:mm:ss:SSS]").format(System.currentTimeMillis())
-                        + " - [$safeName] |\t[$action] |\t$string\n"
+                SimpleDateFormat("[yyyy|MM|dd]-[HH:mm:ss:SSS]").format(System.currentTimeMillis())
+                        + "-[$safeName] |\t[$action] |\t$string\n"
             );flush();close()
         }
     }
@@ -322,25 +322,28 @@ class SafeData(
         oldKey: List<SecretKey>,
         newKey: List<SecretKey>,
     ) {
-        val listOfFiles = File(
-            Environment.getExternalStorageDirectory(),
-            "${safeAbsoluteLocation}/${safeDataDirectory}"
-        ).listFiles()
-        // TODO: use size to display loading
-        val size = listOfFiles!!.size.toFloat()
-        if (!listOfFiles.isNullOrEmpty()) {
-            for (i in listOfFiles) {
+        val fileList = getDataFileList()
+
+        val size = fileList.size.toFloat()
+        if (!fileList.isEmpty()) {
+            for (i in fileList) {
                 // TODO: attempt to use get list of safe files
-                val originalFile = File(i, encryptedFileName)
-                val originalByte = ByteArray(
-                    Files.readAttributes(originalFile.toPath(), BasicFileAttributes::class.java)
-                        .size().toInt()
+                val originalFile = File(
+                    Environment.getExternalStorageDirectory(),
+                    "$safeAbsoluteLocation/" +
+                            "$safeDataDirectory/" +
+                            "${i.fileDirectory}/" +
+                            encryptedFileName
                 )
-                BufferedInputStream(FileInputStream(originalFile)).apply {
-                    read(originalByte, 0, originalByte.size);close()
-                }
-                val newByteArray = encrypt(decrypt(originalByte, oldKey)!!, newKey)!!
-                originalFile.writeBytes(newByteArray)
+                val reEncryptedByteArray =
+                    encrypt(
+                        decrypt(
+                            getEncryptedByteArrayFromSafeFile(i),
+                            oldKey
+                        )!!,
+                        newKey
+                    )!!
+                originalFile.writeBytes(reEncryptedByteArray)
             }
         }
         File(
