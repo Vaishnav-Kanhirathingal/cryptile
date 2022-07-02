@@ -274,6 +274,12 @@ class SafeData(
         string: String
     ) {
         // TODO: action should be of 16 size fixed
+        val newAction =
+            if (action.length > 15) {
+                action.substring(0, 15)
+            } else {
+                action.padEnd(16, '-')
+            }
         FileWriter(
             File(
                 File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation),
@@ -283,7 +289,7 @@ class SafeData(
         ).apply {
             append(
                 SimpleDateFormat("[yyyy|MM|dd]-[HH:mm:ss:SSS]").format(System.currentTimeMillis())
-                        + "-[$safeName] |\t[$action] |\t$string\n"
+                        + "-[$safeName] | [$newAction] | [$string]\n"
             );flush();close()
         }
     }
@@ -395,7 +401,7 @@ class SafeData(
             action = "export",
             string = "exported file from directory ${safeFile.fileDirectory} " +
                     "of extension ${safeFile.extension} " +
-                    "of size - ${SafeFiles.getSize(safeFile.fileSize)} " +
+                    "of size - ${safeFile.fileSize} " +
                     "to $exportDirectoryName folder in safe root"
         )
     }
@@ -412,7 +418,7 @@ class SafeData(
             action = "deletion",
             string = "deleted file from directory ${safeFile.fileDirectory} " +
                     "of extension ${safeFile.extension} " +
-                    "of size - ${SafeFiles.getSize(safeFile.fileSize)} "
+                    "of size - ${safeFile.fileSize} "
         )
     }
 
