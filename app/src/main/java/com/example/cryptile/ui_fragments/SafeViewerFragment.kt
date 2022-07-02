@@ -116,7 +116,7 @@ class SafeViewerFragment : Fragment() {
             viewerAdapter = ViewerAdapter(
                 opener = { safeData.openFile(key, it, requireContext()) },
                 exporter = { safeData.export(it, key) },
-                deleter = { safeData.delete(it);viewerAdapter.submitList(safeData.getDataFileList()) },
+                deleter = { safeData.deleteFile(it);viewerAdapter.submitList(safeData.getDataFileList()) },
                 layoutInflater = layoutInflater
             )
             fileListRecyclerView.adapter = viewerAdapter
@@ -239,10 +239,7 @@ class SafeViewerFragment : Fragment() {
                                     safeData.changeEncryption(
                                         oldKey = key,
                                         newKey = newKeyList
-                                    ) {
-                                        // TODO: progress bar takes float
-                                        Log.d(TAG, "file added, percent: $it")
-                                    }
+                                    )
                                     viewModel.update(safeData)
                                     key = newKeyList
                                 }.addOnFailureListener {

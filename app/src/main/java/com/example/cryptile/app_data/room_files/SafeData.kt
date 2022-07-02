@@ -313,20 +313,24 @@ class SafeData(
 
     //---------------------------------------------------------------------------safe-data-functions
 
+    /**
+     * this function is used to change the encryption of the safe after it undergoes a password
+     * change. The function takes a file at a time, uses the old key list to decrypt it, then,
+     * uses the new key list to encrypt it.
+     */
     fun changeEncryption(
         oldKey: List<SecretKey>,
         newKey: List<SecretKey>,
-        afterIterator: (Float) -> Unit
     ) {
         val listOfFiles = File(
             Environment.getExternalStorageDirectory(),
             "${safeAbsoluteLocation}/${safeDataDirectory}"
         ).listFiles()
+        // TODO: use size to display loading
         val size = listOfFiles!!.size.toFloat()
-        var counter = 0.0f
         if (!listOfFiles.isNullOrEmpty()) {
             for (i in listOfFiles) {
-                // TODO: re-encrypt everything
+                // TODO: attempt to use get list of safe files
                 val originalFile = File(i, encryptedFileName)
                 val originalByte = ByteArray(
                     Files.readAttributes(originalFile.toPath(), BasicFileAttributes::class.java)
@@ -337,8 +341,6 @@ class SafeData(
                 }
                 val newByteArray = encrypt(decrypt(originalByte, oldKey)!!, newKey)!!
                 originalFile.writeBytes(newByteArray)
-                counter++
-                afterIterator((counter / size) * 100)
             }
         }
         File(
@@ -362,12 +364,20 @@ class SafeData(
         )
     }
 
+    /**
+     * takes key list and saves decrypted version of each file in the export directory
+     */
     fun exportAll(keyList: List<SecretKey>) {
         for (i in getDataFileList()) {
             export(i, keyList)
         }
     }
 
+    /**
+     * takes safe file as a parameter along with the key list. It gets the file as byte array and
+     * decrypts it using the key list. Once decryption is complete, it creates a new file inside
+     * the export directory with the same name as the file's name
+     */
     fun export(safeFile: SafeFiles, keyList: List<SecretKey>) {
         val dc = decrypt(getEncryptedByteArrayFromSafeFile(safeFile), keyList)!!
         val file = File(
@@ -387,7 +397,10 @@ class SafeData(
         )
     }
 
-    fun delete(safeFile: SafeFiles) {
+    /**
+     * takes a safeFile parameter and uses its properties to delete it from the safe
+     */
+    fun deleteFile(safeFile: SafeFiles) {
         File(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/$safeDataDirectory/${safeFile.fileDirectory}"
@@ -400,6 +413,10 @@ class SafeData(
         )
     }
 
+    /**
+     * takes list of keys and the file to open. decrypts the file and opens it using context it
+     * received as a parameter
+     */
     fun openFile(safeMasterKey: List<SecretKey>, safeFile: SafeFiles, context: Context) {
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val encryptedByteArray = getEncryptedByteArrayFromSafeFile(safeFile)
