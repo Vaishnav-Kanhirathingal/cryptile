@@ -48,12 +48,12 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/add_file_bottom_button"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableTop="@drawable/open_in_new_24"
-            android:text="Add" />
+            android:padding="@dimen/prompt_horizontal"
+            android:background="#00000000"
+            android:src="@drawable/add_24"/>
     </LinearLayout>
 </LinearLayout>

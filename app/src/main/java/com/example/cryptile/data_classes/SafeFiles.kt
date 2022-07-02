@@ -11,7 +11,7 @@ data class SafeFiles(
     val fileNameUpperCase: String,
     val extension: String,
     val fileAdded: String,
-    val fileSize: String,
+    val fileSize: Long,
     val fileType: FileType,
     val fileDirectory: String
 ) {

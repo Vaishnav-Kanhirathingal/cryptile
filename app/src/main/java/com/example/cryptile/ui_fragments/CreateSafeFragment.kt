@@ -98,33 +98,13 @@ class CreateSafeFragment : Fragment() {
                         .document(auth.currentUser!!.uid)
                         .get()
                         .addOnSuccessListener {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val x = createSafe(
-                                    passwordOne = safePasswordOneInputLayout.editText!!.text.toString(),
-                                    passwordTwo = safePasswordTwoInputLayout.editText!!.text.toString(),
-                                    personalKey = SafeData.stringToKey(
-                                        it.get(UserDataConstants.userKey).toString()
-                                    )
-                                )
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    if (x) {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Files generated Successfully",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        findNavController().navigateUp()
-                                    } else {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Encountered errors while creation of safe, a " +
-                                                    "folder the same name as the safe name already " +
-                                                    "exists at the designated location",
-                                            Toast.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            }
+                            createSafe(
+                                passwordOne = safePasswordOneInputLayout.editText!!.text.toString(),
+                                passwordTwo = safePasswordTwoInputLayout.editText!!.text.toString(),
+                                personalKey = SafeData.stringToKey(
+                                    it.get(UserDataConstants.userKey).toString()
+                                ),
+                            )
                         }.addOnFailureListener {
                             it.printStackTrace()
                             Toast.makeText(
@@ -148,32 +128,33 @@ class CreateSafeFragment : Fragment() {
     private fun createSafe(
         passwordOne: String,
         passwordTwo: String,
-        personalKey: SecretKey
-    ): Boolean {
+        personalKey: SecretKey,
+    ) {
         binding.apply {
             val salt = ByteArray(32)
             SecureRandom().nextBytes(salt)
-            val safeData = SafeData(
-                safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
-                    "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
-                },
-                safeOwner = viewModel.userDisplayName.value.toString(),
-                safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
-                personalAccessOnly = personalAccessOnlySwitch.isChecked,
-                encryptionAlgorithm = when (encryptionLevelSlider.value) {
-                    1.0f -> "one"
-                    2.0f -> "two"
-                    else -> "three"
-                },
-                safeCreated = System.currentTimeMillis(),
-                hideSafePath = !pathHiddenSwitch.isChecked,
-                safeAbsoluteLocation = currentPath.value + "/" +
-                        safeNameInputLayout.editText!!.text.toString().ifEmpty {
-                            "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
+            val safeData =
+                SafeData(
+                    safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                        "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
+                    },
+                    safeOwner = viewModel.userDisplayName.value.toString(),
+                    safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
+                    personalAccessOnly = personalAccessOnlySwitch.isChecked,
+                    encryptionAlgorithm = when (encryptionLevelSlider.value) {
+                        1.0f -> "one"
+                        2.0f -> "two"
+                        else -> "three"
+                    },
+                    safeCreated = System.currentTimeMillis(),
+                    hideSafePath = !pathHiddenSwitch.isChecked,
+                    safeAbsoluteLocation = currentPath.value + "/" +
+                            safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                                "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
 
-                        },
-                safeSalt = String(salt, StandardCharsets.ISO_8859_1)
-            )
+                            },
+                    safeSalt = String(salt, StandardCharsets.ISO_8859_1)
+                )
             val keyList =
                 if (safeData.safeUsesMultiplePassword) {
                     safeData.getKey(
@@ -188,16 +169,39 @@ class CreateSafeFragment : Fragment() {
             if (personalAccessOnlySwitch.isChecked) {
                 keyList.add(personalKey)
             }
-            val fileGenerationStatus = safeData.generateDirectories(keyList)
-            safeData.saveChangesToMetadata()
-            safeData.saveChangesToLogFile("\t\t\t\t-------------safe-created-------------\n")
-            if (fileGenerationStatus) viewModel.insert(safeData) else {
-                Log.e(
-                    TAG,
-                    "File generation for safe failed, directory ${safeData.safeAbsoluteLocation} already exists"
+            CoroutineScope(Dispatchers.IO).launch {
+                safeData.generateDirectories(
+                    masterKey = keyList,
+                    onSuccess = {
+                        CoroutineScope(Dispatchers.IO).launch { viewModel.insert(safeData) }
+                        safeData.saveChangesToMetadata()
+
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(
+                                requireContext(),
+                                "Files generated Successfully",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            findNavController().navigateUp()
+                        }
+                    },
+                    onFailure = {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(
+                                requireContext(),
+                                "Encountered errors while creation of safe, a " +
+                                        "folder the same name as the safe name already " +
+                                        "exists at the designated location",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.e(
+                                TAG,
+                                "File generation for safe failed, directory ${safeData.safeAbsoluteLocation} already exists"
+                            )
+                        }
+                    }
                 )
             }
-            return fileGenerationStatus
         }
     }
 

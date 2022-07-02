@@ -183,7 +183,8 @@ class SafeAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SafeAdapterViewHolder =
         SafeAdapterViewHolder(
-            ListItemSafeBinding.inflate(LayoutInflater.from(parent.context)), parent.context
+            ListItemSafeBinding.inflate(LayoutInflater.from(parent.context)),
+            parent.context
         )
 
     override fun onBindViewHolder(holder: SafeAdapterViewHolder, position: Int) {

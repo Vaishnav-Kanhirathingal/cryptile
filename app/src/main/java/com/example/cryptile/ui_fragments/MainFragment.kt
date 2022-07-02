@@ -164,7 +164,7 @@ class MainFragment : Fragment() {
                     // TODO: prompt
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
-                        title = "remove list?",
+                        title = "Remove list?",
                         message = "Remove all CRYPTILE safes from the list (does not delete them)?",
                         onSuccess = { viewModel.deleteAll() }
                     )

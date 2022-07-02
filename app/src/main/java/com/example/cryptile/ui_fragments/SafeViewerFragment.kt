@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
-import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.databinding.PromptSafeSettingsBinding
 import com.example.cryptile.firebase.UserDataConstants
@@ -114,9 +113,12 @@ class SafeViewerFragment : Fragment() {
                 }
             }
             topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
-
-            val opener: (SafeFiles) -> Unit = { safeData.openFile(key, it, requireContext()) }
-            viewerAdapter = ViewerAdapter(opener)
+            viewerAdapter = ViewerAdapter(
+                opener = { safeData.openFile(key, it, requireContext()) },
+                exporter = { safeData.export(it, key) },
+                deleter = { safeData.delete(it);viewerAdapter.submitList(safeData.getDataFileList()) },
+                layoutInflater = layoutInflater
+            )
             fileListRecyclerView.adapter = viewerAdapter
             viewModel.getById(safeDataId!!).asLiveData().observe(viewLifecycleOwner) {
                 safeData = it
@@ -268,8 +270,9 @@ class SafeViewerFragment : Fragment() {
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
                     safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
-                    val list = safeData.getDataFileList()
-                    CoroutineScope(Dispatchers.Main).launch { viewerAdapter.submitList(list) }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        viewerAdapter.submitList(safeData.getDataFileList())
+                    }
                 }
             }
         } catch (e: Exception) {

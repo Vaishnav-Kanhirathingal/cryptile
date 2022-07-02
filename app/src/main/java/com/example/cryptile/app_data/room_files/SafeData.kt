@@ -232,6 +232,10 @@ class SafeData(
             "$safeAbsoluteLocation/${cacheDirectory}"
         ).apply { if (!this.exists()) this.mkdirs() }
 
+        saveChangesToLogFile(
+            action = "creation",
+            string = "\t\t\t\t-------------safe-created-------------\n"
+        )
         onSuccess()
     }
 

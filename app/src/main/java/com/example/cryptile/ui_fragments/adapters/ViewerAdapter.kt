@@ -1,5 +1,6 @@
 package com.example.cryptile.ui_fragments.adapters
 
+import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,21 +11,31 @@ import com.example.cryptile.R
 import com.example.cryptile.data_classes.FileType
 import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.ListItemFileExplorerBinding
+import com.example.cryptile.databinding.PromptFileOptionsBinding
 
 private const val TAG = "ViewerAdapter"
 
-class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
+class ViewerAdapter(
+    private val opener: (SafeFiles) -> Unit,
+    private val exporter: (SafeFiles) -> Unit,
+    private val deleter: (SafeFiles) -> Unit,
+    private val layoutInflater: LayoutInflater,
+) :
     ListAdapter<SafeFiles, ViewerAdapter.ViewerAdapterViewHolder>(diffCallBack) {
 
     class ViewerAdapterViewHolder(
-        private val openFile: (SafeFiles) -> Unit,
+        private val opener: (SafeFiles) -> Unit,
+        private val exporter: (SafeFiles) -> Unit,
+        private val deleter: (SafeFiles) -> Unit,
         private val binding: ListItemFileExplorerBinding,
-        private val context: Context
+        private val context: Context,
+        private val layoutInflater: LayoutInflater
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
                 fileNameTextView.text = safeFiles.fileNameUpperCase
-                fileDetailsTextView.text = "${safeFiles.fileAdded} | ${safeFiles.fileSize}"
+                fileDetailsTextView.text =
+                    "${safeFiles.fileAdded} | ${SafeFiles.getSize(safeFiles.fileSize)}"
                 fileImageView.setImageResource(
                     when (safeFiles.fileType) {
                         FileType.UNKNOWN -> R.drawable.file_24
@@ -39,10 +50,28 @@ class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
             }
         }
 
-        fun onClick(safeFiles: SafeFiles): Unit = openFile(safeFiles)
+        fun onClick(safeFiles: SafeFiles): Unit = opener(safeFiles)
 
         fun onLongPressed(safeFiles: SafeFiles) {
-            // TODO: prompt
+            val dialog = Dialog(context)
+            val binding = PromptFileOptionsBinding.inflate(layoutInflater)
+            dialog.apply {
+                setContentView(binding.root)
+                window!!.setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                setCancelable(true)
+                show()
+            }
+            binding.apply {
+                fileNameTextView.text = safeFiles.fileNameUpperCase + safeFiles.extension
+                fileDetailsTextView.text =
+                    "${safeFiles.fileAdded} | ${SafeFiles.getSize(safeFiles.fileSize)}"
+                openButton.setOnClickListener { opener(safeFiles);dialog.dismiss() }
+                exportButton.setOnClickListener { exporter(safeFiles);dialog.dismiss() }
+                deleteButton.setOnClickListener { deleter(safeFiles);dialog.dismiss() }
+            }
         }
     }
 
@@ -58,9 +87,12 @@ class ViewerAdapter(private val openFile: (SafeFiles) -> Unit) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewerAdapterViewHolder(
-        openFile,
+        opener,
+        exporter,
+        deleter,
         ListItemFileExplorerBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-        parent.context
+        parent.context,
+        layoutInflater
     )
 
     override fun onBindViewHolder(holder: ViewerAdapterViewHolder, position: Int) {
