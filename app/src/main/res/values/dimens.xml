@@ -18,4 +18,6 @@
     <dimen name="card_padding">10dp</dimen>
     <dimen name="padding_recycler_safe">4dp</dimen>
     <dimen name="sign_up_corner">10dp</dimen>
+    <dimen name="safe_card_horizontal">4dp</dimen>
+    <dimen name="safe_card_vertical">4dp</dimen>
 </resources>

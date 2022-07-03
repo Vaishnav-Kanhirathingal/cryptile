@@ -45,17 +45,28 @@ class SafeAdapter(
         fun bind(safeData: SafeData) {
             binding.apply {
                 fileNameTextView.text = safeData.safeName
-                safeTypeImageView.setImageResource(if (safeData.personalAccessOnly) R.drawable.personal_safe_24 else R.drawable.lock_24)
+                safeCondition.setImageResource(
+                    // TODO: check if the safe is present at location
+                    if (true) R.drawable.check_circle_24
+                    else R.drawable.cancel_24
+                )
+                // TODO: format to normal date
+                safeCreatedTextView.text = "Created: ${safeData.safeCreated}"
                 safeOwnerTextView.text = safeData.safeOwner
-                safeAbsolutePathTextView.text =
-                    if (safeData.hideSafePath) safeData.safeAbsoluteLocation else "Safe Path Hidden"
-                safeIsMultiPasswordTextView.text =
-                    if (safeData.safeUsesMultiplePassword) "YES" else "no"
-                safeIsPrivateTextView.text = if (safeData.personalAccessOnly) {
-                    "private Safe"
-                    // TODO: also add if current user has access
+
+                if (safeData.hideSafePath) {
+                    safePathImageView.setImageResource(R.drawable.location_off_24)
+                    safeAbsolutePathTextView.text = "Location hidden"
                 } else {
-                    "Public Safe"
+                    safePathImageView.setImageResource(R.drawable.location_24)
+                    safeAbsolutePathTextView.text = safeData.safeAbsoluteLocation
+                }
+                if (safeData.personalAccessOnly) {
+                    safeAccessImageView.setImageResource(R.drawable.personal_safe_24)
+                    safeAccessTextView.text = "Owner Access only"
+                } else {
+                    safeAccessImageView.setImageResource(R.drawable.lock_24)
+                    safeAccessTextView.text = "Public Access"
                 }
             }
         }

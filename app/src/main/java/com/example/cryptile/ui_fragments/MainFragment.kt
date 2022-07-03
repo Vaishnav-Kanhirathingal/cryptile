@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
@@ -45,7 +46,6 @@ class MainFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
-
     private lateinit var dataStore: AppDataStore
 
     private val IMPORT_REQUEST_CODE = 1
@@ -67,6 +67,7 @@ class MainFragment : Fragment() {
     }
 
     private fun mainBinding() {
+
         binding.includedSubLayout.topAppBar.setNavigationOnClickListener {
             binding.root.openDrawer(binding.navigationViewMainScreen)
         }
@@ -117,7 +118,8 @@ class MainFragment : Fragment() {
         viewModel.getListOfIds().asLiveData()
             .observe(viewLifecycleOwner) { safeAdapter.submitList(it) }
         binding.includedSubLayout.safeRecycler.adapter = safeAdapter
-        binding.includedSubLayout.safeRecycler
+        binding.includedSubLayout.safeRecycler.layoutManager =
+            GridLayoutManager(requireContext(), 2)
     }
 
     private fun sideMenuBinding() {

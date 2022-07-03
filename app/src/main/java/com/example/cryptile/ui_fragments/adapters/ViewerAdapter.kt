@@ -75,7 +75,6 @@ class ViewerAdapter(
         }
     }
 
-
     companion object {
         val diffCallBack = object : DiffUtil.ItemCallback<SafeFiles>() {
             override fun areItemsTheSame(oldItem: SafeFiles, newItem: SafeFiles) =

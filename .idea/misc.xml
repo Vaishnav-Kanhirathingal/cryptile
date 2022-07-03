@@ -28,6 +28,7 @@
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/import_export_24.xml" value="0.31" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/info_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/key_24.xml" value="0.271" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/location_24.xml" value="0.31" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/location_off_24.xml" value="0.2885" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/lock_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/menu_24.xml" value="0.4015" />
@@ -43,7 +44,7 @@
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/settings_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/text_snippet_24.xml" value="0.109" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/activity_account.xml" value="0.33034188034188033" />
-        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/activity_main.xml" value="0.24182076813655762" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/activity_main.xml" value="0.75" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/fragment_about.xml" value="0.3625" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/fragment_create_safe.xml" value="0.33" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/fragment_documentation.xml" value="0.3625" />
@@ -56,9 +57,9 @@
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/fragment_sign_in.xml" value="0.33034188034188033" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/fragment_sign_up.xml" value="0.33034188034188033" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/list_item_file_explorer.xml" value="0.5" />
-        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/list_item_safe.xml" value="0.25462962962962965" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/list_item_safe.xml" value="0.5" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/main_menu_header.xml" value="0.40260416666666665" />
-        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/main_sub_layout.xml" value="0.41682974559686886" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/main_sub_layout.xml" value="0.33" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/prompt_add_safe.xml" value="0.519489247311828" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/prompt_file_options.xml" value="0.2574074074074074" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/layout/prompt_loading.xml" value="0.29743589743589743" />

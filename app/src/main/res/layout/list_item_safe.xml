@@ -7,28 +7,19 @@
     android:layout_margin="@dimen/padding_recycler_safe"
     android:backgroundTint="@color/card_background"
     app:cardCornerRadius="@dimen/file_list_padding"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="true"
+    tools:layout_width="250dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/file_list_padding">
 
-        <ImageView
-            android:id="@+id/safe_condition"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/check_circle_24"
-            app:layout_constraintBottom_toBottomOf="@id/file_name_text_view"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/file_name_text_view" />
-
         <TextView
             android:id="@+id/file_name_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/file_list_padding"
+            android:layout_marginEnd="@dimen/safe_card_horizontal"
             android:maxLines="1"
             android:textSize="@dimen/safe_name_size"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -36,103 +27,75 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="File Name" />
 
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/top_divider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/file_list_padding"
-            android:clipToPadding="false"
-            app:dividerColor="@color/black"
-            app:dividerThickness="1px"
-            app:layout_constraintTop_toBottomOf="@id/file_name_text_view" />
-
         <ImageView
-            android:id="@+id/safe_type_image_view"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="@dimen/file_list_padding"
-            app:layout_constraintBottom_toBottomOf="@id/details_grid"
+            android:id="@+id/safe_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/check_circle_24"
+            app:layout_constraintBottom_toBottomOf="@id/file_name_text_view"
             app:layout_constraintDimensionRatio="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/details_grid"
-            app:layout_constraintTop_toTopOf="@id/details_grid"
-            tools:src="@drawable/personal_safe_24" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/file_name_text_view" />
+
+        <TextView
+            android:id="@+id/safe_created_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/safe_card_horizontal"
+            android:textSize="@dimen/safe_details_size"
+            app:layout_constraintLeft_toLeftOf="@id/file_name_text_view"
+            app:layout_constraintRight_toLeftOf="@id/safe_condition"
+            app:layout_constraintTop_toBottomOf="@id/file_name_text_view"
+            tools:text="Created: 18/02/2022" />
 
         <GridLayout
             android:id="@+id/details_grid"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/file_list_padding"
             android:columnCount="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/safe_type_image_view"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/top_divider">
+            app:layout_constraintTop_toBottomOf="@id/safe_created_text_view">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Owner"
-                android:textSize="@dimen/safe_details_size" />
+            <ImageView
+                android:layout_marginEnd="@dimen/safe_card_horizontal"
+                android:src="@drawable/account_24" />
 
             <TextView
                 android:id="@+id/safe_owner_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="2"
-                android:layout_marginStart="@dimen/file_list_padding"
-                android:text="something"
-                android:textAlignment="textEnd"
-                android:textSize="@dimen/safe_details_size" />
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="Some body" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Location"
-                android:textSize="@dimen/safe_details_size" />
+            <ImageView
+                android:id="@+id/safe_path_image_view"
+                tools:src="@drawable/location_24" />
 
             <TextView
                 android:id="@+id/safe_absolute_path_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="2"
-                android:layout_marginStart="@dimen/file_list_padding"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:gravity="center_vertical"
                 android:maxLines="1"
-                android:text="something"
-                android:textAlignment="textEnd"
-                android:textSize="@dimen/safe_details_size" />
+                android:text="Some place" />
+
+            <ImageView
+                android:id="@+id/safe_access_image_view"
+                tools:src="@drawable/personal_safe_24" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Account Locked"
-                android:textSize="@dimen/safe_details_size" />
-
-            <TextView
-                android:id="@+id/safe_is_multi_password_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="2"
-                android:layout_marginStart="@dimen/file_list_padding"
-                android:text="something"
-                android:textAlignment="textEnd"
-                android:textSize="@dimen/safe_details_size" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Private"
-                android:textSize="@dimen/safe_details_size" />
-
-            <TextView
-                android:id="@+id/safe_is_private_text_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="2"
-                android:layout_marginStart="@dimen/file_list_padding"
-                android:text="something"
-                android:textAlignment="textEnd"
-                android:textSize="@dimen/safe_details_size" />
+                android:id="@+id/safe_access_text_view"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:text="Private" />
         </GridLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
