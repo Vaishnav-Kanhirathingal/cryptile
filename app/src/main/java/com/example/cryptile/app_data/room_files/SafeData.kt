@@ -233,7 +233,7 @@ class SafeData(
 
         saveChangesToLogFile(
             action = "creation",
-            string = "\t\t\t\t-------------safe-created-------------\n"
+            string = "\t\t\t\t-------------SAFE-CREATED-------------\t\t\t\t"
         )
         onSuccess()
     }
