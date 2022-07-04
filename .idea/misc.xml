@@ -12,15 +12,18 @@
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/add_24.xml" value="0.31" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/archive_24.xml" value="0.109" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/arrow_back_24.xml" value="0.31" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/audio_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/audiotrack_24.xml" value="0.109" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/cancel_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/check_circle_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/clear_all_24.xml" value="0.31" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/compressed_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/delete_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/email_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/exit_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/export_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/file_24.xml" value="0.331" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/file_unknown_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/fingerprint_24.xml" value="0.1935" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/folder_24.xml" value="0.271" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/google.xml" value="0.31" />
@@ -36,6 +39,7 @@
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/location_off_24.xml" value="0.2885" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/lock_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/menu_24.xml" value="0.4015" />
+        <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/movie_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/open_24.xml" value="0.269" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/open_in_new_24.xml" value="0.4015" />
         <entry key="..\:/Users/vaish/OneDrive/Documents/GitHub/CRYPTILE/app/src/main/res/drawable/password_24.xml" value="0.271" />

@@ -38,13 +38,13 @@ class ViewerAdapter(
                     "${safeFiles.fileAdded} | ${SafeFiles.getSize(safeFiles.fileSize)}"
                 fileImageView.setImageResource(
                     when (safeFiles.fileType) {
-                        FileType.UNKNOWN -> R.drawable.file_24
+                        FileType.UNKNOWN -> R.drawable.file_unknown_24
                         FileType.IMAGE -> R.drawable.image_24
-                        FileType.VIDEO -> R.drawable.play_24
-                        FileType.AUDIO -> R.drawable.audiotrack_24
+                        FileType.VIDEO -> R.drawable.movie_24
+                        FileType.AUDIO -> R.drawable.audio_24
                         FileType.DOCUMENT -> R.drawable.file_24
-                        FileType.COMPRESSED -> R.drawable.archive_24
-                        FileType.TEXT -> R.drawable.text_snippet_24
+                        FileType.COMPRESSED -> R.drawable.compressed_24
+                        FileType.TEXT -> R.drawable.text_file_24
                     }
                 )
             }

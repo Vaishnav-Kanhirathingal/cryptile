@@ -31,7 +31,7 @@ data class SafeFiles(
                 ) -> FileType.AUDIO
                 in listOf(
                     ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW", ".BMP",
-                    ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS", ".PDF"
+                    ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS"
                 ) -> FileType.IMAGE
                 in listOf(
                     ".PDF", ".WORDX", ".XLS", ".XLSX", ".XLSB", ".DOC", ".DOCX"
