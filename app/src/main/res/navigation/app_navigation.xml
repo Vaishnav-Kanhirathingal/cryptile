@@ -36,9 +36,6 @@
             android:id="@+id/action_mainFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_permissionsFragment"
-            app:destination="@id/permissionsFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_signInFragment"
             app:destination="@id/signInFragment"
             app:popUpTo="@id/signInFragment"
@@ -71,11 +68,6 @@
         android:name="com.example.cryptile.ui_fragments.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
-    <fragment
-        android:id="@+id/permissionsFragment"
-        android:name="com.example.cryptile.ui_fragments.PermissionsFragment"
-        android:label="fragment_permissions"
-        tools:layout="@layout/fragment_permissions" />
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.cryptile.ui_fragments.SignInFragment"

@@ -29,10 +29,6 @@
                 android:id="@+id/settings"
                 android:icon="@drawable/settings_24"
                 android:title="Setting" />
-            <item
-                android:id="@+id/permission_manager"
-                android:icon="@drawable/permission_24"
-                android:title="Permissions" />
         </menu>
     </item>
     <item android:title="Documentation">

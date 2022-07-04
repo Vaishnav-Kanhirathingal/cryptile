@@ -178,12 +178,6 @@ class MainFragment : Fragment() {
                     )
                     true
                 }
-                R.id.permission_manager -> {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToPermissionsFragment()
-                    )
-                    true
-                }
                 R.id.app_about -> {
                     findNavController().navigate(
                         MainFragmentDirections.actionMainFragmentToAboutFragment()

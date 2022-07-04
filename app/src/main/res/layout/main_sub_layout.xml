@@ -15,7 +15,6 @@
             android:id="@+id/top_app_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:menu="@menu/main_menu_top"
             app:navigationIcon="@drawable/menu_24"
             app:title="Safe List" />
 
