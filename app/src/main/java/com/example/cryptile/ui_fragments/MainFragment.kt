@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
@@ -136,12 +137,6 @@ class MainFragment : Fragment() {
         }
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.account_sign_in -> {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToSignInFragment()
-                    )
-                    true
-                }
                 R.id.account_sign_out -> {
                     // TODO: prompt
                     AdditionalPrompts.confirmationPrompt(
@@ -198,7 +193,8 @@ class MainFragment : Fragment() {
                         message = "Using this option also signs you out of your account " +
                                 "regardless of whether you have enabled \'keep me signed in\'. Proceed?",
                         onSuccess = {
-                            // TODO: sign out, exit app
+                            auth.signOut()
+                            ActivityCompat.finishAffinity(requireActivity())
                         }
                     )
                     true

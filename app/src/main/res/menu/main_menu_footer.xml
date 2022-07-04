@@ -6,10 +6,6 @@
     <item android:title="Account">
         <menu>
             <item
-                android:id="@+id/account_sign_in"
-                android:icon="@drawable/account_sign_in_24"
-                android:title="Sign In" />
-            <item
                 android:id="@+id/account_sign_out"
                 android:icon="@drawable/account_sign_out_24"
                 android:title="Sign Out" />

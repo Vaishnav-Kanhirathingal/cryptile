@@ -85,7 +85,7 @@ object AdditionalPrompts {
         }
         Log.d(TAG, "provider - ${auth.currentUser!!.providerId}")// TODO: check why firebase
         binding.apply {
-            noticeTextView.text = "***$notice***"
+            noticeTextView.text = "*** $notice ***"
             confirmButton.setOnClickListener {
                 val cred = EmailAuthProvider.getCredential(
                     userEmailTextLayout.editText!!.text.toString(),

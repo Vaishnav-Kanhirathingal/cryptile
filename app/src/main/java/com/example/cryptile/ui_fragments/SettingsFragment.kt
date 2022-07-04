@@ -125,7 +125,7 @@ class SettingsFragment : Fragment() {
                 AdditionalPrompts.verifyUser(
                     layoutInflater = layoutInflater,
                     context = requireContext(),
-                    notice = "Change password",
+                    notice = "Deletion of account",
                     onSuccess = {
                         // TODO: delete account
                     }
