@@ -121,6 +121,9 @@ class SettingsFragment : Fragment() {
                     )
                 }
             }
+            conditionCheckBox.setOnCheckedChangeListener { _, isChecked ->
+                deleteAccountButton.isEnabled = isChecked
+            }
             deleteAccountButton.setOnClickListener {
                 AdditionalPrompts.verifyUser(
                     layoutInflater = layoutInflater,

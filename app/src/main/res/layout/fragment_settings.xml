@@ -259,14 +259,19 @@
                         android:text="@string/delete_account_warning"
                         android:textColor="#aa4444" />
 
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/condition_check_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="I understand the consequences of this action" />
+
                     <Button
                         android:id="@+id/delete_account_button"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_marginTop="@dimen/layout_vertical"
-                        android:layout_marginEnd="@dimen/layout_horizontal"
+                        android:enabled="false"
                         android:text="Delete Account" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
