@@ -19,5 +19,6 @@
 
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
+    <color name="pure_red">#ff0000</color>
 
 </resources>

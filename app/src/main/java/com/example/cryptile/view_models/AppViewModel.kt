@@ -32,13 +32,8 @@ class AppViewModel(private val safeDao: SafeDao) : ViewModel() {
         Log.d(TAG, "displayName = $displayName, email = $email, photoUrl = $photoUrl")
     }
 
-    fun getListOfIds(): Flow<List<Int>> {
-        return safeDao.getListOfIds()
-    }
-
-    fun getById(id: Int): Flow<SafeData> {
-        return safeDao.getById(id)
-    }
+    fun getListOfIds(): Flow<List<Int>> = safeDao.getListOfIds()
+    fun getById(id: Int): Flow<SafeData> = safeDao.getById(id)
 
     fun insert(safeData: SafeData) {
         CoroutineScope(Dispatchers.IO).launch { safeDao.insert(safeData) }

@@ -20,4 +20,8 @@
     <dimen name="sign_up_corner">10dp</dimen>
     <dimen name="safe_card_horizontal">4dp</dimen>
     <dimen name="safe_card_vertical">4dp</dimen>
+
+    <dimen name="layout_vertical">14dp</dimen>
+    <dimen name="layout_horizontal">10dp</dimen>
+
 </resources>

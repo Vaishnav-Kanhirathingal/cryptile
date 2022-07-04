@@ -36,7 +36,11 @@ object AdditionalPrompts {
         }
     }
 
-    fun initializeLoading(layoutInflater: LayoutInflater, context: Context, title: String) {
+    fun initializeLoading(
+        layoutInflater: LayoutInflater,
+        context: Context,
+        title: String
+    ) {
         loadingBinding = PromptLoadingBinding.inflate(layoutInflater)
         dialog = Dialog(context)
         dialog.apply {
@@ -52,7 +56,10 @@ object AdditionalPrompts {
         loadingBinding.progressTitleTextView.text = title
     }
 
-    fun addProgress(progress: Int, dismiss: Boolean) {
+    fun addProgress(
+        progress: Int,
+        dismiss: Boolean
+    ) {
         CoroutineScope(Dispatchers.Main).launch {
             if (dismiss) {
                 dialog.dismiss()
@@ -60,5 +67,14 @@ object AdditionalPrompts {
                 loadingBinding.progressBar.progress = progress
             }
         }
+    }
+
+    fun checkAccountPassword(
+        layoutInflater: LayoutInflater,
+        context: Context,
+        title: String,
+        onSuccess: () -> Unit
+    ) {
+        // TODO: check user
     }
 }

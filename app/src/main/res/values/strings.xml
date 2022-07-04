@@ -14,4 +14,5 @@
     <string name="remove">Remove</string>
     <string name="web_client_id">52037316332-715s58328hk1etfq22e2a7gi2tr0gpk4.apps.googleusercontent.com</string>
     <string name="email_sent_message">An E-mail validation link has been sent to your email account. Open the mail and click on the link provided in the mail to verify your email. Once your email has been verified, login again to the app.</string>
+    <string name="delete_account_warning">***Selecting this button would mean you want to delete the account you have currently logged in to using this app. This is not a reversible step. Deletion of this account means you would no longer have access to your personal key as it would be destroyed in the process. This means you would not be able to access your private CRYPTILE safes. your non-private safes would still be accessible since they don\'t rely on the account specific key.***</string>
 </resources>
