@@ -8,6 +8,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import com.example.cryptile.databinding.PromptLoadingBinding
+import com.example.cryptile.databinding.PromptVerifyAccountBinding
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +19,7 @@ private const val TAG = "AdditionalPrompts"
 
 object AdditionalPrompts {
     private lateinit var loadingBinding: PromptLoadingBinding
-    private lateinit var dialog: Dialog
+    private lateinit var loadingDialog: Dialog
 
     fun confirmationPrompt(
         context: Context,
@@ -42,16 +45,12 @@ object AdditionalPrompts {
         title: String
     ) {
         loadingBinding = PromptLoadingBinding.inflate(layoutInflater)
-        dialog = Dialog(context)
-        dialog.apply {
+        loadingDialog = Dialog(context)
+        loadingDialog.apply {
             setContentView(loadingBinding.root)
-            window!!.setLayout(
-                MATCH_PARENT,
-                WRAP_CONTENT
-            )
+            window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
             setCancelable(false)
             show()
-            Log.d(TAG, "show loading")
         }
         loadingBinding.progressTitleTextView.text = title
     }
@@ -62,19 +61,53 @@ object AdditionalPrompts {
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             if (dismiss) {
-                dialog.dismiss()
+                loadingDialog.dismiss()
             } else {
                 loadingBinding.progressBar.progress = progress
             }
         }
     }
 
-    fun checkAccountPassword(
+    fun verifyUser(
         layoutInflater: LayoutInflater,
         context: Context,
-        title: String,
+        notice: String,
         onSuccess: () -> Unit
     ) {
+        val auth = FirebaseAuth.getInstance()
+        val binding = PromptVerifyAccountBinding.inflate(layoutInflater)
+        val dialogBox = Dialog(context)
+        dialogBox.apply {
+            setContentView(binding.root)
+            window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
+            setCancelable(true)
+            show()
+        }
+        Log.d(TAG, "provider - ${auth.currentUser!!.providerId}")// TODO: check why firebase
+        binding.apply {
+            noticeTextView.text = "***$notice***"
+            confirmButton.setOnClickListener {
+                val cred = EmailAuthProvider.getCredential(
+                    userEmailTextLayout.editText!!.text.toString(),
+                    userPasswordTextLayout.editText!!.text.toString()
+                )
+                auth.currentUser!!.reauthenticate(cred).addOnSuccessListener {
+                    Log.d(TAG, "user authenticated")
+                    onSuccess()
+                    dialogBox.dismiss()
+                }.addOnFailureListener {
+                    userEmailTextLayout.apply {
+                        error = "Email might be incorrect"
+                        isErrorEnabled = true
+                    }
+                    userPasswordTextLayout.apply {
+                        error = "Password might be incorrect"
+                        isErrorEnabled = true
+                    }
+                }
+            }
+            cancelButton.setOnClickListener { dialogBox.dismiss() }
+        }
         // TODO: check user
     }
 }
