@@ -19,7 +19,6 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/send_log_files"
-        android:icon="@drawable/open_in_new_24"
         android:title="Send Logs"
         app:showAsAction="never" />
 </menu>
