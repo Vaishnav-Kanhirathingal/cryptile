@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/prompt_horizontal"
+    tools:background="#eeeeee"
+    tools:layout_margin="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/prompt_vertical"
+        android:text="Verify"
+        android:textAlignment="center"
+        android:textSize="30sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/noticce_text_view"
+        android:layout_marginHorizontal="@dimen/prompt_horizontal"
+        android:text="*some notice" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_email_text_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/prompt_vertical"
+        android:hint="Email"
+        app:helperText="Use a registered email or sign-up using one"
+        app:startIconDrawable="@drawable/email_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/user_email_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_password_text_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/prompt_vertical"
+        android:hint="Password"
+        app:counterEnabled="true"
+        app:counterMaxLength="32"
+        app:endIconMode="password_toggle"
+        app:helperText="Use the 8-32 character password you set while signing-up"
+        app:startIconDrawable="@drawable/password_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/user_password_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/prompt_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel_sign_in"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/prompt_horizontal"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/prompt_horizontal"
+            android:layout_weight="1"
+            android:text="Confirm" />
+    </LinearLayout>
+</LinearLayout>

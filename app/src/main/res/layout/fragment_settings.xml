@@ -218,7 +218,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/layout_vertical"
+                android:layout_marginVertical="@dimen/layout_vertical"
                 android:backgroundTint="@color/card_background"
                 app:cardCornerRadius="@dimen/layout_horizontal">
 
