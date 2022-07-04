@@ -263,7 +263,7 @@
                         android:id="@+id/condition_check_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="I understand the consequences of this action" />
+                        android:text="@string/consequences_warning" />
 
                     <Button
                         android:id="@+id/delete_account_button"

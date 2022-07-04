@@ -10,6 +10,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.cryptile.data_classes.SafeFiles
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.io.*
@@ -267,19 +268,22 @@ class SafeData(
 
     /**
      * this function is a logging function which takes a string as parameter then, appends it to the
-     * end of a string with the current time and safeName and writes it to the log text file.
+     * end of a string with the current time, safeName, current user and the action and writes it to
+     * the log text file.
      */
     private fun saveChangesToLogFile(
         action: String,
-        string: String
+        string: String,
     ) {
         // TODO: action should be of 16 size fixed
-        val newAction =
-            if (action.length > 15) {
-                action.substring(0, 15)
+        val fixSize: (String, Int) -> String = { shortString: String, length: Int ->
+            if (shortString.length > length - 1) {
+                action.substring(0, length - 1)
             } else {
-                action.padEnd(16, '-')
+                action.padEnd(length, '-')
             }
+        }
+        val user = FirebaseAuth.getInstance().currentUser!!.uid
         FileWriter(
             File(
                 File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation),
@@ -288,8 +292,11 @@ class SafeData(
             true
         ).apply {
             append(
-                SimpleDateFormat("[yyyy|MM|dd]-[HH:mm:ss:SSS]").format(System.currentTimeMillis())
-                        + "-[$safeName] | [$newAction] | [$string]\n"
+                SimpleDateFormat("[yyyy|MM|dd]-[HH:mm:ss:SSS] | ").format(System.currentTimeMillis()) +
+                        "[$safeName] | " +
+                        "[$user] | " +
+                        "[${fixSize(action, 16)}] | " +
+                        "[$string]\n"
             );flush();close()
         }
     }
