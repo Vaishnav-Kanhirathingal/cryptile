@@ -26,6 +26,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
 private const val TAG = "SafeAdapter"
 
@@ -50,8 +51,8 @@ class SafeAdapter(
                     if (true) R.drawable.check_circle_24
                     else R.drawable.cancel_24
                 )
-                // TODO: format to normal date
-                safeCreatedTextView.text = "Created: ${safeData.safeCreated}"
+                safeCreatedTextView.text =
+                    "Created: ${SimpleDateFormat("dd/MM/yyyy").format(safeData.safeCreated)}"
                 safeOwnerTextView.text = safeData.safeOwner
 
                 if (safeData.hideSafePath) {
@@ -95,16 +96,8 @@ class SafeAdapter(
                     }
                 }
                 removeImageButton.setOnClickListener { viewModel.delete(safeData);dialogBox.dismiss() }
-                deleteImageButton.setOnClickListener {
-                    // TODO: check password/s and delete entire safe directory if personal safe is disabled
-                    dialogBox.dismiss()
-                }
-                passwordOneTextLayout.setEndIconOnClickListener {
-                    passwordOneTextLayout.isEnabled = false
-                }
-                passwordTwoTextLayout.setEndIconOnClickListener {
-                    passwordTwoTextLayout.isEnabled = false
-                }
+                passwordOneTextLayout.apply { setEndIconOnClickListener { this.isEnabled = false } }
+                passwordTwoTextLayout.apply { setEndIconOnClickListener { this.isEnabled = false } }
                 cancelButton.setOnClickListener { dialogBox.dismiss() }
                 openButton.setOnClickListener {
                     openButton.isEnabled = false
