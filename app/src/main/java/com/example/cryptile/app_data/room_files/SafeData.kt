@@ -336,9 +336,8 @@ class SafeData(
         newKey: List<SecretKey>,
     ) {
         val fileList = getDataFileList()
-
         val size = fileList.size.toFloat()
-        if (!fileList.isEmpty()) {
+        if (fileList.isNotEmpty()) {
             for (i in fileList) {
                 // TODO: attempt to use get list of safe files
                 val originalFile = File(

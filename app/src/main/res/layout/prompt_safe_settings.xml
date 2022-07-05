@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/prompt_vertical"
+            android:layout_marginVertical="@dimen/prompt_vertical"
             android:text="Settings"
             android:textAlignment="center"
             android:textSize="32sp" />
@@ -109,7 +109,58 @@
                     android:id="@+id/export_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Export" />
+                    android:text="@string/export" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/prompt_vertical"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/prompt_horizontal"
+                android:text="Delete" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/prompt_horizontal"
+                android:layout_weight="1"
+                app:dividerThickness="1px"
+                tools:dividerThickness="3dp" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/prompt_vertical"
+            android:backgroundTint="@color/card_background"
+            app:cardCornerRadius="@dimen/create_safe_card_radius">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/prompt_horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/prompt_horizontal"
+                    android:layout_weight="2"
+                    android:text="Delete this CRYPTILE safe entirely?" />
+
+                <Button
+                    android:id="@+id/delete_safe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -192,6 +243,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                    android:enabled="false"
                     android:hint="Second Password"
                     app:counterEnabled="true"
                     app:counterMaxLength="32"

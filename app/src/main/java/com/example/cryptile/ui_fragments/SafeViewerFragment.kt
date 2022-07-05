@@ -184,6 +184,22 @@ class SafeViewerFragment : Fragment() {
                     onSuccess = { safeData.exportAll(key) }
                 )
             }
+            deleteSafe.setOnClickListener {
+                AdditionalPrompts.verifyUser(
+                    layoutInflater = layoutInflater,
+                    context = requireContext(),
+                    notice = "delete safe?",
+                    onSuccess = {
+                        viewModel.delete(safeData)
+                        safeData.deleteSafe()
+                        findNavController().navigateUp()
+                        dialogBox.dismiss()
+                    }
+                )
+            }
+            useMultiplePasswordsSwitch.setOnCheckedChangeListener { _, isChecked ->
+                safePasswordTwoInputLayout.isEnabled = isChecked
+            }
             cancelButton.setOnClickListener { dialogBox.dismiss() }
             applyButton.setOnClickListener {
                 val p1Check: Boolean
