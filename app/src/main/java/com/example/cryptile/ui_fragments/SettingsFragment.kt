@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
+import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
@@ -18,7 +19,9 @@ import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +37,9 @@ class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
     private lateinit var dataStore: AppDataStore
 
+    private lateinit var fireStore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,6 +51,8 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dataStore = AppDataStore(requireContext())
+        fireStore = Firebase.firestore
+        auth = Firebase.auth
         applyBinding()
     }
 
@@ -79,9 +87,9 @@ class SettingsFragment : Fragment() {
                             context = requireContext(),
                             notice = "change user name",
                             onSuccess = {
-                                Firebase.firestore
+                                fireStore
                                     .collection(UserDataConstants.tableName)
-                                    .document(Firebase.auth.uid!!)
+                                    .document(auth.uid!!)
                                     .update(UserDataConstants.userDisplayName, newName)
                                     .addOnSuccessListener {
                                         viewModel.updateDisplayName(newName)
@@ -104,7 +112,33 @@ class SettingsFragment : Fragment() {
                 }
             }
             forgotPasswordImageButton.setOnClickListener {
-                // TODO: password reset email and message
+                AdditionalPrompts.confirmationPrompt(
+                    context = requireContext(),
+                    title = "Password Reset?",
+                    message = "This action would send a password reset link in an email to your account. Clicking the link will reset your password and ask for a new password. Proceed?",
+                    onSuccess = {
+                        // TODO: password reset email and message
+                        auth.sendPasswordResetEmail(auth.currentUser!!.email!!)
+                            .addOnSuccessListener {
+                                AdditionalPrompts.showMessagePrompt(
+                                    context = requireContext(),
+                                    layoutInflater = layoutInflater,
+                                    message = getString(R.string.reset_password_message),
+                                    onDismiss = {
+                                        findNavController()
+                                            .navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
+                                    }
+                                )
+                            }.addOnFailureListener {
+                                it.printStackTrace()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "failed to generate a password reset email. error - ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
+                )
             }
             ClearPasswordImageButton.setOnClickListener {
                 newPasswordTextLayout.editText!!.setText("")
@@ -133,6 +167,23 @@ class SettingsFragment : Fragment() {
                         onSuccess = {
                             Log.d(TAG, "password changed")
                             // TODO: use old and new password to change password
+                            auth.currentUser!!.updatePassword(passwordOne).addOnSuccessListener {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "password changed, login again",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                findNavController()
+                                    .navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
+                            }.addOnFailureListener {
+                                it.printStackTrace()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "password change failed, error - ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                            }
                         }
                     )
                 }

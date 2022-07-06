@@ -17,4 +17,5 @@
     <string name="delete_account_warning">***Selecting this button would mean you want to delete the account you have currently logged in to using this app. This is not a reversible step. Deletion of this account means you would no longer have access to your personal key as it would be destroyed in the process. This means you would not be able to access your private CRYPTILE safes. your non-private safes would still be accessible since they don\'t rely on the account specific key.***</string>
     <string name="consequences_warning">I understand the consequences of this action</string>
     <string name="export">Export</string>
+    <string name="reset_password_message">A password reset email has been sent to your email account. Click the link provided in the email to reset your password.</string>
 </resources>

@@ -1,14 +1,12 @@
 package com.example.cryptile.firebase
 
-import android.app.Dialog
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.Toast
 import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData.Companion.createRandomKey
-import com.example.cryptile.databinding.PromptMessageBinding
+import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -89,7 +87,12 @@ object SignInFunctions {
                 auth.currentUser!!.sendEmailVerification().addOnSuccessListener {
                     Log.d(TAG, "verification email sent")
                     auth.signOut()
-                    showEmailSentPrompt(context, layoutInflater, onMessageDismiss)
+                    AdditionalPrompts.showMessagePrompt(
+                        context = context,
+                        layoutInflater = layoutInflater,
+                        message = context.resources.getString(R.string.email_sent_message),
+                        onDismiss = onMessageDismiss
+                    )
                 }.addOnFailureListener { e: Exception ->
                     e.printStackTrace()
                     onFailure(e.message!!)
@@ -160,7 +163,12 @@ object SignInFunctions {
                     Log.d(TAG, "current user is not email verified")
                     auth.currentUser!!.sendEmailVerification()
                         .addOnSuccessListener {
-                            showEmailSentPrompt(context, layoutInflater) {}
+                            AdditionalPrompts.showMessagePrompt(
+                                context = context,
+                                layoutInflater = layoutInflater,
+                                message = context.resources.getString(R.string.email_sent_message),
+                                onDismiss = {}
+                            )
                         }.addOnFailureListener {
                             Log.e(TAG, "firebase error")
                             it.printStackTrace()
@@ -174,30 +182,5 @@ object SignInFunctions {
                 onFailure(it.message!!)
                 Toast.makeText(context, "exception: $it", Toast.LENGTH_SHORT).show()
             }
-    }
-
-    private fun showEmailSentPrompt(
-        context: Context,
-        layoutInflater: LayoutInflater,
-        onDismiss: () -> Unit
-    ) {
-        val alertDialog = Dialog(context)
-        val binding = PromptMessageBinding.inflate(layoutInflater)
-        alertDialog.apply {
-            setContentView(binding.root)
-            window!!.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            setCancelable(true)
-            show()
-        }
-        binding.apply {
-            messageTextView.setText(R.string.email_sent_message)
-            dismissButton.setOnClickListener {
-                alertDialog.dismiss()
-                onDismiss()
-            }
-        }
     }
 }
