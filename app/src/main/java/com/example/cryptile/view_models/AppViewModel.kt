@@ -32,6 +32,10 @@ class AppViewModel(private val safeDao: SafeDao) : ViewModel() {
         Log.d(TAG, "displayName = $displayName, email = $email, photoUrl = $photoUrl")
     }
 
+    fun updateDisplayName(name: String) {
+        _userDisplayName.value = name
+    }
+
     fun getListOfIds(): Flow<List<Int>> = safeDao.getListOfIds()
     fun getById(id: Int): Flow<SafeData> = safeDao.getById(id)
 

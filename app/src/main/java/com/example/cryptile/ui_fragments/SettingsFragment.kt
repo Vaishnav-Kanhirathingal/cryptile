@@ -14,9 +14,13 @@ import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.databinding.FragmentSettingsBinding
+import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -66,7 +70,8 @@ class SettingsFragment : Fragment() {
             }
             newUserNameTextLayout.apply {
                 this.setEndIconOnClickListener {
-                    val lCheck = this.editText!!.text.length in 7..33
+                    val newName = this.editText!!.text.toString()
+                    val lCheck = newName.length in 7..33
                     Log.d(TAG, "lCheck = $lCheck")
                     if (lCheck) {
                         AdditionalPrompts.verifyUser(
@@ -74,7 +79,18 @@ class SettingsFragment : Fragment() {
                             context = requireContext(),
                             notice = "change user name",
                             onSuccess = {
-                                // TODO: change display name
+                                Firebase.firestore
+                                    .collection(UserDataConstants.tableName)
+                                    .document(Firebase.auth.uid!!)
+                                    .update(UserDataConstants.userDisplayName, newName)
+                                    .addOnSuccessListener {
+                                        viewModel.updateDisplayName(newName)
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "display name changed",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 Log.d(TAG, "user  name changed")
                             }
                         )
