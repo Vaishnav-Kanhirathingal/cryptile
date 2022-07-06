@@ -195,7 +195,6 @@ class SettingsFragment : Fragment() {
                     context = requireContext(),
                     notice = "Deletion of account",
                     onSuccess = {
-                        // TODO: delete from database
                         fireStore
                             .collection(UserDataConstants.tableName)
                             .document(auth.currentUser!!.uid)

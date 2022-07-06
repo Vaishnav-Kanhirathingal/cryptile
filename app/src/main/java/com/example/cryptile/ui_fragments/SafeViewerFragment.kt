@@ -282,9 +282,20 @@ class SafeViewerFragment : Fragment() {
                 Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
-                    safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        viewerAdapter.submitList(safeData.getDataFileList())
+                    try {
+                        safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            viewerAdapter.submitList(safeData.getDataFileList())
+                        }
+                    } catch (e: Exception) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            e.printStackTrace()
+                            Toast.makeText(
+                                requireContext(),
+                                "error importing file - ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
             }

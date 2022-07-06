@@ -20,10 +20,10 @@
     <TextView
         android:id="@+id/notice_text_view"
         android:layout_width="match_parent"
-        android:textSize="@dimen/safe_details_size"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/prompt_horizontal"
         android:textAlignment="center"
+        android:textSize="@dimen/safe_details_size"
         tools:text="***some notice***" />
 
     <com.google.android.material.textfield.TextInputLayout
