@@ -112,6 +112,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/create_safe_horizontal"
+                        android:enabled="false"
                         android:hint="Second Password"
                         app:counterEnabled="true"
                         app:counterMaxLength="32"

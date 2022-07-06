@@ -42,7 +42,6 @@ class CreateSafeFragment : Fragment() {
     private lateinit var binding: FragmentCreateSafeBinding
     private var currentPath: MutableLiveData<String> =
         MutableLiveData("Cryptile")
-    private var useMultiplePasswords = MutableLiveData(false)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,10 +63,9 @@ class CreateSafeFragment : Fragment() {
             topAppBar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
-            useMultiplePasswordsSwitch
-                .setOnCheckedChangeListener { _, status -> useMultiplePasswords.value = status }
-            useMultiplePasswords
-                .observe(viewLifecycleOwner) { safePasswordTwoInputLayout.isEnabled = it }
+            useMultiplePasswordsSwitch.setOnCheckedChangeListener { _, status ->
+                safePasswordTwoInputLayout.isEnabled = status
+            }
             selectDirectoryImageButton.setOnClickListener { selectDirectory() }
             currentPath.observe(viewLifecycleOwner) { currentSafeDirectory.text = it }
             cancelButton.setOnClickListener {

@@ -269,13 +269,12 @@ class SafeData(
     /**
      * this function is a logging function which takes a string as parameter then, appends it to the
      * end of a string with the current time, safeName, current user and the action and writes it to
-     * the log text file.
+     * the log text file. action string shouldn't be more than 24 characters.
      */
     private fun saveChangesToLogFile(
         action: String,
         string: String,
     ) {
-        // TODO: action should be of 16 size fixed
         val fixSize: (String, Int) -> String = { shortString: String, length: Int ->
             if (shortString.length > length - 1) {
                 action.substring(0, length - 1)
@@ -285,17 +284,14 @@ class SafeData(
         }
         val user = FirebaseAuth.getInstance().currentUser!!.uid
         FileWriter(
-            File(
-                File(Environment.getExternalStorageDirectory(), safeAbsoluteLocation),
-                logFileName
-            ),
+            File(Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/$logFileName"),
             true
         ).apply {
             append(
-                SimpleDateFormat("[yyyy|MM|dd]-[HH:mm:ss:SSS] | ").format(System.currentTimeMillis()) +
+                SimpleDateFormat("[yyyy-MM-dd]-[HH:mm:ss.SSS] | ").format(System.currentTimeMillis()) +
                         "[$safeName] | " +
                         "[$user] | " +
-                        "[${fixSize(action, 16)}] | " +
+                        "[${fixSize(action, 24)}] | " +
                         "[$string]\n"
             );flush();close()
         }
