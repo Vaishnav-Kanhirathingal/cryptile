@@ -117,7 +117,6 @@ class SettingsFragment : Fragment() {
                     title = "Password Reset?",
                     message = "This action would send a password reset link in an email to your account. Clicking the link will reset your password and ask for a new password. Proceed?",
                     onSuccess = {
-                        // TODO: password reset email and message
                         auth.sendPasswordResetEmail(auth.currentUser!!.email!!)
                             .addOnSuccessListener {
                                 AdditionalPrompts.showMessagePrompt(
@@ -166,7 +165,6 @@ class SettingsFragment : Fragment() {
                         notice = "Change password",
                         onSuccess = {
                             Log.d(TAG, "password changed")
-                            // TODO: use old and new password to change password
                             auth.currentUser!!.updatePassword(passwordOne).addOnSuccessListener {
                                 Toast.makeText(
                                     requireContext(),
@@ -197,12 +195,40 @@ class SettingsFragment : Fragment() {
                     context = requireContext(),
                     notice = "Deletion of account",
                     onSuccess = {
-                        // TODO: delete account
+                        // TODO: delete from database
+                        fireStore
+                            .collection(UserDataConstants.tableName)
+                            .document(auth.currentUser!!.uid)
+                            .delete()
+                            .addOnSuccessListener {
+                                auth.currentUser!!.delete().addOnSuccessListener {
+                                    AdditionalPrompts.showMessagePrompt(
+                                        context = requireContext(),
+                                        layoutInflater = layoutInflater,
+                                        message = "Your account has been deleted. Sign in using another account to access the app.",
+                                        onDismiss = {
+                                            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
+                                        }
+                                    )
+                                }.addOnFailureListener {
+                                    it.printStackTrace()
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "failed to delete account. Reason - ${it.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }.addOnFailureListener {
+                                it.printStackTrace()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "data deletion unsuccessful. Reason - ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                     }
                 )
             }
-            // TODO: account settings for password reset, display name reset, delete for email
-            // TODO: account settings for gmail as delete account
         }
     }
 }
