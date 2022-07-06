@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import com.example.cryptile.databinding.PromptLoadingBinding
+import com.example.cryptile.databinding.PromptMessageBinding
 import com.example.cryptile.databinding.PromptVerifyAccountBinding
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -109,5 +110,29 @@ object AdditionalPrompts {
             cancelButton.setOnClickListener { dialogBox.dismiss() }
         }
         // TODO: check user
+    }
+
+
+    fun showMessagePrompt(
+        context: Context,
+        layoutInflater: LayoutInflater,
+        message: String,
+        onDismiss: () -> Unit
+    ) {
+        val alertDialog = Dialog(context)
+        val binding = PromptMessageBinding.inflate(layoutInflater)
+        alertDialog.apply {
+            setContentView(binding.root)
+            window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
+            setCancelable(false)
+            show()
+        }
+        binding.apply {
+            messageTextView.text = message
+            dismissButton.setOnClickListener {
+                alertDialog.dismiss()
+                onDismiss()
+            }
+        }
     }
 }
