@@ -114,8 +114,16 @@ class SafeViewerFragment : Fragment() {
             }
             topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
             viewerAdapter = ViewerAdapter(
-                opener = { safeData.openFile(key, it, requireContext()) },
-                exporter = { safeData.export(it, key) },
+                opener = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        safeData.openFile(key, it, requireContext(), layoutInflater)
+                    }
+                },
+                exporter = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        safeData.export(it, key, requireContext(), layoutInflater)
+                    }
+                },
                 deleter = { safeData.deleteFile(it);viewerAdapter.submitList(safeData.getDataFileList()) },
                 layoutInflater = layoutInflater
             )
@@ -147,6 +155,7 @@ class SafeViewerFragment : Fragment() {
             setCancelable(true)
         }
         settingsBinding.apply {
+            safeNameInputLayout.editText!!.setText(safeData.safeName)
             safeNameInputLayout.setEndIconOnClickListener {
                 val name = safeNameInputLayout.editText!!.text.toString()
                 if (name.length in 7..32) {
@@ -181,7 +190,11 @@ class SafeViewerFragment : Fragment() {
                     message = "This action would decrypt all files to the export folder " +
                             "and then, remove all contents from the data folder rendering" +
                             " the safe empty. Continue?",
-                    onSuccess = { safeData.exportAll(key) }
+                    onSuccess = {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            safeData.exportAll(key, requireContext(), layoutInflater)
+                        }
+                    }
                 )
             }
             deleteSafe.setOnClickListener {
@@ -252,10 +265,14 @@ class SafeViewerFragment : Fragment() {
                                             )
                                         )
                                     }
-                                    safeData.changeEncryption(
-                                        oldKey = key,
-                                        newKey = newKeyList
-                                    )
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        safeData.changeEncryption(
+                                            context = requireContext(),
+                                            layoutInflater = layoutInflater,
+                                            oldKey = key,
+                                            newKey = newKeyList
+                                        )
+                                    }
                                     viewModel.update(safeData)
                                     key = newKeyList
                                 }.addOnFailureListener {

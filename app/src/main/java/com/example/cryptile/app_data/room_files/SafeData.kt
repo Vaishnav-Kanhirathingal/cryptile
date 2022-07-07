@@ -5,11 +5,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
+import android.view.LayoutInflater
 import android.webkit.MimeTypeMap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.cryptile.data_classes.SafeFiles
+import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -332,7 +334,9 @@ class SafeData(
      * @param oldKey this is the list of keys used to encrypt the safe previously.
      * @param newKey this is the new list of keys to be used to encrypt the safe.
      */
-    fun changeEncryption(
+    suspend fun changeEncryption(
+        context: Context,
+        layoutInflater: LayoutInflater,
         oldKey: List<SecretKey>,
         newKey: List<SecretKey>,
     ) {
@@ -343,10 +347,27 @@ class SafeData(
                     Environment.getExternalStorageDirectory(),
                     "$safeAbsoluteLocation/$safeDataDirectoryName/${safeFile.fileDirectory}/$encStorageDirectoryName"
                 )
+                AdditionalPrompts.initializeLoading(
+                    layoutInflater = layoutInflater,
+                    context = context,
+                    title = "Changing encryption for ${safeFile.fileNameUpperCase}"
+                )
+                val size = curDir.listFiles()!!.size
+                var iterator = 0
                 for (file in curDir.listFiles()!!) {
+                    Thread.sleep(100)
+                    AdditionalPrompts.addProgress(
+                        progress = (iterator * 100) / size,
+                        dismiss = false
+                    )
                     val originalByteArray = file.readBytes()
                     file.writeBytes(encrypt(decrypt(originalByteArray, oldKey)!!, newKey)!!)
+                    iterator++
                 }
+                AdditionalPrompts.addProgress(
+                    progress = (iterator * 100) / size,
+                    dismiss = true
+                )
             }
         }
         File(
@@ -374,9 +395,13 @@ class SafeData(
      * takes key list and saves decrypted version of each file in the export directory
      * @param keyList takes list of keys used for encryption and decryption
      */
-    fun exportAll(keyList: List<SecretKey>) {
+    suspend fun exportAll(
+        keyList: List<SecretKey>,
+        context: Context,
+        layoutInflater: LayoutInflater
+    ) {
         for (i in getDataFileList()) {
-            export(i, keyList)
+            export(i, keyList, context, layoutInflater)
         }
     }
 
@@ -387,7 +412,12 @@ class SafeData(
      * @param safeFile the safe file to export.
      * @param keyList takes list of keys used for encryption and decryption.
      */
-    fun export(safeFile: SafeFiles, keyList: List<SecretKey>) {
+    suspend fun export(
+        safeFile: SafeFiles,
+        keyList: List<SecretKey>,
+        context: Context,
+        layoutInflater: LayoutInflater
+    ) {
         val file = File(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/" +
@@ -395,8 +425,13 @@ class SafeData(
                     "${safeFile.fileNameUpperCase}.${safeFile.extension}"
         )
 
-        readFromWriteTo(safeFile, file, keyList)
-
+        readFromWriteTo(
+            from = safeFile,
+            destinationFile = file,
+            keyList = keyList,
+            context = context,
+            layoutInflater = layoutInflater
+        )
 
         Log.d(TAG, "exported file in directory: ${safeFile.fileDirectory}")
         saveChangesToLogFile(
@@ -415,10 +450,12 @@ class SafeData(
      * @param destinationFile file to store decrypted safe file.
      * @param keyList takes list of keys used for encryption and decryption.
      */
-    private fun readFromWriteTo(
+    private suspend fun readFromWriteTo(
         from: SafeFiles,
         destinationFile: File,
-        keyList: List<SecretKey>
+        keyList: List<SecretKey>,
+        context: Context,
+        layoutInflater: LayoutInflater
     ) {
         val dir = File(
             Environment.getExternalStorageDirectory(),
@@ -426,12 +463,27 @@ class SafeData(
         )
 
         // TODO: compensate in other functions if destination already exists
-
+        val size = dir.list()!!.size
+        destinationFile.delete()
         if (!destinationFile.exists()) {
-            for (i in 0 until dir.list()!!.size) {
+            AdditionalPrompts.initializeLoading(
+                layoutInflater,
+                context,
+                "Decrypting file - ${from.fileNameUpperCase}"
+            )
+            for (i in 0 until size) {
+                Thread.sleep(100)
+                AdditionalPrompts.addProgress(
+                    progress = (i * 100) / size,
+                    dismiss = false
+                )
                 val fileBytes = File(dir, "${encryptedFileName}_$i").readBytes()
                 destinationFile.appendBytes(decrypt(fileBytes, keyList)!!)
             }
+            AdditionalPrompts.addProgress(
+                progress = 100,
+                dismiss = true
+            )
         }
     }
 
@@ -458,10 +510,11 @@ class SafeData(
      * @param keyList takes list of keys used for encryption and decryption.
      * @param safeFile the file to open from safe
      */
-    fun openFile(
+    suspend fun openFile(
         keyList: List<SecretKey>,
         safeFile: SafeFiles,
-        context: Context
+        context: Context,
+        layoutInflater: LayoutInflater
     ) {
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val decryptedFile = File(
@@ -469,7 +522,13 @@ class SafeData(
             "$safeAbsoluteLocation/$cacheDirectoryName/${decryptedFileName}.${safeFile.extension}"
         )
 
-        readFromWriteTo(safeFile, decryptedFile, keyList)
+        readFromWriteTo(
+            from = safeFile,
+            destinationFile = decryptedFile,
+            keyList = keyList,
+            context = context,
+            layoutInflater = layoutInflater
+        )
         saveChangesToLogFile(
             action = "open file",
             string = "File directory opened - ${safeFile.fileDirectory}, " +

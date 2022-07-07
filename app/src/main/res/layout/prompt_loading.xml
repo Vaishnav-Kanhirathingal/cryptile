@@ -6,22 +6,18 @@
     android:orientation="vertical"
     android:padding="@dimen/prompt_horizontal"
     tools:background="#eeeeee"
-    tools:layout_margin="20dp">
+    tools:layout_margin="@dimen/prompt_horizontal">
 
     <TextView
         android:id="@+id/progress_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/prompt_vertical"
-        android:paddingHorizontal="@dimen/prompt_horizontal"
-        android:textAlignment="center"
-        android:textSize="20sp"
         tools:text="Opening file" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/prompt_horizontal"
+        android:paddingVertical="@dimen/prompt_horizontal"
         tools:progress="80" />
 </LinearLayout>

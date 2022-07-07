@@ -2,6 +2,7 @@ package com.example.cryptile.ui_fragments.prompt
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -45,15 +46,17 @@ object AdditionalPrompts {
         context: Context,
         title: String
     ) {
-        loadingBinding = PromptLoadingBinding.inflate(layoutInflater)
-        loadingDialog = Dialog(context)
-        loadingDialog.apply {
-            setContentView(loadingBinding.root)
-            window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
-            setCancelable(false)
-            show()
+        CoroutineScope(Dispatchers.Main).launch{
+            loadingBinding = PromptLoadingBinding.inflate(layoutInflater)
+            loadingDialog = Dialog(context)
+            loadingDialog.apply {
+                setContentView(loadingBinding.root)
+                window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
+                setCancelable(false)
+                show()
+            }
+            loadingBinding.progressTitleTextView.text = "$title..."
         }
-        loadingBinding.progressTitleTextView.text = title
     }
 
     fun addProgress(
