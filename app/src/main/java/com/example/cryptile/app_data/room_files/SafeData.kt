@@ -269,9 +269,10 @@ class SafeData(
     }
 
     /**
-     * this function is a logging function which takes a string as parameter then, appends it to the
-     * end of a string with the current time, safeName, current user and the action and writes it to
-     * the log text file. action string shouldn't be more than 24 characters.
+     * formats and saves the given strings to the log file. Takes the time and user into account for
+     * logging.
+     * @param action can be up to 20 character long.
+     * @param string this string specifies in detail what the action did to the safe.
      */
     private fun saveChangesToLogFile(
         action: String,
@@ -293,7 +294,7 @@ class SafeData(
                 SimpleDateFormat("[yyyy-MM-dd]-[HH:mm:ss.SSS] | ").format(System.currentTimeMillis()) +
                         "[$safeName] | " +
                         "[$user] | " +
-                        "[${fixSize(action, 24)}] | " +
+                        "[${fixSize(action, 20)}] | " +
                         "[$string]\n"
             );flush();close()
         }
@@ -328,6 +329,8 @@ class SafeData(
      * this function is used to change the encryption of the safe after it undergoes a password
      * change. The function takes a file at a time, uses the old key list to decrypt it, then,
      * uses the new key list to encrypt it.
+     * @param oldKey this is the list of keys used to encrypt the safe previously.
+     * @param newKey this is the new list of keys to be used to encrypt the safe.
      */
     fun changeEncryption(
         oldKey: List<SecretKey>,
@@ -369,6 +372,7 @@ class SafeData(
 
     /**
      * takes key list and saves decrypted version of each file in the export directory
+     * @param keyList takes list of keys used for encryption and decryption
      */
     fun exportAll(keyList: List<SecretKey>) {
         for (i in getDataFileList()) {
@@ -379,7 +383,9 @@ class SafeData(
     /**
      * takes safe file as a parameter along with the key list. It gets the file as byte array and
      * decrypts it using the key list. Once decryption is complete, it creates a new file inside
-     * the export directory with the same name as the file's name
+     * the export directory with the same name as the file's name.
+     * @param safeFile the safe file to export.
+     * @param keyList takes list of keys used for encryption and decryption.
      */
     fun export(safeFile: SafeFiles, keyList: List<SecretKey>) {
         val file = File(
@@ -403,6 +409,12 @@ class SafeData(
     }
 
 
+    /**
+     * takes a safe file, decrypts it and stores it into the destination file.
+     * @param from safe file to decrypt.
+     * @param destinationFile file to store decrypted safe file.
+     * @param keyList takes list of keys used for encryption and decryption.
+     */
     private fun readFromWriteTo(
         from: SafeFiles,
         destinationFile: File,
@@ -424,7 +436,8 @@ class SafeData(
     }
 
     /**
-     * takes a safeFile parameter and uses its properties to delete it from the safe
+     * takes a safeFile parameter and uses its properties to delete it from the safe.
+     * @param safeFile the file to delete from safe
      */
     fun deleteFile(safeFile: SafeFiles) {
         File(
@@ -442,9 +455,11 @@ class SafeData(
     /**
      * takes list of keys and the file to open. decrypts the file and opens it using context it
      * received as a parameter
+     * @param keyList takes list of keys used for encryption and decryption.
+     * @param safeFile the file to open from safe
      */
     fun openFile(
-        safeMasterKey: List<SecretKey>,
+        keyList: List<SecretKey>,
         safeFile: SafeFiles,
         context: Context
     ) {
@@ -454,7 +469,7 @@ class SafeData(
             "$safeAbsoluteLocation/$cacheDirectoryName/${decryptedFileName}.${safeFile.extension}"
         )
 
-        readFromWriteTo(safeFile, decryptedFile, safeMasterKey)
+        readFromWriteTo(safeFile, decryptedFile, keyList)
         saveChangesToLogFile(
             action = "open file",
             string = "File directory opened - ${safeFile.fileDirectory}, " +
@@ -600,7 +615,8 @@ class SafeData(
     //----------------------------------------------------------------------------safe-key-functions
 
     /**
-     * decrypt the partial key using given password and return the result as key.
+     * @param passwordOne generates a key using the given string.
+     * @return returns the generated key as a list of secret keys
      */
     fun getKey(
         passwordOne: String
@@ -609,8 +625,9 @@ class SafeData(
     }
 
     /**
-     * generates key one and key two using the method mentioned in get-key function. Once
-     * generated, encrypt key-two using key one to get final key to be returned.
+     * @param passwordOne generates first key using the given string.
+     * @param passwordTwo generates second key using the given string.
+     * @return returns the generated keys from both strings as a list of secret keys.
      */
     fun getKey(
         passwordOne: String,
