@@ -54,14 +54,16 @@ class SafeData(
         const val safeDataFileName = ".SAFE_FILES_META.txt"
         const val encryptedFileName = "ENC_FILE.CRYPTILE"
 
-        const val safeDataDirectory = "DATA"
-        const val testDirectory = "TEST"
-        const val cacheDirectory = ".CACHE"
+        const val safeDataDirectoryName = "DATA"
+        const val testDirectoryName = "TEST"
+        const val cacheDirectoryName = ".CACHE"
         const val exportDirectoryName = "EXPORTED_FILES"
+        const val encStorageDirectoryName = "CRYPT_DATA"
 
         val decryptedFileName = UUID.randomUUID().toString()
 
         const val testSizeLimit = 50
+        const val encFileLimit = 1_000_000
 
         private val ivSpec =
             IvParameterSpec(byteArrayOf(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
@@ -202,7 +204,7 @@ class SafeData(
             "$safeAbsoluteLocation/${exportDirectoryName}"
         ).mkdirs()
         File(
-            Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectory}"
+            Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectoryName}"
         ).apply {
             this.mkdirs()
             val plainWriter = FileWriter(File(this, unencryptedTestFileName))
@@ -225,11 +227,11 @@ class SafeData(
         }
         File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/${safeDataDirectory}"
+            "$safeAbsoluteLocation/${safeDataDirectoryName}"
         ).apply { if (!this.exists()) this.mkdirs() }
         File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/${cacheDirectory}"
+            "$safeAbsoluteLocation/${cacheDirectoryName}"
         ).apply { if (!this.exists()) this.mkdirs() }
 
         saveChangesToLogFile(
@@ -310,7 +312,7 @@ class SafeData(
     fun clearCache() {
         for (child in File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/$cacheDirectory"
+            "$safeAbsoluteLocation/$cacheDirectoryName"
         ).listFiles()!!) {
             child.delete()
         }
@@ -339,7 +341,7 @@ class SafeData(
                 val originalFile = File(
                     Environment.getExternalStorageDirectory(),
                     "$safeAbsoluteLocation/" +
-                            "$safeDataDirectory/" +
+                            "$safeDataDirectoryName/" +
                             "${i.fileDirectory}/" +
                             encryptedFileName
                 )
@@ -355,7 +357,7 @@ class SafeData(
             }
         }
         File(
-            Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectory}"
+            Environment.getExternalStorageDirectory(), "$safeAbsoluteLocation/${testDirectoryName}"
         ).apply {
             val plainTextReader = BufferedReader(FileReader(File(this, unencryptedTestFileName)))
             val cipherWriter = FileWriter(File(this, encryptedTestFileName))
@@ -390,14 +392,17 @@ class SafeData(
      * the export directory with the same name as the file's name
      */
     fun export(safeFile: SafeFiles, keyList: List<SecretKey>) {
-        val dc = decrypt(getEncryptedByteArrayFromSafeFile(safeFile), keyList)!!
         val file = File(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/" +
                     "$exportDirectoryName/" +
                     "${safeFile.fileNameUpperCase}.${safeFile.extension}"
         )
-        file.writeBytes(dc)
+
+
+        readFromWriteTo(safeFile, file, keyList)
+
+
         Log.d(TAG, "exported file in directory: ${safeFile.fileDirectory}")
         saveChangesToLogFile(
             action = "export",
@@ -408,13 +413,34 @@ class SafeData(
         )
     }
 
+
+    private fun readFromWriteTo(
+        from: SafeFiles,
+        destinationFile: File,
+        keyList: List<SecretKey>
+    ) {
+        val dir = File(
+            Environment.getExternalStorageDirectory(),
+            "${safeAbsoluteLocation}/$safeDataDirectoryName/${from.fileDirectory}/$encStorageDirectoryName"
+        )
+
+        // TODO: compensate in other functions if destination already exists
+
+        if (!destinationFile.exists()) {
+            for (i in 0 until dir.list()!!.size) {
+                val fileBytes = File(dir, "${encryptedFileName}_$i").readBytes()
+                destinationFile.appendBytes(decrypt(fileBytes, keyList)!!)
+            }
+        }
+    }
+
     /**
      * takes a safeFile parameter and uses its properties to delete it from the safe
      */
     fun deleteFile(safeFile: SafeFiles) {
         File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/$safeDataDirectory/${safeFile.fileDirectory}"
+            "$safeAbsoluteLocation/$safeDataDirectoryName/${safeFile.fileDirectory}"
         ).deleteRecursively()
         saveChangesToLogFile(
             action = "deletion",
@@ -430,12 +456,12 @@ class SafeData(
      */
     fun openFile(safeMasterKey: List<SecretKey>, safeFile: SafeFiles, context: Context) {
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
-        val encryptedByteArray = getEncryptedByteArrayFromSafeFile(safeFile)
         val decryptedFile = File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/$cacheDirectory/${decryptedFileName}.${safeFile.extension}"
+            "$safeAbsoluteLocation/$cacheDirectoryName/${decryptedFileName}.${safeFile.extension}"
         )
-        decryptedFile.writeBytes(decrypt(encryptedByteArray, safeMasterKey)!!)
+
+        readFromWriteTo(safeFile, decryptedFile, safeMasterKey)
         saveChangesToLogFile(
             action = "open file",
             string = "File directory opened - ${safeFile.fileDirectory}, " +
@@ -467,7 +493,7 @@ class SafeData(
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val encryptedFile = File(
             Environment.getExternalStorageDirectory(),
-            "${safeAbsoluteLocation}/$safeDataDirectory/${safeFile.fileDirectory}/$encryptedFileName"
+            "${safeAbsoluteLocation}/$safeDataDirectoryName/${safeFile.fileDirectory}/$encryptedFileName"
         )
         val encryptedByteArray = ByteArray(
             Files.readAttributes(encryptedFile.toPath(), BasicFileAttributes::class.java)
@@ -490,11 +516,12 @@ class SafeData(
     fun getDataFileList(): List<SafeFiles> {
         val listOfFiles = File(
             Environment.getExternalStorageDirectory(),
-            "${safeAbsoluteLocation}/${safeDataDirectory}"
+            "${safeAbsoluteLocation}/${safeDataDirectoryName}"
         ).listFiles()
         val finalList = mutableListOf<SafeFiles>()
         if (!listOfFiles.isNullOrEmpty()) {
             for (i in listOfFiles) {
+                // TODO: add try catch, notify user of error, add to log
                 finalList.add(
                     Gson().fromJson(
                         FileReader(File(i, safeDataFileName)).readText(),
@@ -513,19 +540,46 @@ class SafeData(
     fun importFileToSafe(fileAbsolutePath: String, safeMasterKey: List<SecretKey>) {
         val safeFile = getSafeFileEnum(fileAbsolutePath)
         val file = File(Environment.getExternalStorageDirectory(), fileAbsolutePath)
-        val originalFileByteArray = ByteArray(
-            Files.readAttributes(file.toPath(), BasicFileAttributes::class.java).size().toInt()
+
+        val inputFileSize = Files
+            .readAttributes(file.toPath(), BasicFileAttributes::class.java).size()
+        Log.d(TAG, "file size = $inputFileSize")
+
+        val destinationDirectory = File(
+            Environment.getExternalStorageDirectory(),
+            "$safeAbsoluteLocation/$safeDataDirectoryName/${safeFile.fileDirectory}"
         )
-        BufferedInputStream(FileInputStream(file)).apply {
-            this.read(originalFileByteArray, 0, originalFileByteArray.size);this.close()
-        }
-        val destination = "$safeAbsoluteLocation/$safeDataDirectory/${safeFile.fileDirectory}"
-        val destinationDirectory = File(Environment.getExternalStorageDirectory(), destination)
         destinationDirectory.mkdirs()
 
-        File(
-            File(Environment.getExternalStorageDirectory(), destination), encryptedFileName
-        ).writeBytes(encrypt(originalFileByteArray, safeMasterKey)!!)
+
+        val newDestinationDirectory = File(destinationDirectory, encStorageDirectoryName)
+        newDestinationDirectory.mkdirs()
+
+        var i: Long = 0
+        var iterationCount = 0
+
+        val inputStream = BufferedInputStream(FileInputStream(file))
+        while (i < inputFileSize) {
+            val currentLimit =
+                if (inputFileSize - i > encFileLimit) {
+                    encFileLimit
+                } else {
+                    (inputFileSize - i).toInt()
+                }
+            Log.d(TAG, "currentLimit = $currentLimit, iteration i = $i")
+            val cacheArray = ByteArray(currentLimit)
+            inputStream.read(cacheArray, 0, currentLimit)
+
+            File(newDestinationDirectory, "${encryptedFileName}_$iterationCount")
+                .writeBytes(encrypt(cacheArray, safeMasterKey)!!)
+
+            iterationCount += 1
+            i += currentLimit
+        }
+        inputStream.close()
+
+
+
         FileWriter(File(destinationDirectory, safeDataFileName)).apply {
             append(GsonBuilder().setPrettyPrinting().create().toJson(safeFile));flush();close()
         }
@@ -557,7 +611,7 @@ class SafeData(
         do randomDirectoryName = UUID.randomUUID().toString() while (
             File(
                 Environment.getExternalStorageDirectory(),
-                "$safeAbsoluteLocation/$safeDataDirectory/$randomDirectoryName"
+                "$safeAbsoluteLocation/$safeDataDirectoryName/$randomDirectoryName"
             ).exists()
         )
         return SafeFiles(
@@ -624,7 +678,7 @@ class SafeData(
                 FileReader(
                     File(
                         Environment.getExternalStorageDirectory(),
-                        "$safeAbsoluteLocation/${testDirectory}/${encryptedTestFileName}"
+                        "$safeAbsoluteLocation/${testDirectoryName}/${encryptedTestFileName}"
                     )
                 )
             )
@@ -633,7 +687,7 @@ class SafeData(
                 FileReader(
                     File(
                         Environment.getExternalStorageDirectory(),
-                        "$safeAbsoluteLocation/${testDirectory}/${unencryptedTestFileName}"
+                        "$safeAbsoluteLocation/${testDirectoryName}/${unencryptedTestFileName}"
                     )
                 )
             )
