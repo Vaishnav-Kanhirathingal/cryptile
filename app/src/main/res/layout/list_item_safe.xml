@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/padding_recycler_safe"
     android:backgroundTint="@color/card_background_light"
-    app:cardCornerRadius="@dimen/file_list_padding"
+    app:cardCornerRadius="@dimen/element_padding_recycler"
     app:cardUseCompatPadding="true"
+
     tools:layout_width="250dp">
 
     <LinearLayout

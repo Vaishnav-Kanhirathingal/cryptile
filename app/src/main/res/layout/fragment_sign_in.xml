@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/sign_up_vertical"
             android:text="Welcome Back"
+            android:textColor="@color/primaryColor"
             android:textAlignment="center"
             android:textSize="36sp" />
 

@@ -24,5 +24,6 @@
     <dimen name="layout_vertical">14dp</dimen>
     <dimen name="layout_horizontal">10dp</dimen>
     <dimen name="safe_list_image_padding">2dp</dimen>
+    <dimen name="element_padding_recycler">10dp</dimen>
 
 </resources>

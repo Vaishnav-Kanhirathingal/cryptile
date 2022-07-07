@@ -5,7 +5,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -16,29 +15,16 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 )
 
 class AppDataStore(val context: Context) {
-    private val default = "Default"
-
     //------------------------------------------------------------------------------------------keys
-    private val userNameKey = stringPreferencesKey("user_name_key")
-    private val userEmailKey = stringPreferencesKey("user_email_key")
-
     private val fingerprintAppLockKey = booleanPreferencesKey("fingerprint_app_lock_key")
     private val keepMeSignedInKey = booleanPreferencesKey("keep_me_signed_in_key")
 
     //------------------------------------------------------------------------------------value-flow
-    val userNameFlow: Flow<String> = stringMapper(userNameKey)
-    val userEmailFlow: Flow<String> = stringMapper(userEmailKey)
 
     val fingerprintAppLockFlow: Flow<Boolean> = booleanMapper(fingerprintAppLockKey)
     val keepMeSignedInFlow: Flow<Boolean> = booleanMapper(keepMeSignedInKey)
 
     //----------------------------------------------------------------------------------------mapper
-    /**
-     * string mapper is used to access every string stored in the data store.
-     */
-    private fun stringMapper(key: Preferences.Key<String>): Flow<String> {
-        return context.dataStore.data.catch { it.printStackTrace() }.map { it[key] ?: default }
-    }
 
     /**
      * boolean mapper is used to access every boolean stored in the data store.
@@ -48,20 +34,6 @@ class AppDataStore(val context: Context) {
     }
 
     //---------------------------------------------------------------------------------------setters
-    /**
-     * savers are used to save the values they get as parameters to the datastore. String saver is
-     * used to store string values. StoreString is an enum which is used to decide, under what key
-     * name the value is to be stored.
-     */
-    suspend fun stringSaver(string: String, storeString: StoreString) {
-        context.dataStore.edit {
-            it[when (storeString) {
-                StoreString.USER_NAME -> userNameKey
-                StoreString.USER_EMAIL -> userEmailKey
-                else -> throw IllegalArgumentException("string type not specified in data store")
-            }] = string
-        }
-    }
 
     /**
      * savers are used to save the values they get as parameters to the datastore. boolean saver is
@@ -82,13 +54,6 @@ class AppDataStore(val context: Context) {
 }
 
 //---------------------------------------------------------------------------------------------enums
-/**
- * these enums are used by saver functions to decide where the provided value is to be stored
- */
-enum class StoreString {
-    USER_NAME,
-    USER_EMAIL,
-}
 
 /**
  * these enums are used by saver functions to decide where the provided value is to be stored
