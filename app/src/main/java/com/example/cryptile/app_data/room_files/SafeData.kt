@@ -334,26 +334,16 @@ class SafeData(
         newKey: List<SecretKey>,
     ) {
         val fileList = getDataFileList()
-        val size = fileList.size.toFloat()
         if (fileList.isNotEmpty()) {
-            for (i in fileList) {
-                // TODO: attempt to use get list of safe files
-                val originalFile = File(
+            for (safeFile in fileList) {
+                val curDir = File(
                     Environment.getExternalStorageDirectory(),
-                    "$safeAbsoluteLocation/" +
-                            "$safeDataDirectoryName/" +
-                            "${i.fileDirectory}/" +
-                            encryptedFileName
+                    "$safeAbsoluteLocation/$safeDataDirectoryName/${safeFile.fileDirectory}/$encStorageDirectoryName"
                 )
-                val reEncryptedByteArray =
-                    encrypt(
-                        decrypt(
-                            getEncryptedByteArrayFromSafeFile(i),
-                            oldKey
-                        )!!,
-                        newKey
-                    )!!
-                originalFile.writeBytes(reEncryptedByteArray)
+                for (file in curDir.listFiles()!!) {
+                    val originalByteArray = file.readBytes()
+                    file.writeBytes(encrypt(decrypt(originalByteArray, oldKey)!!, newKey)!!)
+                }
             }
         }
         File(
@@ -398,7 +388,6 @@ class SafeData(
                     "$exportDirectoryName/" +
                     "${safeFile.fileNameUpperCase}.${safeFile.extension}"
         )
-
 
         readFromWriteTo(safeFile, file, keyList)
 
@@ -454,7 +443,11 @@ class SafeData(
      * takes list of keys and the file to open. decrypts the file and opens it using context it
      * received as a parameter
      */
-    fun openFile(safeMasterKey: List<SecretKey>, safeFile: SafeFiles, context: Context) {
+    fun openFile(
+        safeMasterKey: List<SecretKey>,
+        safeFile: SafeFiles,
+        context: Context
+    ) {
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val decryptedFile = File(
             Environment.getExternalStorageDirectory(),
@@ -487,26 +480,6 @@ class SafeData(
             null
         }
 
-    }
-
-    private fun getEncryptedByteArrayFromSafeFile(safeFile: SafeFiles): ByteArray {
-        // TODO: implement properly, decrypted file shouldn't be stored on disc cache
-        val encryptedFile = File(
-            Environment.getExternalStorageDirectory(),
-            "${safeAbsoluteLocation}/$safeDataDirectoryName/${safeFile.fileDirectory}/$encryptedFileName"
-        )
-        val encryptedByteArray = ByteArray(
-            Files.readAttributes(encryptedFile.toPath(), BasicFileAttributes::class.java)
-                .size().toInt()
-        )
-        try {
-            BufferedInputStream(FileInputStream(encryptedFile)).apply {
-                read(encryptedByteArray, 0, encryptedByteArray.size);close()
-            }
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        }
-        return encryptedByteArray
     }
 
     /**
