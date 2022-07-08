@@ -53,8 +53,52 @@ object Docs {
         Documentation(
             title = "Interacting with a CRYPTILE safe",
             description = "After entering the safe, you would see a list of items imported to " +
-                    "the safe (empty if entering for the first time). To add any file, click " +
-                    "on the \"+\" button at the bottom of the screen."// TODO: finish
-        )
+                    "the safe (empty if entering for the first time). Select any item to open it " +
+                    "in it's designated app. To add any file, click " +
+                    "on the \"+\" button at the bottom of the screen. For additional options, " +
+                    "open the options menu from the top app bar. In there, you can find options " +
+                    "for adding files, safe settings (described later), clear cache and send " +
+                    "logs. Send logs can be used to send your safe's logs to us for analysis " +
+                    "if some error occurs. You can also long press an encrypted file for " +
+                    "further options."
+        ),
+        Documentation(
+            title = "Interacting with CRYPTILE safe Settings",
+            description = "While inside a safe, select the option menu on the top app bar and " +
+                    "select \"Safe Settings\" option to open a new prompt. Within the prompt, " +
+                    "you'll find options to change the safe name, to export all files, delete " +
+                    "the safe and change password. Exporting and changing password are processes " +
+                    "that affect every file. So, these processes can take time proportional to " +
+                    "the size of the safe contents. The reason changing password affects every " +
+                    "file is because each password is used to generate a key. And so, if the " +
+                    "password changes, the key it generates also changes. Hence, a change in " +
+                    "password means re-encryption of every existing file in the safe."
+        ),
+        Documentation(
+            title = "App settings",
+            description = "To navigate to the app settings, be on the main screen. open the side " +
+                    "option menu. Within settings you will find options to change your account's " +
+                    "display name, password, the ability to delete your account with a warning " +
+                    "statement attached. The other options are self explanatory."
+        ),
+        Documentation(
+            title = "Remove All",
+            description = "The remove all option is found in the side menu of the main screen. " +
+                    "This option does not delete the safe. It just removes it from the app's " +
+                    "database."
+        ),
+        Documentation(
+            title = "Importing a CRYPTILE safe from storage",
+            description = "This is also another simple task. In case you created a safe and " +
+                    "removed it from the app's database, you can get it back into the app as " +
+                    "long as you haven't deleted the safe files or modified the contents of " +
+                    "the actual file. To Import the safe, click the \"+\" button on the main " +
+                    "screen. There you can see an option to import the safe. Selecting that " +
+                    "option you will be dropped off into your device's file explorer. Now, " +
+                    "navigate to the directory inside the safe you want to import. Once inside " +
+                    "the directory, you will see a file with the name \"META_DATA.txt\". " +
+                    "Selecting that file would import the safe into the application. " +
+                    "After that, you can interact with the safe as you normally would."
+        ),
     )
 }
