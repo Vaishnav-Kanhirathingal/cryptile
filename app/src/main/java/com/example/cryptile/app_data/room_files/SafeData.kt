@@ -422,7 +422,7 @@ class SafeData(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/" +
                     "$exportDirectoryName/" +
-                    "${safeFile.fileNameUpperCase}.${safeFile.extension}"
+                    "${safeFile.fileNameUpperCase}${safeFile.extension}"
         )
 
         readFromWriteTo(
@@ -519,7 +519,7 @@ class SafeData(
         // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val decryptedFile = File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/$cacheDirectoryName/${decryptedFileName}.${safeFile.extension}"
+            "$safeAbsoluteLocation/$cacheDirectoryName/${decryptedFileName}${safeFile.extension}"
         )
 
         readFromWriteTo(

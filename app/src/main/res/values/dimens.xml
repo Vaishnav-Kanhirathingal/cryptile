@@ -13,7 +13,7 @@
 
     <dimen name="divider_thickness">1px</dimen>
 
-    <dimen name="safe_name_size">20sp</dimen>
+    <dimen name="safe_name_size">18sp</dimen>
     <dimen name="safe_details_size">11sp</dimen>
     <dimen name="card_padding">10dp</dimen>
     <dimen name="padding_recycler_safe">4dp</dimen>

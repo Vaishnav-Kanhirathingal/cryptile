@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
@@ -120,7 +120,7 @@ class MainFragment : Fragment() {
             .observe(viewLifecycleOwner) { safeAdapter.submitList(it) }
         binding.includedSubLayout.safeRecycler.adapter = safeAdapter
         binding.includedSubLayout.safeRecycler.layoutManager =
-            GridLayoutManager(requireContext(), 2)
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
 
     private fun sideMenuBinding() {

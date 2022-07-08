@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:backgroundTint="@color/card_background_light"
     app:cardCornerRadius="@dimen/element_padding_recycler"
+    app:cardElevation="6dp"
     app:cardUseCompatPadding="true"
-
     tools:layout_width="250dp">
 
     <LinearLayout
@@ -36,6 +36,7 @@
                 android:id="@+id/safe_condition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top"
                 android:src="@drawable/check_circle_24" />
 
         </LinearLayout>
@@ -77,9 +78,9 @@
                     android:id="@+id/safe_owner_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="fill"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/safe_card_horizontal"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
                     android:maxLines="1"
                     tools:text="John Doe" />
             </LinearLayout>
@@ -108,7 +109,8 @@
                     android:id="@+id/safe_access_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="fill"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/safe_card_horizontal"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:maxLines="1"
@@ -139,7 +141,8 @@
                     android:id="@+id/safe_absolute_path_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="fill"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/safe_card_horizontal"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:maxLines="2"
