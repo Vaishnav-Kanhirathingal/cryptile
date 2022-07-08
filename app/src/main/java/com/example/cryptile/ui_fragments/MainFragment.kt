@@ -138,7 +138,6 @@ class MainFragment : Fragment() {
         menu.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.account_sign_out -> {
-                    // TODO: prompt
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
                         title = "Sign Out?",
@@ -158,7 +157,6 @@ class MainFragment : Fragment() {
                     true
                 }
                 R.id.safe_remove_all -> {
-                    // TODO: prompt
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
                         title = "Remove list?",
@@ -186,7 +184,6 @@ class MainFragment : Fragment() {
                     true
                 }
                 R.id.app_exit -> {
-                    // TODO: prompt
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
                         title = "Exit app?",

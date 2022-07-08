@@ -20,7 +20,6 @@ interface SafeDao {
     @Query("SELECT * FROM safe_database where id = :id")
     fun getById(id: Int): Flow<SafeData>
 
-    // TODO: delete all entries from the table
     @Query("DELETE FROM safe_database")
     suspend fun deleteAll()
 }

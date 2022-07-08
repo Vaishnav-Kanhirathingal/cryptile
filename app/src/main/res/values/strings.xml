@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">CRYPTILE</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
@@ -18,4 +18,5 @@
     <string name="consequences_warning">I understand the consequences of this action</string>
     <string name="export">Export</string>
     <string name="reset_password_message">A password reset email has been sent to your email account. Click the link provided in the email to reset your password.</string>
+    <string name="sign_up_description">You can either sign up using the google Sign up process or your email address. Signing up to the app creates your account name and a secret key. This key that has been created will be used for every personal safe. This key would not be used with public safes. The key would prevent other users from using the safe you created as private.</string>
 </resources>

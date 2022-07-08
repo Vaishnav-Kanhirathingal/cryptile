@@ -45,7 +45,6 @@
             android:id="@+id/safe_created_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/safe_card_horizontal"
             android:textSize="@dimen/safe_details_size"
             tools:text="Created: 18/02/2022" />
 

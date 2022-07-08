@@ -66,7 +66,6 @@ class SafeViewerFragment : Fragment() {
         for (i in list) {
             keyList.add(SafeData.stringToKey(i))
         }
-        // TODO: get list keys from gson and assign
         key = keyList
     }
 
