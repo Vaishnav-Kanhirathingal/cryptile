@@ -62,7 +62,7 @@ class SafeData(
         const val exportDirectoryName = "EXPORTED_FILES"
         const val encStorageDirectoryName = "CRYPT_DATA"
 
-        val decryptedFileName = UUID.randomUUID().toString()
+        val decryptedFileName = UUID.randomUUID().toString()// TODO: change
 
         const val testSizeLimit = 50
         const val encFileLimit = 1_000_000
@@ -368,6 +368,12 @@ class SafeData(
                     progress = (iterator * 100) / size,
                     dismiss = true
                 )
+                saveChangesToLogFile(
+                    action = "encryption change",
+                    string = "for ${safeFile.fileDirectory} " +
+                            "of extension ${safeFile.extension} " +
+                            "and size ${safeFile.fileSize}"
+                )
             }
         }
         File(
@@ -436,7 +442,7 @@ class SafeData(
         Log.d(TAG, "exported file in directory: ${safeFile.fileDirectory}")
         saveChangesToLogFile(
             action = "export",
-            string = "exported file from directory ${safeFile.fileDirectory} " +
+            string = "from directory ${safeFile.fileDirectory} " +
                     "of extension ${safeFile.extension} " +
                     "of size - ${safeFile.fileSize} " +
                     "to $exportDirectoryName folder in safe root"

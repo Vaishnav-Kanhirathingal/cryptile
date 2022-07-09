@@ -25,7 +25,11 @@
         android:id="@+id/doc_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        android:paddingTop="@dimen/card_elevation"
+        android:paddingBottom="50dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:itemCount="3"
+        tools:itemCount="6"
         tools:listitem="@layout/list_item_documentation" />
 </LinearLayout>

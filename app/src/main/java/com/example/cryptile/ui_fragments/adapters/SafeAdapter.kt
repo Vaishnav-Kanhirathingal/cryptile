@@ -2,6 +2,7 @@ package com.example.cryptile.ui_fragments.adapters
 
 import android.app.Dialog
 import android.content.Context
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.example.cryptile.databinding.ListItemSafeBinding
 import com.example.cryptile.databinding.PromptOpenSafeBinding
 import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.MainFragmentDirections
+import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -26,6 +28,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
 
 private const val TAG = "SafeAdapter"
@@ -43,13 +46,22 @@ class SafeAdapter(
         private val context: Context
     ) :
         RecyclerView.ViewHolder(binding.root) {
+
+        private var locationCorrect: Boolean = true
+
         fun bind(safeData: SafeData) {
             binding.apply {
                 fileNameTextView.text = safeData.safeName
+                locationCorrect = File(
+                    Environment.getExternalStorageDirectory(), safeData.safeAbsoluteLocation
+                ).exists()
                 safeCondition.setImageResource(
                     // TODO: check if the safe is present at location
-                    if (true) R.drawable.check_circle_24
-                    else R.drawable.cancel_24
+                    if (locationCorrect) {
+                        R.drawable.offline_24
+                    } else {
+                        R.drawable.error_24
+                    }
                 )
                 safeCreatedTextView.text =
                     "Created: ${SimpleDateFormat("dd/MM/yyyy").format(safeData.safeCreated)}"
@@ -78,102 +90,123 @@ class SafeAdapter(
             viewModel: AppViewModel,
             navController: NavController
         ) {
-            val binding: PromptOpenSafeBinding = PromptOpenSafeBinding.inflate(inflater)
-            val dialogBox = Dialog(context)
-            binding.apply {
-                safeNameTextView.text = safeData.safeName
-                passwordTwoTextLayout.isEnabled = safeData.safeUsesMultiplePassword
-                resetImageButton.setOnClickListener {
+            if (locationCorrect) {
+                val binding: PromptOpenSafeBinding = PromptOpenSafeBinding.inflate(inflater)
+                val dialogBox = Dialog(context)
+                binding.apply {
+                    safeNameTextView.text = safeData.safeName
+                    passwordTwoTextLayout.isEnabled = safeData.safeUsesMultiplePassword
+                    resetImageButton.setOnClickListener {
+                        passwordOneTextLayout.apply {
+                            isEnabled = true
+                            isErrorEnabled = false
+                            editText!!.setText("")
+                        }
+                        passwordTwoTextLayout.apply {
+                            isEnabled = safeData.safeUsesMultiplePassword
+                            isErrorEnabled = false
+                            editText!!.setText("")
+                        }
+                    }
+                    removeImageButton.setOnClickListener { viewModel.delete(safeData);dialogBox.dismiss() }
                     passwordOneTextLayout.apply {
-                        isEnabled = true
-                        isErrorEnabled = false
-                        editText!!.setText("")
+                        setEndIconOnClickListener {
+                            this.isEnabled = false
+                        }
                     }
                     passwordTwoTextLayout.apply {
-                        isEnabled = safeData.safeUsesMultiplePassword
-                        isErrorEnabled = false
-                        editText!!.setText("")
+                        setEndIconOnClickListener {
+                            this.isEnabled = false
+                        }
                     }
-                }
-                removeImageButton.setOnClickListener { viewModel.delete(safeData);dialogBox.dismiss() }
-                passwordOneTextLayout.apply { setEndIconOnClickListener { this.isEnabled = false } }
-                passwordTwoTextLayout.apply { setEndIconOnClickListener { this.isEnabled = false } }
-                cancelButton.setOnClickListener { dialogBox.dismiss() }
-                openButton.setOnClickListener {
-                    openButton.isEnabled = false
-                    Firebase.firestore
-                        .collection(UserDataConstants.tableName)
-                        .document(Firebase.auth.currentUser!!.uid)
-                        .get()
-                        .addOnSuccessListener {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val keyList = if (safeData.safeUsesMultiplePassword) {
-                                    safeData.getKey(
-                                        passwordOne = passwordOneTextLayout.editText!!.text.toString(),
-                                        passwordTwo = passwordTwoTextLayout.editText!!.text.toString()
-                                    )
-                                } else {
-                                    safeData.getKey(
-                                        passwordOne = passwordOneTextLayout.editText!!.text.toString()
-                                    )
-                                }
-                                if (safeData.personalAccessOnly) {
-                                    keyList.add(
-                                        SafeData.stringToKey(
-                                            it.get(UserDataConstants.userKey).toString()
-                                        )
-                                    )
-                                }
-                                val keyIsCorrect: Boolean = try {
-                                    safeData.checkKeyGenerated(keyList)
-                                } catch (e: Exception) {
-                                    e.printStackTrace();false
-                                }
-                                val stringList = mutableListOf<String>()
-                                for (i in keyList) stringList.add(SafeData.keyToString(i))
-
-
-                                val gson = Gson().toJson(stringList)
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    if (keyIsCorrect) {
-                                        dialogBox.dismiss()
-                                        navController.navigate(
-                                            MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
-                                                safeData.id,
-                                                gson
-                                            )
+                    cancelButton.setOnClickListener { dialogBox.dismiss() }
+                    openButton.setOnClickListener {
+                        openButton.isEnabled = false
+                        Firebase.firestore
+                            .collection(UserDataConstants.tableName)
+                            .document(Firebase.auth.currentUser!!.uid)
+                            .get()
+                            .addOnSuccessListener {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    val keyList = if (safeData.safeUsesMultiplePassword) {
+                                        safeData.getKey(
+                                            passwordOne = passwordOneTextLayout.editText!!.text.toString(),
+                                            passwordTwo = passwordTwoTextLayout.editText!!.text.toString()
                                         )
                                     } else {
-                                        passwordOneTextLayout.apply {
-                                            error = "Password might be incorrect"; isErrorEnabled =
-                                            true
-                                        }
-                                        passwordTwoTextLayout.apply {
-                                            if (safeData.safeUsesMultiplePassword) error =
-                                                "Password might be incorrect"; isErrorEnabled = true
-                                        }
+                                        safeData.getKey(
+                                            passwordOne = passwordOneTextLayout.editText!!.text.toString()
+                                        )
                                     }
-                                    openButton.isEnabled = true
+                                    if (safeData.personalAccessOnly) {
+                                        keyList.add(
+                                            SafeData.stringToKey(
+                                                it.get(UserDataConstants.userKey).toString()
+                                            )
+                                        )
+                                    }
+                                    val keyIsCorrect: Boolean = try {
+                                        safeData.checkKeyGenerated(keyList)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace();false
+                                    }
+                                    val stringList = mutableListOf<String>()
+                                    for (i in keyList) stringList.add(SafeData.keyToString(i))
+
+
+                                    val gson = Gson().toJson(stringList)
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        if (keyIsCorrect) {
+                                            dialogBox.dismiss()
+                                            navController.navigate(
+                                                MainFragmentDirections.actionMainFragmentToSafeViewerFragment(
+                                                    safeData.id,
+                                                    gson
+                                                )
+                                            )
+                                        } else {
+                                            passwordOneTextLayout.apply {
+                                                error =
+                                                    "Password might be incorrect"; isErrorEnabled =
+                                                true
+                                            }
+                                            passwordTwoTextLayout.apply {
+                                                if (safeData.safeUsesMultiplePassword) error =
+                                                    "Password might be incorrect"; isErrorEnabled =
+                                                true
+                                            }
+                                        }
+                                        openButton.isEnabled = true
+                                    }
                                 }
+                            }.addOnFailureListener {
+                                it.printStackTrace()
+                                Toast.makeText(
+                                    context,
+                                    "an error has occurred: ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                        }.addOnFailureListener {
-                            it.printStackTrace()
-                            Toast.makeText(
-                                context,
-                                "an error has occurred: ${it.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                    }
                 }
-            }
-            dialogBox.apply {
-                setContentView(binding.root)
-                window!!.setLayout(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                dialogBox.apply {
+                    setContentView(binding.root)
+                    window!!.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                    setCancelable(true)
+                    show()
+                }
+            } else {
+                AdditionalPrompts.confirmationPrompt(
+                    context = context,
+                    title = "Warning!!!",
+                    message = "The safe you were looking for no longer exists at it's specified " +
+                            "location. You may want to import it again. Remove safe data from " +
+                            "the app?",
+                    onSuccess = { viewModel.delete(safeData) }
                 )
-                setCancelable(true)
-                show()
             }
         }
     }
