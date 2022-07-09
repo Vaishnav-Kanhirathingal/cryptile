@@ -112,7 +112,6 @@ object AdditionalPrompts {
             }
             cancelButton.setOnClickListener { dialogBox.dismiss() }
         }
-        // TODO: check user
     }
 
 

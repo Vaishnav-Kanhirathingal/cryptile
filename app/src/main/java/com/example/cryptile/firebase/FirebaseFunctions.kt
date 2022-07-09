@@ -65,55 +65,50 @@ object SignInFunctions {
         onFailure: (String) -> Unit
     ) {
         Log.d(TAG, "creating account using email")
-        // TODO: open a prompt with loading screen
-        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
-            Log.d(TAG, "account creation successful")
-            // TODO: add values to database.
-            if (it.additionalUserInfo!!.isNewUser) {
-                Log.d(TAG, "user is new")
-                addToDatabase(
-                    userName = userName,
-                    email = email,
-                    database = database,
-                    photoURL = "some photo url",
-                    uid = auth.uid!!,
-                    onFailure = onFailure
-                )
-                Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
-            }
-
-
-            if (auth.currentUser != null) {
-                auth.currentUser!!.sendEmailVerification().addOnSuccessListener {
-                    Log.d(TAG, "verification email sent")
-                    auth.signOut()
-                    AdditionalPrompts.showMessagePrompt(
-                        context = context,
-                        layoutInflater = layoutInflater,
-                        message = context.resources.getString(R.string.email_sent_message),
-                        onDismiss = onMessageDismiss
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                Log.d(TAG, "account creation successful")
+                if (it.additionalUserInfo!!.isNewUser) {
+                    Log.d(TAG, "user is new")
+                    addToDatabase(
+                        userName = userName,
+                        email = email,
+                        database = database,
+                        photoURL = "some photo url",
+                        uid = auth.uid!!,
+                        onFailure = onFailure
                     )
-                }.addOnFailureListener { e: Exception ->
-                    e.printStackTrace()
-                    onFailure(e.message!!)
-                    auth.signOut()
-                    Toast.makeText(
-                        context,
-                        "Verification email generation failed, try again later. Reason: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, "Account Created", Toast.LENGTH_SHORT).show()
                 }
+                auth.currentUser!!.sendEmailVerification()
+                    .addOnSuccessListener {
+                        Log.d(TAG, "verification email sent")
+                        auth.signOut()
+                        AdditionalPrompts.showMessagePrompt(
+                            context = context,
+                            layoutInflater = layoutInflater,
+                            message = context.resources.getString(R.string.email_sent_message),
+                            onDismiss = onMessageDismiss
+                        )
+                    }.addOnFailureListener { e: Exception ->
+                        e.printStackTrace()
+                        onFailure(e.message!!)
+                        auth.signOut()
+                        Toast.makeText(
+                            context,
+                            "Verification email generation failed, try again later. Reason: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }.addOnFailureListener {
+                it.printStackTrace()
+                onFailure(it.message!!)
+                Toast.makeText(
+                    context,
+                    "Account generation failed. Reason: ${it.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        }.addOnFailureListener {
-            // TODO: warning about failing to create user
-            it.printStackTrace()
-            onFailure(it.message!!)
-            Toast.makeText(
-                context,
-                "Account generation failed. Reason: ${it.message}",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
     }
 
     private fun addToDatabase(
