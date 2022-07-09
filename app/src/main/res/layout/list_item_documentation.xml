@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardElevation="@dimen/documentation_card_padding"
-    app:cardCornerRadius="@dimen/documentation_card_padding"
-    app:cardUseCompatPadding="true"
-    android:backgroundTint="@color/card_background">
+    android:layout_marginHorizontal="@dimen/card_elevation"
+    android:backgroundTint="@color/card_background"
+    app:cardCornerRadius="@dimen/card_radius"
+    app:cardElevation="@dimen/card_elevation"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
             android:id="@+id/title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
             android:textSize="@dimen/documentation_title_size"
             tools:text="Sign Up Process" />
 
