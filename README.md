@@ -8,8 +8,6 @@ This is an encryption application. it would take your files and encrypt them so 
 
 Maybe you want some of your important buisness documents always with you. Here, you can create a safe with the name `buisness`. This would help you identify the safe's purpose. Similiarly, maybe you want to store your bank's papers. you can name the safe `finance`. This would again similiarly help you identify the safe's purpose.
 
-<hr>
-
 ## Documentation
 
 ### Sign Up -
