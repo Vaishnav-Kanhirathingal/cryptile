@@ -85,7 +85,8 @@ object Docs {
             title = "Remove All",
             description = "The remove all option is found in the side menu of the main screen. " +
                     "This option does not delete the safe. It just removes it from the app's " +
-                    "database."
+                    "database. This means that the safe is still located at the location you " +
+                    "set for it during creation."
         ),
         Documentation(
             title = "Importing a CRYPTILE safe from storage",

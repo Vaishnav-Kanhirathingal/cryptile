@@ -7,14 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.databinding.FragmentDocumentationBinding
+import com.example.cryptile.ui_fragments.documentation.DocAdapter
+import com.example.cryptile.ui_fragments.documentation.Docs
 
 class DocumentationFragment : Fragment() {
     private lateinit var binding: FragmentDocumentationBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,6 +30,9 @@ class DocumentationFragment : Fragment() {
             topAppBar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
+            val adapter = DocAdapter()
+            docRecycler.adapter = adapter
+            adapter.submitList(Docs.list)
         }
     }
 }
