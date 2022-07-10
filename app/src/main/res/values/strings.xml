@@ -19,4 +19,6 @@
     <string name="export">Export</string>
     <string name="reset_password_message">A password reset email has been sent to your email account. Click the link provided in the email to reset your password.</string>
     <string name="sign_up_description">You can either sign up using the google Sign up process or your email address. Signing up to the app creates your account name and a secret key. This key that has been created will be used for every personal safe. This key would not be used with public safes. The key would prevent other users from using the safe you created as private.</string>
+    <string name="app_about">This app is intended to be used to encrypt and store any file the user wants to keep safe. This application does not save any user data other than the users one key linked to the account. This is an open source projects and you can find the link to the repository below.</string>
+    <string name="personal_about">Hi there. My name is Vaishnav Kanhirathingal. Currently I am a third year computer student. Android development is my thing. This was onne of the projects I have completed. For any queries, you can find my contacts below.</string>
 </resources>
