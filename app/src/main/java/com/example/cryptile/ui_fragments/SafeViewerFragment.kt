@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
@@ -108,7 +109,8 @@ class SafeViewerFragment : Fragment() {
                                     "faults within the app. Continue?",
                             onSuccess = {
                                 // TODO: open intent to send log file
-                                sendLogs()
+//                                sendLogs()
+                                test()
                             }
                         )
                         true
@@ -157,6 +159,29 @@ class SafeViewerFragment : Fragment() {
             "Sending log file for account ${viewModel.userEmail.value}.[specify your issue below]"
         )
         startActivity(Intent.createChooser(emailIntent, "Send email"))
+    }
+
+    private fun test() {
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.type = "text/plain"
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("email@example.com"))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "subject here")
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "body text")
+        val root = Environment.getExternalStorageDirectory()
+        val file = File(
+            root, "${safeData.safeAbsoluteLocation}/${SafeData.logFileName}"
+        )
+        if (!file.exists() || !file.canRead()) {
+            return
+        }
+//        val uri = Uri.fromFile(file)
+        val uri = getUriForFile(
+            requireContext(),
+            "com.example.cryptile.fileprovider",
+            file,
+        );
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"))
     }
 
     private fun addFile() {
