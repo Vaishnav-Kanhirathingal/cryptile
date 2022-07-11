@@ -10,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -47,14 +49,7 @@ class SafeViewerFragment : Fragment() {
     private lateinit var safeData: SafeData
     private lateinit var binding: FragmentSafeViewerBinding
     private lateinit var viewerAdapter: ViewerAdapter
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentSafeViewerBinding.inflate(layoutInflater)
-        return binding.root
-    }
+    private lateinit var addFile: ActivityResultLauncher<Intent>
 
     /**
      * here, the argument contains a list of keys as json strings. The list of keys are then
@@ -72,6 +67,15 @@ class SafeViewerFragment : Fragment() {
             keyList.add(SafeData.stringToKey(i))
         }
         key = keyList
+        registerActivity()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSafeViewerBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -84,7 +88,7 @@ class SafeViewerFragment : Fragment() {
             topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.add_file -> {
-                        addFile()
+                        startAdditionActivity()
                         true
                     }
                     R.id.safe_settings -> {
@@ -138,7 +142,7 @@ class SafeViewerFragment : Fragment() {
                 safeData = it
                 viewerAdapter.submitList(it.getDataFileList())
             }
-            addFileBottomButton.setOnClickListener { addFile() }
+            addFileBottomButton.setOnClickListener { startAdditionActivity() }
         }
     }
 
@@ -170,10 +174,10 @@ class SafeViewerFragment : Fragment() {
         startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"))
     }
 
-    private fun addFile() {
+    private fun startAdditionActivity() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*"
-        startActivityForResult(intent, 1)
+        addFile.launch(intent)
     }
 
     private fun openSafeSettings() {
@@ -324,36 +328,45 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        try {
-            val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
-            Log.d(TAG, "File Path = $path")
-            if (path.isBlank()) {
-                Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT).show()
-            } else {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        safeData.importFileToSafe(fileAbsolutePath = path, safeMasterKey = key)
-                        CoroutineScope(Dispatchers.Main).launch {
-                            viewerAdapter.submitList(safeData.getDataFileList())
-                        }
-                    } catch (e: Exception) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            e.printStackTrace()
-                            Toast.makeText(
-                                requireContext(),
-                                "error importing file - ${e.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+    private fun registerActivity() {
+        addFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            try {
+                val path = it.data!!.data!!.lastPathSegment!!.removePrefix("primary:")
+                Log.d(TAG, "File Path = $path")
+                if (path.isBlank()) {
+                    Toast.makeText(requireContext(), "File not detected", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            safeData.importFileToSafe(
+                                fileAbsolutePath = path,
+                                safeMasterKey = key
+                            )
+                            CoroutineScope(Dispatchers.Main).launch {
+                                viewerAdapter.submitList(safeData.getDataFileList())
+                            }
+                        } catch (e: Exception) {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                e.printStackTrace()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "error importing file - ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 }
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "System Error, Reselect File",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                e.printStackTrace()
             }
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "System Error, Reselect File", Toast.LENGTH_SHORT)
-                .show()
-            e.printStackTrace()
         }
     }
 }
