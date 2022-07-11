@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/sign_up_vertical"
             android:text="Create Account"
-            android:textColor="@color/primaryColor"
             android:textAlignment="center"
+            android:textColor="@color/primaryColor"
             android:textSize="36sp" />
 
         <com.google.android.material.textfield.TextInputLayout

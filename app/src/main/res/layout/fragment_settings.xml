@@ -108,9 +108,9 @@
                     android:layout_marginTop="@dimen/layout_vertical"
                     android:hint="New User Name"
                     android:tooltipText="press end icon to change user name"
+                    app:endIconContentDescription="Confirm user name"
                     app:endIconDrawable="@drawable/check_circle_24"
                     app:endIconMode="custom"
-                    app:endIconContentDescription="Confirm user name"
                     app:helperText="This will be displayed as the account name."
                     app:startIconDrawable="@drawable/account_24">
 

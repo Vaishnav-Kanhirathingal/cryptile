@@ -2,7 +2,9 @@ package com.example.cryptile.ui_fragments
 
 import android.app.Dialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +31,9 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.crypto.SecretKey
+
 
 private const val TAG = "SafeViewerFragment"
 
@@ -104,6 +108,7 @@ class SafeViewerFragment : Fragment() {
                                     "faults within the app. Continue?",
                             onSuccess = {
                                 // TODO: open intent to send log file
+                                sendLogs()
                             }
                         )
                         true
@@ -133,6 +138,25 @@ class SafeViewerFragment : Fragment() {
             }
             addFileBottomButton.setOnClickListener { addFile() }
         }
+    }
+
+    private fun sendLogs() {
+        // TODO: fix
+        val fileLocation = File(
+            Environment.getExternalStorageDirectory().absolutePath,
+            "${safeData.safeAbsoluteLocation}/${SafeData.logFileName}"
+        )
+        val path: Uri = Uri.fromFile(fileLocation)
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.type = "vnd.android.cursor.dir/email"
+        val to = arrayOf("vaishnav.kanhira@gmail.com")
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
+        emailIntent.putExtra(Intent.EXTRA_STREAM, path)
+        emailIntent.putExtra(
+            Intent.EXTRA_SUBJECT,
+            "Sending log file for account ${viewModel.userEmail.value}.[specify your issue below]"
+        )
+        startActivity(Intent.createChooser(emailIntent, "Send email"))
     }
 
     private fun addFile() {

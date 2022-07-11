@@ -2,7 +2,6 @@ package com.example.cryptile.ui_fragments.prompt
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -46,7 +45,7 @@ object AdditionalPrompts {
         context: Context,
         title: String
     ) {
-        CoroutineScope(Dispatchers.Main).launch{
+        CoroutineScope(Dispatchers.Main).launch {
             loadingBinding = PromptLoadingBinding.inflate(layoutInflater)
             loadingDialog = Dialog(context)
             loadingDialog.apply {
