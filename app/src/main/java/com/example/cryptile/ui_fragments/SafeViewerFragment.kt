@@ -105,12 +105,12 @@ class SafeViewerFragment : Fragment() {
                                     "contain any personal information other than your accounts " +
                                     "user name and the type of files you imported/opened/exported " +
                                     "along with its size. (eg - extension - \'.mp4\' size - 32 MB). " +
-                                    "these files can be useful for the developer to figure out any " +
+                                    "Log files can be useful for the developer to figure out any " +
                                     "faults within the app. Continue?",
                             onSuccess = {
                                 // TODO: open intent to send log file
 //                                sendLogs()
-                                test()
+                                sendLog()
                             }
                         )
                         true
@@ -142,44 +142,30 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
-    private fun sendLogs() {
-        // TODO: fix
-        val fileLocation = File(
-            Environment.getExternalStorageDirectory().absolutePath,
+    private fun sendLog() {
+        val emailIntent = Intent(Intent.ACTION_SEND, Uri.parse("mailto:vaishnav.kanhira@gmail.com"))
+        emailIntent.apply {
+            this.type = "text/plain"
+            this.putExtra(Intent.EXTRA_EMAIL, arrayOf("vaishnav.kanhira@gmail.com"))
+            this.putExtra(
+                Intent.EXTRA_SUBJECT,
+                "[CRYPTILE] - Sending log files for ${viewModel.userEmail.value}"
+            )
+            this.putExtra(Intent.EXTRA_TEXT, "[enter your issue associated with the safe below]")
+        }
+        val file = File(
+            Environment.getExternalStorageDirectory(),
             "${safeData.safeAbsoluteLocation}/${SafeData.logFileName}"
         )
-        val path: Uri = Uri.fromFile(fileLocation)
-        val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.type = "vnd.android.cursor.dir/email"
-        val to = arrayOf("vaishnav.kanhira@gmail.com")
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, to)
-        emailIntent.putExtra(Intent.EXTRA_STREAM, path)
-        emailIntent.putExtra(
-            Intent.EXTRA_SUBJECT,
-            "Sending log file for account ${viewModel.userEmail.value}.[specify your issue below]"
-        )
-        startActivity(Intent.createChooser(emailIntent, "Send email"))
-    }
-
-    private fun test() {
-        val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.type = "text/plain"
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("email@example.com"))
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "subject here")
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "body text")
-        val root = Environment.getExternalStorageDirectory()
-        val file = File(
-            root, "${safeData.safeAbsoluteLocation}/${SafeData.logFileName}"
-        )
         if (!file.exists() || !file.canRead()) {
+            Toast.makeText(
+                requireContext(),
+                "Sending logs failed. You might have to do it manually",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
-//        val uri = Uri.fromFile(file)
-        val uri = getUriForFile(
-            requireContext(),
-            "com.example.cryptile.fileprovider",
-            file,
-        );
+        val uri = getUriForFile(requireContext(), "com.example.cryptile.fileProvider", file)
         emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
         startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"))
     }
