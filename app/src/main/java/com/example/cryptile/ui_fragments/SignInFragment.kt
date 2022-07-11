@@ -41,8 +41,6 @@ class SignInFragment : Fragment() {
 
     private lateinit var dataStore: AppDataStore
 
-    private val GOOGLE_REQUEST_CODE = 3
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
@@ -125,7 +123,6 @@ class SignInFragment : Fragment() {
             }
             googleSignUpButton.setOnClickListener {
                 googleSignInActivity.launch(googleSignInClient.signInIntent)
-//                startActivityForResult(googleSignInClient.signInIntent, GOOGLE_REQUEST_CODE)
             }
             emailSignUpButton.setOnClickListener {
                 findNavController().navigate(
@@ -182,51 +179,6 @@ class SignInFragment : Fragment() {
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            GOOGLE_REQUEST_CODE -> {
-                try {
-                    Log.d(TAG, "google sign-in started")
-                    SignInFunctions.signInUsingGoogle(
-                        id = GoogleSignIn.getSignedInAccountFromIntent(data).result.idToken,
-                        context = requireContext(),
-                        auth = auth,
-                        database = firebaseFirestore,
-                        onSuccess = {
-                            Toast.makeText(
-                                requireContext(),
-                                "Google Login Successful",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            CoroutineScope(Dispatchers.IO).launch {
-                                dataStore.booleanSaver(true, StoreBoolean.KEEP_ME_SIGNED_IN)
-                                dataStore.booleanSaver(
-                                    binding.fingerprintLockSwitch.isChecked,
-                                    StoreBoolean.USER_USES_FINGERPRINT
-                                )
-                            }
-                            findNavController().navigate(
-                                SignInFragmentDirections.actionSignInFragmentToMainFragment()
-                            )
-                        },
-                        onFailure = {
-                            Toast.makeText(
-                                requireContext(),
-                                "an error has occurred: $it",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    )
-                } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
-                }
-            }
-            else -> Log.e(TAG, "request code didn't match")
         }
     }
 }
