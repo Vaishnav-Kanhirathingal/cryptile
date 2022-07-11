@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
@@ -35,6 +37,7 @@ class SignInFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseFirestore: FirebaseFirestore
+    private lateinit var googleSignInActivity: ActivityResultLauncher<Intent>
 
     private lateinit var dataStore: AppDataStore
 
@@ -47,6 +50,7 @@ class SignInFragment : Fragment() {
             .requestIdToken(getString(R.string.web_client_id)).requestEmail().build()
         googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
         firebaseFirestore = Firebase.firestore
+        registerActivity()
     }
 
     override fun onCreateView(
@@ -120,7 +124,8 @@ class SignInFragment : Fragment() {
                 }
             }
             googleSignUpButton.setOnClickListener {
-                startActivityForResult(googleSignInClient.signInIntent, GOOGLE_REQUEST_CODE)
+                googleSignInActivity.launch(googleSignInClient.signInIntent)
+//                startActivityForResult(googleSignInClient.signInIntent, GOOGLE_REQUEST_CODE)
             }
             emailSignUpButton.setOnClickListener {
                 findNavController().navigate(
@@ -136,6 +141,46 @@ class SignInFragment : Fragment() {
                 findNavController().navigate(
                     SignInFragmentDirections.actionSignInFragmentToMainFragment()
                 )
+            }
+        }
+    }
+
+    private fun registerActivity() {
+        googleSignInActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            try {
+                Log.d(TAG, "google sign-in started")
+                SignInFunctions.signInUsingGoogle(
+                    id = GoogleSignIn.getSignedInAccountFromIntent(it.data).result.idToken,
+                    context = requireContext(),
+                    auth = auth,
+                    database = firebaseFirestore,
+                    onSuccess = {
+                        Toast.makeText(
+                            requireContext(),
+                            "Google Login Successful",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.booleanSaver(true, StoreBoolean.KEEP_ME_SIGNED_IN)
+                            dataStore.booleanSaver(
+                                binding.fingerprintLockSwitch.isChecked,
+                                StoreBoolean.USER_USES_FINGERPRINT
+                            )
+                        }
+                        findNavController().navigate(
+                            SignInFragmentDirections.actionSignInFragmentToMainFragment()
+                        )
+                    },
+                    onFailure = {
+                        Toast.makeText(
+                            requireContext(),
+                            "an error has occurred: $it",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
             }
         }
     }
