@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -48,8 +50,12 @@ class MainFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseFirestore: FirebaseFirestore
     private lateinit var dataStore: AppDataStore
+    private lateinit var importSafe: ActivityResultLauncher<Intent>
 
-    private val IMPORT_REQUEST_CODE = 1
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        registerActivity()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,7 +99,7 @@ class MainFragment : Fragment() {
                         onSuccess = {
                             val intent = Intent(Intent.ACTION_GET_CONTENT)
                             intent.type = "text/plain"
-                            startActivityForResult(intent, IMPORT_REQUEST_CODE)
+                            importSafe.launch(intent)
                             dialogBox.dismiss()
                         }
                     )
@@ -228,27 +234,24 @@ class MainFragment : Fragment() {
             }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            IMPORT_REQUEST_CODE -> {
-                try {
-                    val path = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
-                    if (path.isBlank() || !path.endsWith(".txt")) {
-                        Toast.makeText(
-                            requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        viewModel.insert(SafeData.load(path))
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+    private fun registerActivity() {
+        importSafe = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            try {
+                val path = it.data!!.data!!.lastPathSegment!!.removePrefix("primary:")
+                if (path.isBlank() || !path.endsWith(".txt")) {
                     Toast.makeText(
-                        requireContext(), "System Error: ${e.message}", Toast.LENGTH_SHORT
+                        requireContext(), "Safe MetaData file not detected", Toast.LENGTH_SHORT
                     ).show()
+                } else {
+                    viewModel.insert(SafeData.load(path))
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(
+                    requireContext(), "System Error: ${e.message}", Toast.LENGTH_SHORT
+                ).show()
             }
-            else -> Log.e(TAG, "request code didn't match")
+
         }
     }
 }
