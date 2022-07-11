@@ -107,7 +107,7 @@ class CreateSafeFragment : Fragment() {
                             it.printStackTrace()
                             Toast.makeText(
                                 requireContext(),
-                                "safe creation error has occourred: ${it.message}",
+                                "safe creation error has occurred: ${it.message}",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

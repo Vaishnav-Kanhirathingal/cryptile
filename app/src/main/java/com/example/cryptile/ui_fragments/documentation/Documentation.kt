@@ -6,7 +6,7 @@ data class Documentation(
 )
 
 object Docs {
-    val list = listOf<Documentation>(
+    val list = listOf(
         Documentation(
             title = "Sign Up",
             description = "You can either sign up using the Google account Sign up process or your " +

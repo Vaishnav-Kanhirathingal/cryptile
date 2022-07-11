@@ -44,7 +44,7 @@ class SafeViewerFragment : Fragment() {
     private val viewModel: AppViewModel by activityViewModels {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
-    var safeDataId: Int? = null
+    private var safeDataId: Int? = null
     private lateinit var key: List<SecretKey>
     private lateinit var safeData: SafeData
     private lateinit var binding: FragmentSafeViewerBinding
@@ -71,7 +71,8 @@ class SafeViewerFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSafeViewerBinding.inflate(layoutInflater)

@@ -2,11 +2,11 @@
 
 ## What is the purpose of this app?
 
-This is an encryption application. it would take your files and encrypt them so that only you can see them. This can be useful when you have files that are important but, at the same time you want them accessible at all times. With CRYPTILE, you don't have to worry about having your data stolen. Since the only place the data will ever exist is on your physical device, no worry about any cloud provider having your data, neither of any other app being able to read it. It would be password locked and wouldn't be in readabe format for anybody without the password/s. A safe is a term that would be a collection of such files.
+This is an encryption application. it would take your files and encrypt them so that only you can see them. This can be useful when you have files that are important but, at the same time you want them accessible at all times. With CRYPTILE, you don't have to worry about having your data stolen. Since the only place the data will ever exist is on your physical device, no worry about any cloud provider having your data, neither of any other app being able to read it. It would be password locked and wouldn't be in readable format for anybody without the password/s. A safe is a term that would be a collection of such files.
 
 ### An example use case -
 
-Maybe you want some of your important buisness documents always with you. Here, you can create a safe with the name `buisness`. This would help you identify the safe's purpose. Similiarly, maybe you want to store your bank's papers. you can name the safe `finance`. This would again similiarly help you identify the safe's purpose.
+Maybe you want some of your important business documents always with you. Here, you can create a safe with the name `buisness`. This would help you identify the safe's purpose. Similarly, maybe you want to store your bank's papers. you can name the safe `finance`. This would again similarly help you identify the safe's purpose.
 
 ## Documentation
 
@@ -34,7 +34,7 @@ While inside a safe, select the option menu on the top app bar and select `Safe 
 
 ### App settings -
 
-To navigate to the app settings, be on the main screen. open the side option menu. Within settings you will find options to change your account's display name, password, the ability to delete your account with a warning statement attached. The other options are self explanator
+To navigate to the app settings, be on the main screen. open the side option menu. Within settings you will find options to change your account's display name, password, the ability to delete your account with a warning statement attached. The other options are self explanatory
 
 ### Remove All -
 

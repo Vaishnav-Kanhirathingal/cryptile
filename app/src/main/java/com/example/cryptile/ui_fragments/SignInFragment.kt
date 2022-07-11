@@ -55,7 +55,7 @@ class SignInFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSignInBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -143,42 +143,43 @@ class SignInFragment : Fragment() {
     }
 
     private fun registerActivity() {
-        googleSignInActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            try {
-                Log.d(TAG, "google sign-in started")
-                SignInFunctions.signInUsingGoogle(
-                    id = GoogleSignIn.getSignedInAccountFromIntent(it.data).result.idToken,
-                    context = requireContext(),
-                    auth = auth,
-                    database = firebaseFirestore,
-                    onSuccess = {
-                        Toast.makeText(
-                            requireContext(),
-                            "Google Login Successful",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        CoroutineScope(Dispatchers.IO).launch {
-                            dataStore.booleanSaver(true, StoreBoolean.KEEP_ME_SIGNED_IN)
-                            dataStore.booleanSaver(
-                                binding.fingerprintLockSwitch.isChecked,
-                                StoreBoolean.USER_USES_FINGERPRINT
+        googleSignInActivity =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                try {
+                    Log.d(TAG, "google sign-in started")
+                    SignInFunctions.signInUsingGoogle(
+                        id = GoogleSignIn.getSignedInAccountFromIntent(it.data).result.idToken,
+                        context = requireContext(),
+                        auth = auth,
+                        database = firebaseFirestore,
+                        onSuccess = {
+                            Toast.makeText(
+                                requireContext(),
+                                "Google Login Successful",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            CoroutineScope(Dispatchers.IO).launch {
+                                dataStore.booleanSaver(true, StoreBoolean.KEEP_ME_SIGNED_IN)
+                                dataStore.booleanSaver(
+                                    binding.fingerprintLockSwitch.isChecked,
+                                    StoreBoolean.USER_USES_FINGERPRINT
+                                )
+                            }
+                            findNavController().navigate(
+                                SignInFragmentDirections.actionSignInFragmentToMainFragment()
                             )
+                        },
+                        onFailure = {e:String->
+                            Toast.makeText(
+                                requireContext(),
+                                "an error has occurred: $e",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                        findNavController().navigate(
-                            SignInFragmentDirections.actionSignInFragmentToMainFragment()
-                        )
-                    },
-                    onFailure = {
-                        Toast.makeText(
-                            requireContext(),
-                            "an error has occurred: $it",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
+                    )
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
     }
 }
