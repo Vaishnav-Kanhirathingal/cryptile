@@ -1,12 +1,9 @@
 package com.example.cryptile.app_data.room_files
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
-import android.webkit.MimeTypeMap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -62,7 +59,7 @@ class SafeData(
         const val exportDirectoryName = "EXPORTED_FILES"
         const val encStorageDirectoryName = "CRYPT_DATA"
 
-        val decryptedFileName = UUID.randomUUID().toString()// TODO: change
+        val randomFileName get() = UUID.randomUUID().toString()
 
         const val testSizeLimit = 50
         const val encFileLimit = 1_000_000
@@ -438,7 +435,6 @@ class SafeData(
             context = context,
             layoutInflater = layoutInflater
         )
-
         Log.d(TAG, "exported file in directory: ${safeFile.fileDirectory}")
         saveChangesToLogFile(
             action = "export",
@@ -456,7 +452,7 @@ class SafeData(
      * @param destinationFile file to store decrypted safe file.
      * @param keyList takes list of keys used for encryption and decryption.
      */
-    private suspend fun readFromWriteTo(
+    private fun readFromWriteTo(
         from: SafeFiles,
         destinationFile: File,
         keyList: List<SecretKey>,
@@ -516,18 +512,17 @@ class SafeData(
      * @param keyList takes list of keys used for encryption and decryption.
      * @param safeFile the file to open from safe
      */
-    suspend fun openFile(
+    fun openFile(
         keyList: List<SecretKey>,
         safeFile: SafeFiles,
         context: Context,
-        layoutInflater: LayoutInflater
+        layoutInflater: LayoutInflater,
+        opener: (File) -> Unit
     ) {
-        // TODO: implement properly, decrypted file shouldn't be stored on disc cache
         val decryptedFile = File(
             Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/$cacheDirectoryName/${decryptedFileName}${safeFile.extension}"
+            "$safeAbsoluteLocation/$cacheDirectoryName/${randomFileName}${safeFile.extension}"
         )
-
         readFromWriteTo(
             from = safeFile,
             destinationFile = decryptedFile,
@@ -541,25 +536,7 @@ class SafeData(
                     "file extension ${safeFile.fileDirectory}, " +
                     "file size - ${safeFile.fileSize}"
         )
-
-        val uri: Uri = Uri.fromFile(decryptedFile).normalizeScheme()
-        val mime: String = getMimeType(uri.toString())!!
-        val intent = Intent()
-        intent.action = Intent.ACTION_VIEW
-        intent.data = uri
-        intent.type = mime
-        context.startActivity(Intent.createChooser(intent, "Open file with"))
-        // TODO: fix this
-    }
-
-    private fun getMimeType(url: String?): String? {
-        val ext = MimeTypeMap.getFileExtensionFromUrl(url)
-        return if (ext != null) {
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
-        } else {
-            null
-        }
-
+        opener(File(decryptedFile.absolutePath))
     }
 
     /**

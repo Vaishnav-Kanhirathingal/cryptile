@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -127,7 +128,31 @@ class SafeViewerFragment : Fragment() {
             viewerAdapter = ViewerAdapter(
                 opener = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        safeData.openFile(key, it, requireContext(), layoutInflater)
+                        safeData.openFile(
+                            keyList = key,
+                            safeFile = it,
+                            context = requireContext(),
+                            layoutInflater = layoutInflater,
+                            opener = { file ->
+                                val uri: Uri = Uri.fromFile(file).normalizeScheme()
+                                val mime = MimeTypeMap
+                                    .getSingleton()
+                                    .getMimeTypeFromExtension(it.extension.substring(1))
+                                Log.d(TAG, "mime = $mime")
+                                val intent = Intent(Intent.ACTION_VIEW)
+                                intent.data = uri
+                                intent.type = mime
+                                Log.d(
+                                    TAG,
+                                    "uri = ${uri.toString()}" +
+                                            " path = ${file.absolutePath}" +
+                                            " size = ${file.totalSpace}"
+                                )
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    startActivity(intent)
+                                }
+                            }
+                        )
                     }
                 },
                 exporter = {
