@@ -142,6 +142,7 @@ class SafeViewerFragment : Fragment() {
                                 val intent = Intent(Intent.ACTION_VIEW)
                                 intent.data = uri
                                 intent.type = mime
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
                                 Log.d(
                                     TAG,
                                     "uri = ${uri.toString()}" +
@@ -149,7 +150,7 @@ class SafeViewerFragment : Fragment() {
                                             " size = ${file.totalSpace}"
                                 )
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    startActivity(intent)
+                                    context!!.startActivity(intent)
                                 }
                             }
                         )
@@ -367,7 +368,9 @@ class SafeViewerFragment : Fragment() {
                         try {
                             safeData.importFileToSafe(
                                 fileAbsolutePath = path,
-                                safeMasterKey = key
+                                safeMasterKey = key,
+                                context = requireContext(),
+                                layoutInflater = layoutInflater
                             )
                             CoroutineScope(Dispatchers.Main).launch {
                                 viewerAdapter.submitList(safeData.getDataFileList())

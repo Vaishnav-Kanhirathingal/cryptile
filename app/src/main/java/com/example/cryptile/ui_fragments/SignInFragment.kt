@@ -17,6 +17,7 @@ import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.databinding.FragmentSignInBinding
 import com.example.cryptile.firebase.SignInFunctions
+import com.example.cryptile.ui_fragments.prompt.Biometrics
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -29,9 +30,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 private const val TAG = "SignInFragment"
 
-class SignInFragment : Fragment() {
+open class SignInFragment : Fragment() {
     private lateinit var binding: FragmentSignInBinding
 
     private lateinit var auth: FirebaseAuth
@@ -103,9 +105,7 @@ class SignInFragment : Fragment() {
                                     StoreBoolean.USER_USES_FINGERPRINT
                                 )
                             }
-                            findNavController().navigate(
-                                SignInFragmentDirections.actionSignInFragmentToMainFragment()
-                            )
+                            navigateToMain()
                         },
                         onFailure = {
                             Log.e(TAG, it)
@@ -121,24 +121,44 @@ class SignInFragment : Fragment() {
                     ).show()
                 }
             }
-            googleSignUpButton.setOnClickListener {
-                googleSignInActivity.launch(googleSignInClient.signInIntent)
-            }
+            googleSignUpButton.setOnClickListener { googleSignInActivity.launch(googleSignInClient.signInIntent) }
             emailSignUpButton.setOnClickListener {
-                findNavController().navigate(
-                    SignInFragmentDirections.actionSignInFragmentToSignUpFragment()
-                )
+                findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToSignUpFragment())
             }
         }
     }
 
     private fun navigateIfSignedIn() {
-        dataStore.keepMeSignedInFlow.asLiveData().observe(viewLifecycleOwner) {
-            if (it && auth.currentUser != null) {
-                findNavController().navigate(
-                    SignInFragmentDirections.actionSignInFragmentToMainFragment()
-                )
+        val navigateUnderConditions = {
+            if (auth.currentUser != null) {
+                dataStore.keepMeSignedInFlow.asLiveData()
+                    .observe(viewLifecycleOwner) { keepSignedIn ->
+                        if (keepSignedIn) {
+                            navigateToMain()
+                        }
+                    }
             }
+        }
+        dataStore.fingerprintAppLockFlow.asLiveData().observe(viewLifecycleOwner) { useFinger ->
+            if (useFinger) {
+                Biometrics.verifyBiometrics(
+                    context = requireContext(),
+                    description = "Scan fingerprint to access app",
+                    onSuccess = navigateUnderConditions,
+                    onFailure = {
+                        Log.d(TAG, "failed authentication")
+                        auth.signOut()
+//                        ActivityCompat.finishAffinity(requireActivity())
+                        // TODO: exit app or log out
+                    })
+            } else navigateUnderConditions()
+
+        }
+    }
+
+    private fun navigateToMain() {
+        if (auth.currentUser != null) {
+            findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToMainFragment())
         }
     }
 
@@ -165,11 +185,9 @@ class SignInFragment : Fragment() {
                                     StoreBoolean.USER_USES_FINGERPRINT
                                 )
                             }
-                            findNavController().navigate(
-                                SignInFragmentDirections.actionSignInFragmentToMainFragment()
-                            )
+                            navigateToMain()
                         },
-                        onFailure = {e:String->
+                        onFailure = { e: String ->
                             Toast.makeText(
                                 requireContext(),
                                 "an error has occurred: $e",
