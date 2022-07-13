@@ -56,7 +56,6 @@ class SafeAdapter(
                     Environment.getExternalStorageDirectory(), safeData.safeAbsoluteLocation
                 ).exists()
                 safeCondition.setImageResource(
-                    // TODO: check if the safe is present at location
                     if (locationCorrect) {
                         R.drawable.offline_24
                     } else {

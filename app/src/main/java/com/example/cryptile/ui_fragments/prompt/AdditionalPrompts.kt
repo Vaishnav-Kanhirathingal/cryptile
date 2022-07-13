@@ -86,7 +86,8 @@ object AdditionalPrompts {
             setCancelable(true)
             show()
         }
-        Log.d(TAG, "provider - ${auth.currentUser!!.providerId}")// TODO: check why firebase
+        Log.d(TAG, "provider - ${auth.currentUser!!.providerId}")
+        // TODO: check why firebase also, verify automatically using fingerprint if google sign in.
         binding.apply {
             noticeTextView.text = "*** $notice ***"
             confirmButton.setOnClickListener {

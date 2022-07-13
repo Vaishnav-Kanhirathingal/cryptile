@@ -113,11 +113,7 @@ class SafeViewerFragment : Fragment() {
                                     "along with its size. (eg - extension - \'.mp4\' size - 32 MB). " +
                                     "Log files can be useful for the developer to figure out any " +
                                     "faults within the app. Continue?",
-                            onSuccess = {
-                                // TODO: open intent to send log file
-//                                sendLogs()
-                                sendLog()
-                            }
+                            onSuccess = { sendLog() }
                         )
                         true
                     }

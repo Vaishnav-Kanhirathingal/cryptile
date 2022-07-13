@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -134,6 +135,8 @@ class MainFragment : Fragment() {
         val headerMenu = menu.getHeaderView(0)
 
         headerMenu.apply {
+            // TODO: set image
+            val img = findViewById<ImageView>(R.id.user_image)
             viewModel.userDisplayName.observe(viewLifecycleOwner) {
                 findViewById<TextView>(R.id.name_text_view).text = it
             }
