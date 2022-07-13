@@ -567,7 +567,12 @@ class SafeData(
      * takes absolute file path of the selected file, safe master key for encryption, safe path
      * to store the encrypted file inside the safe.
      */
-    fun importFileToSafe(fileAbsolutePath: String, safeMasterKey: List<SecretKey>) {
+    fun importFileToSafe(
+        fileAbsolutePath: String,
+        safeMasterKey: List<SecretKey>,
+        context: Context,
+        layoutInflater: LayoutInflater
+    ) {
         val safeFile = getSafeFileEnum(fileAbsolutePath)
         val file = File(Environment.getExternalStorageDirectory(), fileAbsolutePath)
 
@@ -588,8 +593,13 @@ class SafeData(
         var i: Long = 0
         var iterationCount = 0
 
+        AdditionalPrompts.initializeLoading(layoutInflater, context, "Importing file")
+        val parts = (inputFileSize / encFileLimit) + 1
+
         val inputStream = BufferedInputStream(FileInputStream(file))
         while (i < inputFileSize) {
+            Thread.sleep(100)
+            AdditionalPrompts.addProgress(((iterationCount * 100) / parts).toInt(), false)
             val currentLimit =
                 if (inputFileSize - i > encFileLimit) {
                     encFileLimit
@@ -606,6 +616,7 @@ class SafeData(
             iterationCount += 1
             i += currentLimit
         }
+        AdditionalPrompts.addProgress(100, true)
         inputStream.close()
 
 
