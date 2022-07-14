@@ -3,6 +3,7 @@ package com.example.cryptile.ui_fragments
 import android.Manifest
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -39,6 +40,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.net.URL
+
 
 private const val TAG = "MainFragment"
 
@@ -75,7 +78,6 @@ class MainFragment : Fragment() {
     }
 
     private fun mainBinding() {
-
         binding.includedSubLayout.topAppBar.setNavigationOnClickListener {
             binding.root.openDrawer(binding.navigationViewMainScreen)
         }
@@ -136,7 +138,22 @@ class MainFragment : Fragment() {
 
         headerMenu.apply {
             // TODO: set image
-            val img = findViewById<ImageView>(R.id.user_image)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                repeat(3) {
+                    try {
+                        Thread.sleep(3000)
+                        Log.d(TAG, "url = ${viewModel.userPhotoUrl.value!!}")
+                        val url = URL(viewModel.userPhotoUrl.value!!)
+                        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                        CoroutineScope(Dispatchers.Main).launch {
+                            findViewById<ImageView>(R.id.user_image).setImageBitmap(bmp)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
             viewModel.userDisplayName.observe(viewLifecycleOwner) {
                 findViewById<TextView>(R.id.name_text_view).text = it
             }
