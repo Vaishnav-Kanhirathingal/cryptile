@@ -71,6 +71,7 @@ dependencies {
 
     //------------------------------------------------------------------------------------biometrics
     implementation "androidx.biometric:biometric-ktx:1.2.0-alpha04"
+//    implementation "androidx.biometric:biometric:1.1.0"
 
     //--------------------------------------------------------------------------lifecycle-components
     def lifecycle_version = "2.5.0"

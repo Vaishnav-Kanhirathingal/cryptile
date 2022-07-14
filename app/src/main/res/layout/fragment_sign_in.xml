@@ -131,7 +131,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingVertical="20dp"
-                android:src="@drawable/google" />
+                android:src="@drawable/google"
+                android:tooltipText="Use Google Sign-up to complete sign in process" />
 
             <ImageButton
                 android:id="@+id/email_sign_up_button"
@@ -139,7 +140,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:paddingVertical="20dp"
-                android:src="@drawable/email_24" />
+                android:src="@drawable/email_24"
+                android:tooltipText="create a new account using email and password pair" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

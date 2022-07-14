@@ -101,5 +101,9 @@ object Docs {
                     "Selecting that file would import the safe into the application. " +
                     "After that, you can interact with the safe as you normally would."
         ),
+        Documentation(
+            title = "Common tips and tricks",
+            description = "You can always long press an Image button to see what it does."
+        )
     )
 }

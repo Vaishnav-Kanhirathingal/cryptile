@@ -16,23 +16,36 @@ object Biometrics {
         onFailure: () -> Unit
     ) {
         val authenticationCallback = object : BiometricPrompt.AuthenticationCallback() {
+
             override fun onAuthenticationFailed() {
+                //no issues here
                 super.onAuthenticationFailed()
                 Log.d(TAG, "onAuthenticationFailed called")
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
+                //no issues here
                 super.onAuthenticationSucceeded(result)
                 Log.d(TAG, "onAuthenticationSucceeded called")
                 onSuccess()
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
+                //gets called as soon as the prompt is displayed and with cancel button
                 super.onAuthenticationError(errorCode, errString)
                 Log.d(TAG, "onAuthenticationError called")
                 onFailure()
             }
         }
+
+        val cancellationSignal = CancellationSignal()
+        cancellationSignal.setOnCancelListener {
+            //doesn't get called after cancel is clicked on the biometrics prompt
+            Log.d(TAG, "cancellationSignal called")
+            Toast.makeText(context, "action cancelled", Toast.LENGTH_SHORT).show()
+            onFailure()
+        }
+
         BiometricPrompt
             .Builder(context)
             .setTitle("Authenticate")
@@ -44,19 +57,9 @@ object Biometrics {
             ) { _, _ -> }
             .build()
             .authenticate(
-                getCancellationSignal(context, onFailure),
+                cancellationSignal,
                 context.mainExecutor,
                 authenticationCallback
             )
-    }
-
-    private fun getCancellationSignal(context: Context, onFailure: () -> Unit): CancellationSignal {
-        val cancellationSignal = CancellationSignal()
-        cancellationSignal.setOnCancelListener {
-            Log.d(TAG, "cancellationSignal called")
-            Toast.makeText(context, "action cancelled", Toast.LENGTH_SHORT).show()
-            onFailure()
-        }
-        return cancellationSignal
     }
 }

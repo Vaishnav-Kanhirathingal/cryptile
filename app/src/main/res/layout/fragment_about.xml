@@ -67,7 +67,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:drawableLeft="@drawable/github_24"
-                        android:text="CRYPTILE" />
+                        android:text="CRYPTILE"
+                        android:tooltipText="Open This app's public repository" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
