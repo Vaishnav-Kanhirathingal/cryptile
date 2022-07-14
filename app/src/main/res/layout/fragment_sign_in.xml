@@ -81,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/sign_up_horizontal"
-                android:text="Fingerprint Lock" />
+                android:text="Fingerprint Authentication" />
         </com.google.android.material.card.MaterialCardView>
 
         <Button
