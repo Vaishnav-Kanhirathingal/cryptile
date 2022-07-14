@@ -11,7 +11,10 @@ object Docs {
             title = "Sign Up",
             description = "You can either sign up using the Google account Sign up process or your " +
                     "email address. Signing up to the app creates your account name and a secret key. " +
-                    "This key's use case will be discussed later on during the creation of a safe "
+                    "This key's use case will be discussed later on during the creation of a safe. " +
+                    "Using the gmail account to sign up means you don't have have to use password " +
+                    "for any interactions with the application. Using email gives you the option " +
+                    "of either using the password or your phone\'s biometrics for verification."
         ),
         Documentation(
             title = "Creating a CRYPTILE safe",
