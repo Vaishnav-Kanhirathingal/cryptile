@@ -94,16 +94,15 @@ class SignUpFragment : Fragment() {
                         userName = userName,
                         email = userEmail,
                         password = passOne,
-                        auth = auth,
                         context = requireContext(),
                         layoutInflater = layoutInflater,
-                        onMessageDismiss = {
+                        onSuccess = {
                             findNavController().navigateUp()
-                        }, onFailure = {
+                        },
+                        onFailure = {
                             userEmailTextLayout.error = it
                             userEmailTextLayout.isErrorEnabled = true
                         },
-                        database = firebaseFirestore
                     )
                 }
             }

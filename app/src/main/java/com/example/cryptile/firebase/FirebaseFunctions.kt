@@ -7,9 +7,10 @@ import android.widget.Toast
 import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData.Companion.createRandomKey
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,14 +18,19 @@ import kotlinx.coroutines.launch
 private const val TAG = "SignInFunctions"
 
 object SignInFunctions {
+    /**
+     * this function is used to complete google sign in or sign up process.
+     * @param [id] takes the user id for the siged in account
+     * @param [onSuccess] Lambda to run after task is a Success
+     * @param [onFailure] Lambda to run after task is a Failure
+     */
     fun signInUsingGoogle(
         id: String?,
         context: Context,
-        auth: FirebaseAuth,
-        database: FirebaseFirestore,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit,
     ) {
+        val auth = Firebase.auth
         Log.d(TAG, "google sign-in function started")
         val credential = GoogleAuthProvider.getCredential(id, null)
         auth.signInWithCredential(credential)
@@ -35,7 +41,6 @@ object SignInFunctions {
                     addToDatabase(
                         userName = firebaseUser!!.displayName!!,
                         email = firebaseUser.email!!,
-                        database = database,
                         photoURL = firebaseUser.photoUrl!!.toString(),
                         uid = firebaseUser.uid,
                         onFailure = onFailure
@@ -53,17 +58,25 @@ object SignInFunctions {
             }
     }
 
+    /**
+     * function to sign up the user using the data they provided.
+     * @param [userName] typed in user name
+     * @param [email] registered email
+     * @param [password] current password
+     * @param [onSuccess] this is a lambda that has the coe to run after the account has been
+     * created and the user has been notified
+     * @param [onFailure] code to run if the sign up fails
+     */
     fun signUpWithEmail(
         userName: String,
         email: String,
         password: String,
-        auth: FirebaseAuth,
-        database: FirebaseFirestore,
         context: Context,
         layoutInflater: LayoutInflater,
-        onMessageDismiss: () -> Unit,
+        onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
+        val auth = Firebase.auth
         Log.d(TAG, "creating account using email")
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
@@ -73,7 +86,6 @@ object SignInFunctions {
                     addToDatabase(
                         userName = userName,
                         email = email,
-                        database = database,
                         photoURL = "some photo url",
                         uid = auth.uid!!,
                         onFailure = onFailure
@@ -88,7 +100,7 @@ object SignInFunctions {
                             context = context,
                             layoutInflater = layoutInflater,
                             message = context.resources.getString(R.string.email_sent_message),
-                            onDismiss = onMessageDismiss
+                            onDismiss = onSuccess
                         )
                     }.addOnFailureListener { e: Exception ->
                         e.printStackTrace()
@@ -111,10 +123,12 @@ object SignInFunctions {
             }
     }
 
+    /**
+     * saves value to the database
+     */
     private fun addToDatabase(
         userName: String,
         email: String,
-        database: FirebaseFirestore,
         photoURL: String,
         uid: String,
         onFailure: (String) -> Unit,
@@ -126,6 +140,7 @@ object SignInFunctions {
             UserDataConstants.userPhotoUrl to photoURL
         )
         Log.d(TAG, "uid = $uid")
+        val database = Firebase.firestore
         database
             .collection(UserDataConstants.tableName)
             .document(uid)
@@ -140,15 +155,19 @@ object SignInFunctions {
             }
     }
 
+    /**
+     * @param [onSuccess] task to perform on Success
+     * @param [onFailure] task to perform on Failure, takes error message string as parameter
+     */
     fun signInWithEmail(
         email: String,
         password: String,
-        auth: FirebaseAuth,
         context: Context,
         layoutInflater: LayoutInflater,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
+        val auth = Firebase.auth
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 if (auth.currentUser!!.isEmailVerified) {
@@ -165,7 +184,6 @@ object SignInFunctions {
                                 onDismiss = {}
                             )
                         }.addOnFailureListener {
-                            Log.e(TAG, "firebase error")
                             it.printStackTrace()
                             Log.d(TAG, "verification link generation failed. Reason: ${it.message}")
                             onFailure(it.message!!)

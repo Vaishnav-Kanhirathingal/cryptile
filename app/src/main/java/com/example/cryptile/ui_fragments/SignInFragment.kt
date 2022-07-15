@@ -85,7 +85,6 @@ open class SignInFragment : Fragment() {
                     SignInFunctions.signInWithEmail(
                         email = userEmailTextLayout.editText!!.text.toString(),
                         password = pass,
-                        auth = auth,
                         context = requireContext(),
                         layoutInflater = layoutInflater,
                         onSuccess = {
@@ -170,8 +169,6 @@ open class SignInFragment : Fragment() {
                     SignInFunctions.signInUsingGoogle(
                         id = GoogleSignIn.getSignedInAccountFromIntent(it.data).result.idToken,
                         context = requireContext(),
-                        auth = auth,
-                        database = firebaseFirestore,
                         onSuccess = {
                             Toast.makeText(
                                 requireContext(),

@@ -364,7 +364,7 @@ class SafeViewerFragment : Fragment() {
                         try {
                             safeData.importFileToSafe(
                                 fileAbsolutePath = path,
-                                safeMasterKey = key,
+                                keyList = key,
                                 context = requireContext(),
                                 layoutInflater = layoutInflater
                             )

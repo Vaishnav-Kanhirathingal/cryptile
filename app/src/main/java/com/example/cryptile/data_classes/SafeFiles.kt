@@ -48,7 +48,7 @@ data class SafeFiles(
          * gets size of file as long and outputs human readable size formats.
          * example - 123456789 gives 123.45 MB
          */
-        fun getSize(size: Long): String {
+        fun getFormattedSize(size: Long): String {
             var x = size
             val measureLimit: Long = 1000
             var i = 0

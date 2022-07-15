@@ -42,13 +42,15 @@ class ExampleInstrumentedTest {
 
     @Test
     fun mainTask() {
-//        signUpWithEmail()
+        signUpWithEmail()
         loginUsingEmail(accountPassword)
         testSettings()
     }
 
+
     /** run while on sign in screen */
-    private fun signUpWithEmail() {
+    @Test
+    fun signUpWithEmail() {
         onView(withId(R.id.email_sign_up_button)).perform(click())
         onView(withId(R.id.user_name_edit_text)).perform(typeText(userName))
         onView(withId(R.id.user_email_edit_text)).perform(typeText(email))
@@ -63,7 +65,8 @@ class ExampleInstrumentedTest {
     }
 
     /** run while on sign in screen */
-    private fun loginUsingEmail(password: String) {
+    @Test
+    fun loginUsingEmail(password: String) {
         onView(withId(R.id.user_email_edit_text)).perform(typeText(email))
         onView(withId(R.id.user_password_edit_text)).perform(typeText(password))
         saveScreenshot()
@@ -107,7 +110,8 @@ class ExampleInstrumentedTest {
         saveScreenshot()
     }
 
-    private fun testSettings() {
+    @Test
+    fun testSettings() {
         openSettings()
         onView(withParent(withId(R.id.new_user_name_text_layout))).perform(typeText(newUserName))
         onView(withContentDescription("New User Name")).perform(click())

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "52037316332-4vr22f6jv2el4uj9d2ri0vspib5akqon.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cryptile",
+            "certificate_hash": "ebe4778dfe8d0cf3c4de9ab2498e8426641844ee"
+          }
+        },
+        {
           "client_id": "52037316332-715s58328hk1etfq22e2a7gi2tr0gpk4.apps.googleusercontent.com",
           "client_type": 3
         }

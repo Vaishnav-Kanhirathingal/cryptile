@@ -42,7 +42,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.URL
 
-
 private const val TAG = "MainFragment"
 
 class MainFragment : Fragment() {
@@ -74,7 +73,7 @@ class MainFragment : Fragment() {
         dataStore = AppDataStore(requireContext())
         auth = Firebase.auth
         firebaseFirestore = Firebase.firestore
-        mainBinding();sideMenuBinding();getPermissions();setValues()
+        mainBinding();sideMenuBinding();getPermissions();setViewModelValues()
     }
 
     private fun mainBinding() {
@@ -135,10 +134,8 @@ class MainFragment : Fragment() {
     private fun sideMenuBinding() {
         val menu = binding.navigationViewMainScreen
         val headerMenu = menu.getHeaderView(0)
-
         headerMenu.apply {
             // TODO: set image
-
             CoroutineScope(Dispatchers.IO).launch {
                 repeat(3) {
                     try {
@@ -150,6 +147,7 @@ class MainFragment : Fragment() {
                             findViewById<ImageView>(R.id.user_image).setImageBitmap(bmp)
                         }
                     } catch (e: Exception) {
+                        findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.google)
                         e.printStackTrace()
                     }
                 }
@@ -238,7 +236,7 @@ class MainFragment : Fragment() {
         requireActivity().requestPermissions(permission, 100)
     }
 
-    private fun setValues() {
+    private fun setViewModelValues() {
         firebaseFirestore
             .collection(UserDataConstants.tableName)
             .document(auth.currentUser!!.uid)

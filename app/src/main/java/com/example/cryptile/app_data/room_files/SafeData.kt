@@ -36,7 +36,7 @@ class SafeData(
     @ColumnInfo(name = "safe_owner") var safeOwner: String,
     @ColumnInfo(name = "safe_uses_multiple_password") var safeUsesMultiplePassword: Boolean,
     @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
-    @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,
+    @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,// TODO: use this
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
     @ColumnInfo(name = "hide_safe_path") var hideSafePath: Boolean,
     @ColumnInfo(name = "safe_absolute_location") var safeAbsoluteLocation: String,
@@ -94,11 +94,13 @@ class SafeData(
 
         /**
          * encrypts byte array using key list given.
+         * @param [keyList] order should start with key from password one, password two if present then
+         * private key if required.
          */
-        fun encrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
+        fun encrypt(byteArray: ByteArray, keyList: List<SecretKey>): ByteArray? {
             try {
                 var returnable = byteArray
-                for (i in key) {
+                for (i in keyList) {
                     val cipher: Cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
                     cipher.init(Cipher.ENCRYPT_MODE, i, ivSpec)
                     returnable = Base64.getEncoder().encode(cipher.doFinal(returnable))
@@ -112,12 +114,14 @@ class SafeData(
 
         /**
          * decrypts encrypted byte array using key list given. the order of the keys are reversed.
-         * So, the keys should be in the same order as when provided for encryption
+         * So, the keys should be in the same order as when provided for encryption.
+         * @param [keyList] order should start with key from password one, password two if present then
+         * private key if required.
          */
-        fun decrypt(byteArray: ByteArray, key: List<SecretKey>): ByteArray? {
+        fun decrypt(byteArray: ByteArray, keyList: List<SecretKey>): ByteArray? {
             try {
                 var returnable = byteArray
-                for (i in key.reversed()) {
+                for (i in keyList.reversed()) {
                     val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
                     cipher.init(Cipher.DECRYPT_MODE, i, ivSpec)
                     returnable = cipher.doFinal(Base64.getDecoder().decode(returnable))
@@ -134,6 +138,7 @@ class SafeData(
          * This takes path of a metadata file of a safe as a parameter. Then, using that file,
          * extracts the safe data values. It then checks if the safeData value for safe's path has
          * changed and records this changes into the meta-data file.
+         * @param [path] is the storage path, shouldn't start with emulated.
          */
         fun load(path: String): SafeData {
             val reader =
@@ -184,7 +189,9 @@ class SafeData(
      * this function generates necessary directories for all safe files. these directories include
      * the cache, export and the data directories. an additional test directory with one plain test
      * and it's corresponding cipher text is also generated to check if the key received is correct.
-     * these are generated using the master-key list provided
+     * these are generated using the master-key list provided.
+     * @param [onSuccess] action to be performed on Success.
+     * @param [onFailure] action to be performed on Failure.
      */
     fun generateDirectories(
         masterKey: List<SecretKey>,
@@ -270,8 +277,8 @@ class SafeData(
     /**
      * formats and saves the given strings to the log file. Takes the time and user into account for
      * logging.
-     * @param action can be up to 20 character long.
-     * @param string this string specifies in detail what the action did to the safe.
+     * @param [action] can be up to 20 character long.
+     * @param [string] this string specifies in detail what the action did to the safe.
      */
     private fun saveChangesToLogFile(
         action: String,
@@ -331,7 +338,7 @@ class SafeData(
      * @param oldKey this is the list of keys used to encrypt the safe previously.
      * @param newKey this is the new list of keys to be used to encrypt the safe.
      */
-    suspend fun changeEncryption(
+    fun changeEncryption(
         context: Context,
         layoutInflater: LayoutInflater,
         oldKey: List<SecretKey>,
@@ -398,7 +405,7 @@ class SafeData(
      * takes key list and saves decrypted version of each file in the export directory
      * @param keyList takes list of keys used for encryption and decryption
      */
-    suspend fun exportAll(
+    fun exportAll(
         keyList: List<SecretKey>,
         context: Context,
         layoutInflater: LayoutInflater
@@ -415,7 +422,7 @@ class SafeData(
      * @param safeFile the safe file to export.
      * @param keyList takes list of keys used for encryption and decryption.
      */
-    suspend fun export(
+    fun export(
         safeFile: SafeFiles,
         keyList: List<SecretKey>,
         context: Context,
@@ -566,10 +573,11 @@ class SafeData(
     /**
      * takes absolute file path of the selected file, safe master key for encryption, safe path
      * to store the encrypted file inside the safe.
+     * @param [keyList] safe's key list
      */
     fun importFileToSafe(
         fileAbsolutePath: String,
-        safeMasterKey: List<SecretKey>,
+        keyList: List<SecretKey>,
         context: Context,
         layoutInflater: LayoutInflater
     ) {
@@ -611,7 +619,7 @@ class SafeData(
             inputStream.read(cacheArray, 0, currentLimit)
 
             File(newDestinationDirectory, "${encryptedFileName}_$iterationCount")
-                .writeBytes(encrypt(cacheArray, safeMasterKey)!!)
+                .writeBytes(encrypt(cacheArray, keyList)!!)
 
             iterationCount += 1
             i += currentLimit
@@ -715,7 +723,7 @@ class SafeData(
      * it, then checks if the encrypted string is the same as the encrypted test file content.
      * if same for every line in the file, returns true else false.
      */
-    fun checkKeyGenerated(masterKey: List<SecretKey>): Boolean {
+    fun checkKeyGenerated(keyList: List<SecretKey>): Boolean {
         val cipherReader =
             BufferedReader(
                 FileReader(
@@ -741,7 +749,7 @@ class SafeData(
                 String(
                     decrypt(
                         cipher.toByteArray(StandardCharsets.ISO_8859_1),
-                        masterKey
+                        keyList
                     )!!
                 )
             if (plain == extractedText) {
