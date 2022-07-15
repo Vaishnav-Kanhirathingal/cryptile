@@ -22,6 +22,12 @@ object AdditionalPrompts {
     private lateinit var loadingBinding: PromptLoadingBinding
     private lateinit var loadingDialog: Dialog
 
+    /**
+     * a simple yes or no prompt.
+     * @param [title] the main title of the prompt.
+     * @param [message] description of the action
+     * @param [onSuccess] action to be performed if the user agrees
+     */
     fun confirmationPrompt(
         context: Context,
         title: String,
@@ -40,6 +46,9 @@ object AdditionalPrompts {
         }
     }
 
+    /**
+     * @param [title] title of the loading prompt
+     */
     fun initializeLoading(
         layoutInflater: LayoutInflater,
         context: Context,
@@ -58,6 +67,11 @@ object AdditionalPrompts {
         }
     }
 
+    /**
+     * shows the given number as progress.
+     * @param [progress] the value should be between 0-100.
+     * @param [dismiss] some.
+     */
     fun addProgress(
         progress: Int,
         dismiss: Boolean
@@ -71,12 +85,19 @@ object AdditionalPrompts {
         }
     }
 
+    /**
+     * uses email and password based verification if the user has an email based account
+     * @param [notice] displays a notice of the action that will be performed once the user
+     * enters the password and email
+     * @param [onSuccess] task to be performed after the account has been verified
+     */
     fun verifyUser(
         layoutInflater: LayoutInflater,
         context: Context,
         notice: String,
         onSuccess: () -> Unit
     ) {
+        // TODO: should only ask for password and not email
         val auth = FirebaseAuth.getInstance()
         val binding = PromptVerifyAccountBinding.inflate(layoutInflater)
         val dialogBox = Dialog(context)
@@ -114,7 +135,11 @@ object AdditionalPrompts {
         }
     }
 
-
+    /**
+     * displays a message as a prompt and performs an action after the dismiss button is pressed.
+     * @param [message] message to be displayed on the screen
+     * @param [onDismiss] task to be performed after the notice is dismissed.
+     */
     fun showMessagePrompt(
         context: Context,
         layoutInflater: LayoutInflater,

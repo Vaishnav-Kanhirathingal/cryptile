@@ -6,6 +6,9 @@ data class Documentation(
 )
 
 object Docs {
+    /**
+     * this is the list of documentation to be displayed on the Documentation section of the app
+     */
     val list = listOf(
         Documentation(
             title = "Sign Up",

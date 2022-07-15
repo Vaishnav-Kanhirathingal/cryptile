@@ -18,7 +18,7 @@ abstract class SafeDatabase : RoomDatabase() {
         private var instance: SafeDatabase? = null
 
         /**
-         * here, if the instance is not initialized, it gets initialized and then returned
+         * here, if the database instance is not initialized, it gets initialized and then returned
          */
         fun getDatabase(context: Context): SafeDatabase {
             return instance ?: synchronized(this) {

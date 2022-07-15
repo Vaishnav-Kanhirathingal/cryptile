@@ -44,11 +44,13 @@ class SafeAdapter(
     class SafeAdapterViewHolder(
         private val binding: ListItemSafeBinding,
         private val context: Context
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         private var locationCorrect: Boolean = true
 
+        /**
+         * applies bindings that affect the visuals of the card. no listeners
+         */
         fun bind(safeData: SafeData) {
             binding.apply {
                 fileNameTextView.text = safeData.safeName
@@ -83,6 +85,9 @@ class SafeAdapter(
             }
         }
 
+        /**
+         * listener for the card. also takes care of the password prompts
+         */
         fun promptListener(
             inflater: LayoutInflater,
             safeData: SafeData,

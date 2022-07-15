@@ -9,12 +9,18 @@ import android.widget.Toast
 private const val TAG = "Biometrics"
 
 object Biometrics {
+    /**
+     * function to verify biometrics.
+     * @param [onSuccess] action to be performed on Success.
+     * @param [onFailure] action to be performed if the verification fails completely.
+     */
     fun verifyBiometrics(
         context: Context,
         description: String,
         onSuccess: () -> Unit,
         onFailure: () -> Unit
     ) {
+        // TODO: fix issues
         val authenticationCallback = object : BiometricPrompt.AuthenticationCallback() {
 
             override fun onAuthenticationFailed() {
