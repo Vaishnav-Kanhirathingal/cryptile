@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
@@ -40,8 +42,14 @@ class CreateSafeFragment : Fragment() {
     private lateinit var firebaseFirestore: FirebaseFirestore
 
     private lateinit var binding: FragmentCreateSafeBinding
-    private var currentPath: MutableLiveData<String> =
-        MutableLiveData("Cryptile")
+    private lateinit var getPath: ActivityResultLauncher<Intent>
+
+    private var currentPath: MutableLiveData<String> = MutableLiveData("Cryptile")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        registerActivity()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,24 +80,8 @@ class CreateSafeFragment : Fragment() {
                 findNavController().navigateUp()
             }
             confirmButton.setOnClickListener {
-                val p1Check: Boolean
-                safePasswordOneInputLayout.apply {
-                    p1Check = this.editText!!.text.toString().length in 7..33
-                    this.error = "Password length should be 8-32 characters"
-                    this.isErrorEnabled = !p1Check
-                }
-                val p2Check: Boolean
-                safePasswordTwoInputLayout.apply {
-                    if (useMultiplePasswordsSwitch.isChecked) {
-                        p2Check = this.editText!!.text.toString().length in 7..33
-                        this.error = "Password length should be 8-32 characters"
-                        this.isErrorEnabled = !p2Check
-                    } else {
-                        p2Check = true
-                    }
-                }
-                val conditionCheck = (p1Check && p2Check)
-                // TODO: replace with condition check
+                val passwordCheck = verifyPasswordParameters()
+                // TODO: replace with [passwordCheck]
                 if (true) {
                     firebaseFirestore
                         .collection(UserDataConstants.tableName)
@@ -111,18 +103,42 @@ class CreateSafeFragment : Fragment() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                } else {
-                    safePasswordOneInputLayout.isErrorEnabled = p1Check
-                    safePasswordTwoInputLayout.isErrorEnabled = p2Check
-                    "password length should be between 8 and 32".apply {
-                        safePasswordOneInputLayout.error = this
-                        safePasswordTwoInputLayout.error = this
-                    }
                 }
             }
         }
     }
 
+    /**
+     * verifies password length in the text boxes. it also checks is the safe uses multiple
+     * passwords. It is also responsible for showing error on the password text layouts.
+     */
+    private fun verifyPasswordParameters(): Boolean {
+        binding.apply {
+            val p1Check: Boolean
+            safePasswordOneInputLayout.apply {
+                p1Check = this.editText!!.text.toString().length in 7..33
+                this.error = "Password length should be 8-32 characters"
+                this.isErrorEnabled = !p1Check
+            }
+            val p2Check: Boolean
+            safePasswordTwoInputLayout.apply {
+                p2Check = if (useMultiplePasswordsSwitch.isChecked) {
+                    this.editText!!.text.toString().length in 7..33
+                } else {
+                    true
+                }
+                this.error = "Password length should be 8-32 characters"
+                this.isErrorEnabled = !p2Check
+            }
+            return (p1Check && p2Check)
+        }
+    }
+
+    /**
+     * attempts to create a safe using the password/s and personal key. Only uses these values if
+     * required. Responsible for creating directories, adding to database and navigating back if
+     * the action was a success or giving a warning if it wasn't.
+     */
     private fun createSafe(
         passwordOne: String,
         passwordTwo: String,
@@ -131,28 +147,27 @@ class CreateSafeFragment : Fragment() {
         binding.apply {
             val salt = ByteArray(32)
             SecureRandom().nextBytes(salt)
-            val safeData =
-                SafeData(
-                    safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
-                        "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
-                    },
-                    safeOwner = viewModel.userDisplayName.value.toString(),
-                    safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
-                    personalAccessOnly = personalAccessOnlySwitch.isChecked,
-                    encryptionAlgorithm = when (encryptionLevelSlider.value) {
-                        1.0f -> "one"
-                        2.0f -> "two"
-                        else -> "three"
-                    },
-                    safeCreated = System.currentTimeMillis(),
-                    hideSafePath = pathHiddenSwitch.isChecked,
-                    safeAbsoluteLocation = currentPath.value + "/" +
-                            safeNameInputLayout.editText!!.text.toString().ifEmpty {
-                                "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
+            val safeData = SafeData(
+                safeName = safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                    "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
+                },
+                safeOwner = viewModel.userDisplayName.value.toString(),
+                safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
+                personalAccessOnly = personalAccessOnlySwitch.isChecked,
+                encryptionAlgorithm = when (encryptionLevelSlider.value) {
+                    1.0f -> "one"
+                    2.0f -> "two"
+                    else -> "three"
+                },
+                safeCreated = System.currentTimeMillis(),
+                hideSafePath = pathHiddenSwitch.isChecked,
+                safeAbsoluteLocation = currentPath.value + "/" +
+                        safeNameInputLayout.editText!!.text.toString().ifEmpty {
+                            "CRYPTILE_" + SimpleDateFormat("yyyy_MM_dd").format(System.currentTimeMillis())
 
-                            },
-                    safeSalt = String(salt, StandardCharsets.ISO_8859_1)
-                )
+                        },
+                safeSalt = String(salt, StandardCharsets.ISO_8859_1)
+            )
             val keyList =
                 if (safeData.safeUsesMultiplePassword) {
                     safeData.getKey(
@@ -193,8 +208,8 @@ class CreateSafeFragment : Fragment() {
                                 Toast.LENGTH_LONG
                             ).show()
                             Log.e(
-                                TAG,
-                                "File generation for safe failed, directory ${safeData.safeAbsoluteLocation} already exists"
+                                TAG, "File generation for safe failed, directory " +
+                                        "${safeData.safeAbsoluteLocation} already exists"
                             )
                         }
                     }
@@ -207,21 +222,22 @@ class CreateSafeFragment : Fragment() {
         try {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
-            startActivityForResult(intent, 1)
+            getPath.launch(intent)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        try {
-            currentPath.value = data!!.data!!.lastPathSegment!!.removePrefix("primary:")
-            Log.d(TAG, "data = ${currentPath.value}")
-        } catch (e: Exception) {
-            Toast.makeText(requireContext(), "System Error, Reselect Path", Toast.LENGTH_SHORT)
-                .show()
-            e.printStackTrace()
+    private fun registerActivity() {
+        getPath = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            try {
+                currentPath.value = it.data!!.data!!.lastPathSegment!!.removePrefix("primary:")
+                Log.d(TAG, "data = ${currentPath.value}")
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "System Error, Reselect Path", Toast.LENGTH_SHORT)
+                    .show()
+                e.printStackTrace()
+            }
         }
     }
 }
