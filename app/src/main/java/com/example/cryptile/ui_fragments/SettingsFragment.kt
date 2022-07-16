@@ -56,9 +56,18 @@ class SettingsFragment : Fragment() {
         applyBinding()
     }
 
+    /**
+     * the layout is divided into different sections. each sections bindings are done separately.
+     */
     private fun applyBinding() {
+        appSettingSectionBinding()
+        userNameSectionBinding()
+        changeAccountPasswordSectionBinding()
+        deleteAccountSectionBinding()
+    }
+
+    private fun appSettingSectionBinding() {
         binding.apply {
-            newUserNameTextLayout.editText!!.setText(viewModel.userDisplayName.value)
             dataStore.keepMeSignedInFlow.asLiveData().observe(viewLifecycleOwner) {
                 keepMeSignedInSwitch.isChecked = it
             }
@@ -76,41 +85,50 @@ class SettingsFragment : Fragment() {
                     dataStore.booleanSaver(isChecked, StoreBoolean.USER_USES_FINGERPRINT)
                 }
             }
-            newUserNameTextLayout.apply {
-                this.setEndIconOnClickListener {
-                    val newName = this.editText!!.text.toString()
-                    val lCheck = newName.length in 7..33
-                    Log.d(TAG, "lCheck = $lCheck")
-                    if (lCheck) {
-                        AdditionalPrompts.verifyUser(
-                            layoutInflater = layoutInflater,
-                            context = requireContext(),
-                            notice = "change user name",
-                            onSuccess = {
-                                fireStore
-                                    .collection(UserDataConstants.tableName)
-                                    .document(auth.uid!!)
-                                    .update(UserDataConstants.userDisplayName, newName)
-                                    .addOnSuccessListener {
-                                        viewModel.updateDisplayName(newName)
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "display name changed",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                Log.d(TAG, "user  name changed")
-                            }
-                        )
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "length should be 8-32 characters",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+        }
+    }
+
+    private fun userNameSectionBinding() {
+        binding.newUserNameTextLayout.apply {
+            this.editText!!.setText(viewModel.userDisplayName.value)
+            this.setEndIconOnClickListener {
+                val newName = this.editText!!.text.toString()
+                val lCheck = newName.length in 7..33
+                Log.d(TAG, "lCheck = $lCheck")
+                if (lCheck) {
+                    AdditionalPrompts.verifyUser(
+                        layoutInflater = layoutInflater,
+                        context = requireContext(),
+                        notice = "change user name",
+                        onSuccess = {
+                            fireStore
+                                .collection(UserDataConstants.tableName)
+                                .document(auth.uid!!)
+                                .update(UserDataConstants.userDisplayName, newName)
+                                .addOnSuccessListener {
+                                    viewModel.updateDisplayName(newName)
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "display name changed",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            Log.d(TAG, "user  name changed")
+                        }
+                    )
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "length should be 8-32 characters",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
+        }
+    }
+
+    private fun changeAccountPasswordSectionBinding() {
+        binding.apply {
             forgotPasswordImageButton.setOnClickListener {
                 AdditionalPrompts.confirmationPrompt(
                     context = requireContext(),
@@ -186,6 +204,11 @@ class SettingsFragment : Fragment() {
                     )
                 }
             }
+        }
+    }
+
+    private fun deleteAccountSectionBinding() {
+        binding.apply {
             conditionCheckBox.setOnCheckedChangeListener { _, isChecked ->
                 deleteAccountButton.isEnabled = isChecked
             }
