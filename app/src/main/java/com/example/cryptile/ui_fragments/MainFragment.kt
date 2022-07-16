@@ -135,9 +135,8 @@ class MainFragment : Fragment() {
         val menu = binding.navigationViewMainScreen
         val headerMenu = menu.getHeaderView(0)
         headerMenu.apply {
-            // TODO: set image
             CoroutineScope(Dispatchers.IO).launch {
-                repeat(3) {
+                repeat(2) {
                     try {
                         Thread.sleep(3000)
                         Log.d(TAG, "url = ${viewModel.userPhotoUrl.value!!}")
@@ -147,8 +146,10 @@ class MainFragment : Fragment() {
                             findViewById<ImageView>(R.id.user_image).setImageBitmap(bmp)
                         }
                     } catch (e: Exception) {
-                        findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.google)
-                        e.printStackTrace()
+                        CoroutineScope(Dispatchers.Main).launch {
+                            findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.google)
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -236,6 +237,9 @@ class MainFragment : Fragment() {
         requireActivity().requestPermissions(permission, 100)
     }
 
+    /**
+     * takes values from fire store and stores them in the view model
+     */
     private fun setViewModelValues() {
         firebaseFirestore
             .collection(UserDataConstants.tableName)

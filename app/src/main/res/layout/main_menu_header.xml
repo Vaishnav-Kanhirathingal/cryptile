@@ -12,11 +12,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/card_background"
-        tools:src="@drawable/google"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/google" />
 
 
     <com.google.android.material.divider.MaterialDivider

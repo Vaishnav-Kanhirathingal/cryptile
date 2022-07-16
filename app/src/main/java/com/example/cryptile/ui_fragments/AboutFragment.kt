@@ -26,15 +26,12 @@ class AboutFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //code
         applyBinding()
     }
 
     private fun applyBinding() {
         binding.apply {
-            topAppBar.setNavigationOnClickListener {
-                findNavController().navigateUp()
-            }
+            topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
             projectGithubButton.setOnClickListener { open("https://github.com/Vaishnav-Kanhirathingal/CRYPTILE") }
             personalWhatsappButton.setOnClickListener { open("https://wa.me/917219648837") }
             personalGithubButton.setOnClickListener { open("https://github.com/Vaishnav-Kanhirathingal") }

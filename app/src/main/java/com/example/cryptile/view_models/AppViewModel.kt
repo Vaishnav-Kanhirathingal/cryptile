@@ -25,6 +25,9 @@ class AppViewModel(private val safeDao: SafeDao) : ViewModel() {
     val userEmail: LiveData<String> get() = _userEmail
     val userPhotoUrl: LiveData<String> get() = _userPhotoUrl
 
+    /**
+     * sets values for name, email and image URL
+     */
     fun setData(displayName: String, email: String, photoUrl: String) {
         this._userDisplayName.value = displayName
         this._userEmail.value = email

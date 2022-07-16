@@ -169,6 +169,10 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
+    /**
+     * creates an intent to send the current safe's logs to the email account
+     * vaishnav.kanhira@gmail.com for problem analysis.
+     */
     private fun sendLog() {
         val emailIntent = Intent(Intent.ACTION_SEND, Uri.parse("mailto:vaishnav.kanhira@gmail.com"))
         emailIntent.apply {
@@ -203,6 +207,10 @@ class SafeViewerFragment : Fragment() {
         addFile.launch(intent)
     }
 
+    /**
+     * a prompt with all the safe's settings wil be launched. here, the user can can change the
+     * safe's name, password, delete and export the entire safe.
+     */
     private fun openSafeSettings() {
         val dialogBox = Dialog(requireContext())
         val settingsBinding = PromptSafeSettingsBinding.inflate(layoutInflater)
@@ -351,6 +359,9 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
+    /**
+     * registers activity to import a new file to the safe.
+     */
     private fun registerActivity() {
         addFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             try {

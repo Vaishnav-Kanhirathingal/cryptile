@@ -127,12 +127,15 @@ open class SignInFragment : Fragment() {
         }
     }
 
+    /**
+     * navigates to the main screen if conditions are correct
+     */
     private fun navigateIfSignedIn() {
         val navigateUnderConditions = {
             if (auth.currentUser != null) {
                 dataStore.keepMeSignedInFlow.asLiveData()
-                    .observe(viewLifecycleOwner) { keepSignedIn ->
-                        if (keepSignedIn) {
+                    .observe(viewLifecycleOwner) {
+                        if (it) {
                             navigateToMain()
                         }
                     }
@@ -155,6 +158,10 @@ open class SignInFragment : Fragment() {
         }
     }
 
+    /**
+     * this is the navigation function to go to the main fragment. This is necessary to ensure that
+     * the user is logged in.
+     */
     private fun navigateToMain() {
         if (auth.currentUser != null) {
             findNavController().navigate(SignInFragmentDirections.actionSignInFragmentToMainFragment())

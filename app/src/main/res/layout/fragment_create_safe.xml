@@ -167,9 +167,9 @@
                         android:id="@+id/select_directory_image_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tooltipText="Open file explorer to select a new directory"
                         android:layout_marginStart="@dimen/create_safe_horizontal"
-                        android:src="@drawable/folder_24" />
+                        android:src="@drawable/folder_24"
+                        android:tooltipText="Open file explorer to select a new directory" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
