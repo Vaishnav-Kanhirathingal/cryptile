@@ -42,7 +42,7 @@ The remove all option is found in the side menu of the main screen. This option 
 
 ### Importing a CRYPTILE safe from storage -
 
-This is also another simple task. In case you created a safe and removed it from the app's database, you can get it back into the app as long as you haven't deleted the safe files or modified the contents of the actual file. To Import the safe, click the `+` button on the main screen. There you can see an option to import the safe. Selecting that option you will be dropped off into your device's file explorer. Now, navigate to the directory inside the safe you want to import. Once inside the directory, you will see a file with the name `META_DATA.txt`l̥. Selecting that file would import the safe into the application. After that, you can interact with the safe as you normally would."
+This is also another simple task. In case you created a safe and removed it from the app's database, you can get it back into the app as long as you haven't deleted the safe files or modified the contents of the actual file. To Import the safe, click the `+` button on the main screen. There you can see an option to import the safe. Selecting that option you will be dropped off into your device's file explorer. Now, navigate to the directory inside the safe you want to import. Once inside the directory, you will see a file with the name `META_DATA.txt`. Selecting that file would import the safe into the application. After that, you can interact with the safe as you normally would."
 
 ## Usage -
 
