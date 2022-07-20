@@ -50,46 +50,52 @@ This is also another simple task. In case you created a safe and removed it from
 
 Here, the user can enter their user name, an email address and a new password.
 
-[image here]
+![Screenshot_20220720_124932_com example cryptile](https://user-images.githubusercontent.com/94210466/179973917-32a083dd-a20f-41ae-b743-b66c5141e100.jpg)
 
 Once the account has been created, a confirmation email is sent to the user's email.
 
-[image here]
+![Screenshot_20220720_124943_com example cryptile](https://user-images.githubusercontent.com/94210466/179974088-53dc7fba-9029-4635-a99f-a708c4046c0c.jpg)
 
 After opening the verification link, the user's account gets verified and now they can sign in using their new account.
+
+![Screenshot_20220720_125038_com google android gm](https://user-images.githubusercontent.com/94210466/179974312-fad474d1-f788-4fd2-8f6b-cb7e0254ce3b.jpg)
+![Screenshot_20220720_125110_com android chrome](https://user-images.githubusercontent.com/94210466/179974324-2fbe9011-7f63-4024-9336-86da487ef2a8.jpg)
+
 
 ### Sign in process -
 
 Once the user's email has been verified, the user can now sign in using their email and password pair.
 
-[image here]
+![Screenshot_20220720_125206_com example cryptile](https://user-images.githubusercontent.com/94210466/179974707-79cc51bb-2b73-4985-b5f0-da6b2c062ef7.jpg)
 
 Alternatively, they can also sign up using their google account
 
-[image here]
+![Screenshot_20220720_125352_com google android gms](https://user-images.githubusercontent.com/94210466/179974861-a868cf00-f82a-457b-b044-c5e65c7982c9.jpg)
 
 ### Main screen -
 
 This is the screen you will be shown after signing in. The application would ask for the device's media permissions to store the safe.
 
-[image here]
+![Screenshot_20220720_125457_com google android packageinstaller](https://user-images.githubusercontent.com/94210466/179974961-5c7f756a-50c1-486e-b934-8c34c67a832e.jpg)
 
 ### Creating a safe -
 
 Creating a Safe is quite easy. Once on the main screen click the circular `+` button. This will navigate you to the `create safe` screen. Importing the safe will be discussed later on.
 
-[image here]
+![Screenshot_20220720_125617_com example cryptile](https://user-images.githubusercontent.com/94210466/179975042-37a9bf99-bed5-4114-b2a8-bbb4994bcc24.jpg)
 
  In here, all you have to do is provide the application with the name of the safe, the password you want to give it. Now, here, you can use an additional password if you so require. Next you can also provide the safe with its own separate location. the default location is provided and changing that is optional. You can change the location using the image button on the right of the card. Select the folder where you want to create the safe. After selection, the path value should be updated in the app. Next up is the `Personal Access Only?` option. Enabling this option means only you can access the safe. When this option is enabled, the safe adds another layer of encryption using the key created while you signed up to the app. Disabling this means that you can access the safe with any account as long as you have the password. Next is the dial of level of encryption. This is pretty self explanatory. After you have made the necessary changes, click on the `confirm` button. This would create the safe and add it to the list.
 
-[enter create]
-[recycler pic]
+![Screenshot_20220720_132203_com example cryptile](https://user-images.githubusercontent.com/94210466/179975254-dc859692-eec6-45e3-8292-b7781e8e191e.jpg)
+![Screenshot_20220720_172055_com example cryptile](https://user-images.githubusercontent.com/94210466/179975359-51d56cbd-660c-4b5a-98b0-07b4161ae37c.jpg)
 
 ### Importing a safe -
 
 For now, let's remove the safe we just created. click on the card with the safe's name. and long press the `-` and see what action it performs. It should say something along the lines of remove safe. click on that option.
 
-[image here]
+![Screenshot_20220720_132520_com example cryptile](https://user-images.githubusercontent.com/94210466/179975517-677db425-3c88-4f33-a2da-3ffba437e072.jpg)
+![Screenshot_20220720_133129_com example cryptile](https://user-images.githubusercontent.com/94210466/179975636-af7878bd-5639-44da-8aac-1ab13cbea7d6.jpg)
+![Screenshot_20220720_133211_com android documentsui](https://user-images.githubusercontent.com/94210466/179975792-abef6477-3f99-458a-8fe2-f03a37def10a.jpg)
 
 Now that the safe is no longer stored in the database, we can import it. Click on the `+` icon on the home screen. and select the import option. Now navigate to the safe's directory and select the file named `META_DATA.txt` Now, the safe has been imported into the app.
 
@@ -97,50 +103,51 @@ Now that the safe is no longer stored in the database, we can import it. Click o
 
 Click on the safe with your safe's name and enter your passwords. Then, click the `open` button. Once that is done, to add a file to the safe, click on the `+` icon at the bottom of the screen. Then, navigate to the file you want to import and select it. Selecting the file would import it to the safe as below.
 
-[import image]
+![Screenshot_20220720_133810_com example cryptile](https://user-images.githubusercontent.com/94210466/179975888-2b2aab98-6ae7-43b4-96b7-225d992319da.jpg)
 
 ### Opening the file -
 
 Select the file you want to open from the safe's list. Once the decrypting is done, It would open the file in it's dedicated app.
 
-[image here]
+![Screenshot_20220720_154342_com example cryptile](https://user-images.githubusercontent.com/94210466/179976023-5bdaac97-de5b-42ff-8709-b8642aff87f8.jpg)
 
 ### Intercting with a file -
 
 Long clicking on the file you want to interact with opens a prompt with all the options of actions you can perform on the file.
 
-[image here]
+![Screenshot_20220720_162539_com example cryptile](https://user-images.githubusercontent.com/94210466/179976110-8cb0d683-d225-4257-86dc-e55844bbc8a3.jpg)
 
 ### Safe settings -
 
 Inside the safe, in the option menu, select the safe settings. Here, you can see options to change the safe's attributes. You can also find additional options. Options include changing the safe's name, exporting all the contents of the safe, deleting the safe, changing the safe's password, changing the safe's access type.
 
-[image here]
+![Screenshot_20220720_162725_com example cryptile](https://user-images.githubusercontent.com/94210466/179976163-866acd4c-30c9-4ab4-89b7-a2402766404c.jpg)
+![Screenshot_20220720_163147_com example cryptile](https://user-images.githubusercontent.com/94210466/179976179-13fe2884-e4e7-4da1-b116-4a4984cbe680.jpg)
 
 ### Sending LOGs -
 
 If you encounter any issue with the safe, you can email the safe's log data for analysis. To send LOGs, open the safe and inside the options menu, select the `send logs` option and select any email client. Once the email is ready, you can enter your issues inside the body of the mail.
 
-[image here]
+![Screenshot_20220720_163357_com example cryptile](https://user-images.githubusercontent.com/94210466/179976370-02abc4b2-8050-4a47-a71e-019ec788507d.jpg)
 
 ### Settings -
 
 You can enter settings fron the main screen's side menu. Once you have entered into the settings screen, the settings are grouped into three sections. The first section has the option to change the basic settings. Then, the next section has the account settings. There, we can change the account's display name, account password and the option to reset password if you forget the password. The last section has the delete account option.
 
-[image here]
+![Screenshot_20220720_173110_com example cryptile](https://user-images.githubusercontent.com/94210466/179977252-87eb3d5a-8793-4145-8d14-393c13a16dac.jpg)
 
 Making changes require confirmation using the email and password.
 
-[image here]
+![Screenshot_20220720_173133_com example cryptile](https://user-images.githubusercontent.com/94210466/179977278-800454d4-cfef-4bb2-b9bf-7fdb6335172b.jpg)
 
 ### About -
 
 This section has some details regarding the app and the developer.
 
-[image here]
+![Screenshot_20220720_173142_com example cryptile](https://user-images.githubusercontent.com/94210466/179977351-148e9593-b6bd-4980-bbac-c5ebc4968e92.jpg)
 
 ### Documentation -
 
 This section has the documentation regarding how to use the app.
 
-[image here]
+![Screenshot_20220720_173151_com example cryptile](https://user-images.githubusercontent.com/94210466/179977403-75b9304d-0f3a-4242-9e78-4ddc0c0c01cf.jpg)
