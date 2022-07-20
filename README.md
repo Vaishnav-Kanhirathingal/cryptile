@@ -145,4 +145,5 @@ This section has some details regarding the app and the developer.
 
 This section has the documentation regarding how to use the app.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179977403-75b9304d-0f3a-4242-9e78-4ddc0c0c01cf.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/179981611-b082ff81-110b-4feb-b01a-dd260fb5f505.jpg" width = 324>
+
