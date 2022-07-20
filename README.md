@@ -58,8 +58,7 @@ Once the account has been created, a confirmation email is sent to the user's em
 
 After opening the verification link, the user's account gets verified and now they can sign in using their new account.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179974312-fad474d1-f788-4fd2-8f6b-cb7e0254ce3b.jpg" width = 324>
-<img src = "https://user-images.githubusercontent.com/94210466/179974324-2fbe9011-7f63-4024-9336-86da487ef2a8.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/179974312-fad474d1-f788-4fd2-8f6b-cb7e0254ce3b.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179974324-2fbe9011-7f63-4024-9336-86da487ef2a8.jpg" width = 324>
 
 
 ### Sign in process -
@@ -86,16 +85,13 @@ Creating a Safe is quite easy. Once on the main screen click the circular `+` bu
 
  In here, all you have to do is provide the application with the name of the safe, the password you want to give it. Now, here, you can use an additional password if you so require. Next you can also provide the safe with its own separate location. the default location is provided and changing that is optional. You can change the location using the image button on the right of the card. Select the folder where you want to create the safe. After selection, the path value should be updated in the app. Next up is the `Personal Access Only?` option. Enabling this option means only you can access the safe. When this option is enabled, the safe adds another layer of encryption using the key created while you signed up to the app. Disabling this means that you can access the safe with any account as long as you have the password. Next is the dial of level of encryption. This is pretty self explanatory. After you have made the necessary changes, click on the `confirm` button. This would create the safe and add it to the list.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179975254-dc859692-eec6-45e3-8292-b7781e8e191e.jpg" width = 324>
-<img src = "https://user-images.githubusercontent.com/94210466/179975359-51d56cbd-660c-4b5a-98b0-07b4161ae37c.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/179975254-dc859692-eec6-45e3-8292-b7781e8e191e.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179975359-51d56cbd-660c-4b5a-98b0-07b4161ae37c.jpg" width = 324>
 
 ### Importing a safe -
 
 For now, let's remove the safe we just created. click on the card with the safe's name. and long press the `-` and see what action it performs. It should say something along the lines of remove safe. click on that option.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179975517-677db425-3c88-4f33-a2da-3ffba437e072.jpg" width = 324>
-<img src = "https://user-images.githubusercontent.com/94210466/179975636-af7878bd-5639-44da-8aac-1ab13cbea7d6.jpg" width = 324>
-<img src = "https://user-images.githubusercontent.com/94210466/179975792-abef6477-3f99-458a-8fe2-f03a37def10a.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/179975517-677db425-3c88-4f33-a2da-3ffba437e072.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179975636-af7878bd-5639-44da-8aac-1ab13cbea7d6.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179975792-abef6477-3f99-458a-8fe2-f03a37def10a.jpg" width = 324>
 
 Now that the safe is no longer stored in the database, we can import it. Click on the `+` icon on the home screen. and select the import option. Now navigate to the safe's directory and select the file named `META_DATA.txt` Now, the safe has been imported into the app.
 
@@ -121,8 +117,7 @@ Long clicking on the file you want to interact with opens a prompt with all the 
 
 Inside the safe, in the option menu, select the safe settings. Here, you can see options to change the safe's attributes. You can also find additional options. Options include changing the safe's name, exporting all the contents of the safe, deleting the safe, changing the safe's password, changing the safe's access type.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179976163-866acd4c-30c9-4ab4-89b7-a2402766404c.jpg" width = 324>
-<img src = "https://user-images.githubusercontent.com/94210466/179976179-13fe2884-e4e7-4da1-b116-4a4984cbe680.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/179976163-866acd4c-30c9-4ab4-89b7-a2402766404c.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179976179-13fe2884-e4e7-4da1-b116-4a4984cbe680.jpg" width = 324>
 
 ### Sending LOGs -
 
