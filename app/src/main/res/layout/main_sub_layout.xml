@@ -34,6 +34,18 @@
         tools:itemCount="5"
         tools:listitem="@layout/list_item_safe" />
 
+    <TextView
+        android:id="@+id/empty_safe_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Click on the \'+\' icon to add a safe."
+        android:textAlignment="center"
+        android:textSize="@dimen/safe_name_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_safe_fab"
         android:layout_width="wrap_content"

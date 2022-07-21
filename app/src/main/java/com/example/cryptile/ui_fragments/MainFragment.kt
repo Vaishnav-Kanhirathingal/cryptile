@@ -80,52 +80,18 @@ class MainFragment : Fragment() {
         binding.includedSubLayout.topAppBar.setNavigationOnClickListener {
             binding.root.openDrawer(binding.navigationViewMainScreen)
         }
-        binding.includedSubLayout.addSafeFab.setOnClickListener {
-            val promptAddSafeBinding = PromptAddSafeBinding.inflate(layoutInflater)
-            val dialogBox = Dialog(requireContext())
-            promptAddSafeBinding.apply {
-                createSafeButton.setOnClickListener {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToCreateSafeFragment()
-                    )
-                    dialogBox.dismiss()
-                }
-                importSafeButton.setOnClickListener {
-                    AdditionalPrompts.confirmationPrompt(
-                        context = requireContext(),
-                        title = "Import Safe?",
-                        message = "To import an already created safe into the app, navigate to " +
-                                "the safe's folder and find the file named " +
-                                "${SafeData.metaDataFileName}. Selecting this file would import " +
-                                "the safe into the app. Continue?",
-                        onSuccess = {
-                            val intent = Intent(Intent.ACTION_GET_CONTENT)
-                            intent.type = "text/plain"
-                            importSafe.launch(intent)
-                            dialogBox.dismiss()
-                        }
-                    )
-                }
-                cancelButton.setOnClickListener { dialogBox.dismiss() }
-            }
-            dialogBox.apply {
-                setContentView(promptAddSafeBinding.root)
-                window!!.setLayout(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                setCancelable(true)
-                show()
-            }
-        }
+        binding.includedSubLayout.addSafeFab.setOnClickListener { addSafePrompt() }
         val safeAdapter = SafeAdapter(
             viewModel = viewModel,
             lifeCycle = viewLifecycleOwner,
             inflater = layoutInflater,
             navController = findNavController(),
         )
-        viewModel.getListOfIds().asLiveData()
-            .observe(viewLifecycleOwner) { safeAdapter.submitList(it) }
+        viewModel.getListOfIds().asLiveData().observe(viewLifecycleOwner) {
+            safeAdapter.submitList(it)
+            binding.includedSubLayout.emptySafeTextView.visibility =
+                if (it.isEmpty()) View.VISIBLE else View.GONE
+        }
         binding.includedSubLayout.safeRecycler.adapter = safeAdapter
         binding.includedSubLayout.safeRecycler.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -225,6 +191,45 @@ class MainFragment : Fragment() {
                     throw IllegalArgumentException("menu item not set")
                 }
             }
+        }
+    }
+
+    private fun addSafePrompt() {
+        val promptAddSafeBinding = PromptAddSafeBinding.inflate(layoutInflater)
+        val dialogBox = Dialog(requireContext())
+        promptAddSafeBinding.apply {
+            createSafeButton.setOnClickListener {
+                findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToCreateSafeFragment()
+                )
+                dialogBox.dismiss()
+            }
+            importSafeButton.setOnClickListener {
+                AdditionalPrompts.confirmationPrompt(
+                    context = requireContext(),
+                    title = "Import Safe?",
+                    message = "To import an already created safe into the app, navigate to " +
+                            "the safe's folder and find the file named " +
+                            "${SafeData.metaDataFileName}. Selecting this file would import " +
+                            "the safe into the app. Continue?",
+                    onSuccess = {
+                        val intent = Intent(Intent.ACTION_GET_CONTENT)
+                        intent.type = "text/plain"
+                        importSafe.launch(intent)
+                        dialogBox.dismiss()
+                    }
+                )
+            }
+            cancelButton.setOnClickListener { dialogBox.dismiss() }
+        }
+        dialogBox.apply {
+            setContentView(promptAddSafeBinding.root)
+            window!!.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setCancelable(true)
+            show()
         }
     }
 
