@@ -85,7 +85,7 @@ Creating a Safe is quite easy. Once on the main screen click the circular `+` bu
 
  In here, all you have to do is provide the application with the name of the safe, the password you want to give it. Now, here, you can use an additional password if you so require. Next you can also provide the safe with its own separate location. the default location is provided and changing that is optional. You can change the location using the image button on the right of the card. Select the folder where you want to create the safe. After selection, the path value should be updated in the app. Next up is the `Personal Access Only?` option. Enabling this option means only you can access the safe. When this option is enabled, the safe adds another layer of encryption using the key created while you signed up to the app. Disabling this means that you can access the safe with any account as long as you have the password. Next is the dial of level of encryption. This is pretty self explanatory. After you have made the necessary changes, click on the `confirm` button. This would create the safe and add it to the list.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179975254-dc859692-eec6-45e3-8292-b7781e8e191e.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179975359-51d56cbd-660c-4b5a-98b0-07b4161ae37c.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/180235198-25ad401e-efc4-4744-9e6b-8ad5e9ec650a.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180235225-655fed61-b6bc-469d-9137-f896d37411e2.jpg" width = 324>
 
 ### Importing a safe -
 
