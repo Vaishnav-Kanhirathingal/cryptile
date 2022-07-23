@@ -16,11 +16,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
+import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.FragmentSafeViewerBinding
 import com.example.cryptile.databinding.PromptSafeSettingsBinding
 import com.example.cryptile.firebase.UserDataConstants
@@ -51,6 +53,7 @@ class SafeViewerFragment : Fragment() {
     private lateinit var binding: FragmentSafeViewerBinding
     private lateinit var viewerAdapter: ViewerAdapter
     private lateinit var addFile: ActivityResultLauncher<Intent>
+    private var fileList: MutableLiveData<List<SafeFiles>> = MutableLiveData(listOf())
 
     /**
      * here, the argument contains a list of keys as json strings. The list of keys are then
@@ -104,18 +107,7 @@ class SafeViewerFragment : Fragment() {
                         true
                     }
                     R.id.send_log_files -> {
-                        AdditionalPrompts.confirmationPrompt(
-                            context = requireContext(),
-                            title = "Send Log?",
-                            message = "Log files contain a list of actions that you have " +
-                                    "performed from the date of it's creation. Logs do not " +
-                                    "contain any personal information other than your accounts " +
-                                    "user name and the type of files you imported/opened/exported " +
-                                    "along with its size. (eg - extension - \'.mp4\' size - 32 MB). " +
-                                    "Log files can be useful for the developer to figure out any " +
-                                    "faults within the app. Continue?",
-                            onSuccess = { sendLog() }
-                        )
+                        sendLog()
                         true
                     }
                     else -> false
@@ -158,14 +150,20 @@ class SafeViewerFragment : Fragment() {
                         safeData.export(it, key, requireContext(), layoutInflater)
                     }
                 },
-                deleter = { safeData.deleteFile(it);viewerAdapter.submitList(safeData.getDataFileList()) },
+                deleter = { safeData.deleteFile(it);fileList.value = safeData.getDataFileList() },
                 layoutInflater = layoutInflater
             )
             fileListRecyclerView.adapter = viewerAdapter
             viewModel.getById(safeDataId!!).asLiveData().observe(viewLifecycleOwner) {
                 safeData = it
-                viewerAdapter.submitList(it.getDataFileList())
+                fileList.value = it.getDataFileList()
+
             }
+            fileList.observe(viewLifecycleOwner) {
+                viewerAdapter.submitList(it)
+                emptyRecyclerTextView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+            }
+
             addFileBottomButton.setOnClickListener { startAdditionActivity() }
         }
     }
@@ -175,31 +173,50 @@ class SafeViewerFragment : Fragment() {
      * vaishnav.kanhira@gmail.com for problem analysis.
      */
     private fun sendLog() {
-        val emailIntent = Intent(Intent.ACTION_SEND, Uri.parse("mailto:vaishnav.kanhira@gmail.com"))
-        emailIntent.apply {
-            this.type = "text/plain"
-            this.putExtra(Intent.EXTRA_EMAIL, arrayOf("vaishnav.kanhira@gmail.com"))
-            this.putExtra(
-                Intent.EXTRA_SUBJECT,
-                "[CRYPTILE] - Sending log files for ${viewModel.userEmail.value}"
-            )
-            this.putExtra(Intent.EXTRA_TEXT, "[enter your issue associated with the safe below]")
-        }
-        val file = File(
-            Environment.getExternalStorageDirectory(),
-            "${safeData.safeAbsoluteLocation}/${SafeData.logFileName}"
+
+        AdditionalPrompts.confirmationPrompt(
+            context = requireContext(),
+            title = "Send Log?",
+            message = "Log files contain a list of actions that you have " +
+                    "performed from the date of it's creation. Logs do not " +
+                    "contain any personal information other than your accounts " +
+                    "user name and the type of files you imported/opened/exported " +
+                    "along with its size. (eg - extension - \'.mp4\' size - 32 MB). " +
+                    "Log files can be useful for the developer to figure out any " +
+                    "faults within the app. Continue?",
+            onSuccess = {
+                val emailIntent =
+                    Intent(Intent.ACTION_SEND, Uri.parse("mailto:vaishnav.kanhira@gmail.com"))
+                emailIntent.apply {
+                    this.type = "text/plain"
+                    this.putExtra(Intent.EXTRA_EMAIL, arrayOf("vaishnav.kanhira@gmail.com"))
+                    this.putExtra(
+                        Intent.EXTRA_SUBJECT,
+                        "[CRYPTILE] - Sending log files for ${viewModel.userEmail.value}"
+                    )
+                    this.putExtra(
+                        Intent.EXTRA_TEXT,
+                        "[enter your issue associated with the safe below]"
+                    )
+                }
+                val file = File(
+                    Environment.getExternalStorageDirectory(),
+                    "${safeData.safeAbsoluteLocation}/${SafeData.logFileName}"
+                )
+                if (!file.exists() || !file.canRead()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Sending logs failed. You might have to do it manually",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val uri =
+                        getUriForFile(requireContext(), "com.example.cryptile.fileProvider", file)
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                    startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"))
+                }
+            }
         )
-        if (!file.exists() || !file.canRead()) {
-            Toast.makeText(
-                requireContext(),
-                "Sending logs failed. You might have to do it manually",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-        val uri = getUriForFile(requireContext(), "com.example.cryptile.fileProvider", file)
-        emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
-        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"))
     }
 
     private fun startAdditionActivity() {
@@ -274,9 +291,9 @@ class SafeViewerFragment : Fragment() {
                     notice = "delete safe?",
                     usePassword = false,
                     onSuccess = {
+                        findNavController().navigateUp()
                         viewModel.delete(safeData)
                         safeData.deleteSafe()
-                        findNavController().navigateUp()
                         dialogBox.dismiss()
                     }
                 )
@@ -382,7 +399,7 @@ class SafeViewerFragment : Fragment() {
                                 layoutInflater = layoutInflater
                             )
                             CoroutineScope(Dispatchers.Main).launch {
-                                viewerAdapter.submitList(safeData.getDataFileList())
+                                fileList.value = safeData.getDataFileList()
                             }
                         } catch (e: Exception) {
                             CoroutineScope(Dispatchers.Main).launch {

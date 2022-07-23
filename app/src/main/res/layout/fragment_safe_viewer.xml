@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,7 +10,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
@@ -31,23 +32,41 @@
         android:paddingBottom="50dp"
         android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/add_linear_layout"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
         tools:itemCount="8"
         tools:listitem="@layout/list_item_file_explorer" />
 
+    <TextView
+        android:id="@+id/empty_recycler_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="50dp"
+        android:text="Click on the \'+\' button to add files to safe."
+        android:textAlignment="center"
+        android:textSize="@dimen/safe_name_size"
+        app:layout_constraintBottom_toBottomOf="@id/file_list_recycler_view"
+        app:layout_constraintLeft_toLeftOf="@id/file_list_recycler_view"
+        app:layout_constraintRight_toRightOf="@id/file_list_recycler_view"
+        app:layout_constraintTop_toTopOf="@id/file_list_recycler_view"
+        tools:visibility="gone"/>
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:dividerColor="@color/black"
         app:dividerThickness="@dimen/divider_thickness"
+        app:layout_constraintBottom_toTopOf="@id/add_linear_layout"
         tools:dividerThickness="1dp" />
 
     <LinearLayout
+        android:id="@+id/add_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/card_background"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageButton
             android:id="@+id/add_file_bottom_button"
@@ -58,4 +77,4 @@
             android:src="@drawable/add_24"
             android:tooltipText="Import a new file" />
     </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
