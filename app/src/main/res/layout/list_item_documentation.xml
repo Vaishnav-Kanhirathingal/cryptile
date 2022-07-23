@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/layout_horizontal"
-    android:layout_marginBottom="@dimen/layout_vertical"
     android:backgroundTint="@color/card_background_light"
     app:cardCornerRadius="@dimen/card_radius"
-    app:cardElevation="@dimen/card_elevation"
+    app:cardElevation="@dimen/doc_elevation"
+    android:layout_marginHorizontal="@dimen/doc_elevation"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
@@ -21,13 +20,13 @@
             android:id="@+id/title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="textEnd"
             android:textSize="@dimen/documentation_title_size"
             tools:text="Sign Up Process" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:dividerColor="@color/black"
             android:layout_marginVertical="@dimen/documentation_card_padding"
             app:dividerThickness="@dimen/divider_thickness"
             tools:dividerThickness="1dp" />
@@ -36,6 +35,6 @@
             android:id="@+id/message_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="@string/sign_up_description" />
+            tools:text="@string/app_about" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
