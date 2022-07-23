@@ -18,7 +18,7 @@
 
 <img src = "https://user-images.githubusercontent.com/94210466/179973917-32a083dd-a20f-41ae-b743-b66c5141e100.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179974088-53dc7fba-9029-4635-a99f-a708c4046c0c.jpg" width = 324>
 
-After opening the verification link, your account gets verified and now you can sign in using your new account.
+> After opening the verification link, your account gets verified and now you can sign in using your new account.
 
 <img src = "https://user-images.githubusercontent.com/94210466/179974312-fad474d1-f788-4fd2-8f6b-cb7e0254ce3b.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179974324-2fbe9011-7f63-4024-9336-86da487ef2a8.jpg" width = 324>
 
