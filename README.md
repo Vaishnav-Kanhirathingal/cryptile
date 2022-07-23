@@ -56,9 +56,9 @@
 
 ### Interacting with the safe -
 
-> Click on the safe with your safe's name and enter your passwords. Then, click the `open` button. Once that is done, to add a file to the safe, click on the `+` icon at the bottom of the screen. Then, navigate to the file you want to import and select it. Selecting the file would import it to the safe as below.
+> Click on the safe with your safe's name and enter your passwords. Then, click the `open` button. Once that is done, to add a file to the safe, click on the `+` icon at the bottom of the screen. Then, navigate to the file you want to import and select it. Selecting the file would import it to the safe as below. If the safe directories are not found, the card will display a `!` sign as in the third image.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179975888-2b2aab98-6ae7-43b4-96b7-225d992319da.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/180609344-ed3dced9-93f0-4c44-acb8-270169b90a6f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609350-2543d8fa-0909-48b8-8781-e980a141438f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609351-6638b7bc-ade4-4836-b72c-4f7f7fdc2402.jpg" width = 324>
 
 ### Opening the file -
 
