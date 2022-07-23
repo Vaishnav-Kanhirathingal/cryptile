@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.cryptile.databinding.FragmentSignUpBinding
-import com.example.cryptile.firebase.SignInFunctions
-
-private const val TAG = "SignUpFragment"
+import com.example.cryptile.firebase.FirebaseFunctions
 
 class SignUpFragment : Fragment() {
     private lateinit var binding: FragmentSignUpBinding
@@ -66,7 +64,7 @@ class SignUpFragment : Fragment() {
                     }
 
                 if (userNameCorrect && userEmailCorrect && passwordCorrect) {
-                    SignInFunctions.signUpWithEmail(
+                    FirebaseFunctions.signUpWithEmail(
                         userName = userName,
                         email = userEmail,
                         password = passOne,

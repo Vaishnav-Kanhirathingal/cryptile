@@ -13,8 +13,6 @@ import com.example.cryptile.data_classes.SafeFiles
 import com.example.cryptile.databinding.ListItemFileExplorerBinding
 import com.example.cryptile.databinding.PromptFileOptionsBinding
 
-private const val TAG = "ViewerAdapter"
-
 class ViewerAdapter(
     private val opener: (SafeFiles) -> Unit,
     private val exporter: (SafeFiles) -> Unit,

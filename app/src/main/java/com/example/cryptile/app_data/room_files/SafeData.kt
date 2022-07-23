@@ -155,7 +155,7 @@ class SafeData(
                     this.safeAbsoluteLocation = path.removeSuffix("/$metaDataFileName")
                     this.saveChangesToMetadata()
                 }
-                Log.d(TAG, "safe data file generated = \n${this.toString()}")
+                Log.d(TAG, "safe data file generated = \n$this")
                 return this
             }
         }
@@ -559,12 +559,17 @@ class SafeData(
         if (!listOfFiles.isNullOrEmpty()) {
             for (i in listOfFiles) {
                 // TODO: add try catch, notify user of error, add to log
-                finalList.add(
-                    Gson().fromJson(
-                        FileReader(File(i, safeDataFileName)).readText(),
-                        SafeFiles::class.java
+                try {
+                    finalList.add(
+                        Gson().fromJson(
+                            FileReader(File(i, safeDataFileName)).readText(),
+                            SafeFiles::class.java
+                        )
                     )
-                )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
             }
         }
         return finalList

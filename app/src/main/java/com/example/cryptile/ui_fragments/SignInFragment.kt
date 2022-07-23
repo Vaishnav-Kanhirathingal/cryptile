@@ -16,7 +16,7 @@ import com.example.cryptile.R
 import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.databinding.FragmentSignInBinding
-import com.example.cryptile.firebase.SignInFunctions
+import com.example.cryptile.firebase.FirebaseFunctions
 import com.example.cryptile.ui_fragments.prompt.Biometrics
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -82,7 +82,7 @@ open class SignInFragment : Fragment() {
                 userEmailTextLayout.isErrorEnabled = !emailCorrect
 
                 if (passCorrect && emailCorrect) {
-                    SignInFunctions.signInWithEmail(
+                    FirebaseFunctions.signInWithEmail(
                         email = userEmailTextLayout.editText!!.text.toString(),
                         password = pass,
                         context = requireContext(),
@@ -173,7 +173,7 @@ open class SignInFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 try {
                     Log.d(TAG, "google sign-in started")
-                    SignInFunctions.signInUsingGoogle(
+                    FirebaseFunctions.signInUsingGoogle(
                         id = GoogleSignIn.getSignedInAccountFromIntent(it.data).result.idToken,
                         context = requireContext(),
                         onSuccess = {

@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.example.cryptile.R
 import com.example.cryptile.app_data.room_files.SafeData.Companion.createRandomKey
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "SignInFunctions"
 
-object SignInFunctions {
+object FirebaseFunctions {
     /**
      * this function is used to complete google sign in or sign up process.
      * @param [id] takes the user id for the siged in account
@@ -195,5 +196,15 @@ object SignInFunctions {
                 onFailure(it.message!!)
                 Toast.makeText(context, "exception: $it", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    fun isAnEmailAccount(): Boolean {
+        for (i in FirebaseAuth.getInstance().currentUser!!.providerData) {
+            Log.d(TAG, "providerData = ${i.providerId}")
+            if ("password" == i.providerId) {
+                return true
+            }
+        }
+        return false
     }
 }

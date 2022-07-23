@@ -15,6 +15,7 @@ import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.databinding.FragmentSettingsBinding
+import com.example.cryptile.firebase.FirebaseFunctions
 import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
@@ -100,6 +101,7 @@ class SettingsFragment : Fragment() {
                         layoutInflater = layoutInflater,
                         context = requireContext(),
                         notice = "change user name",
+                        usePassword = false,
                         onSuccess = {
                             fireStore
                                 .collection(UserDataConstants.tableName)
@@ -129,6 +131,8 @@ class SettingsFragment : Fragment() {
 
     private fun changeAccountPasswordSectionBinding() {
         binding.apply {
+            accountPasswordLayout.visibility =
+                if (FirebaseFunctions.isAnEmailAccount()) View.VISIBLE else View.GONE
             forgotPasswordImageButton.setOnClickListener {
                 AdditionalPrompts.confirmationPrompt(
                     context = requireContext(),
@@ -181,6 +185,7 @@ class SettingsFragment : Fragment() {
                         layoutInflater = layoutInflater,
                         context = requireContext(),
                         notice = "Change password",
+                        usePassword = true,
                         onSuccess = {
                             Log.d(TAG, "password changed")
                             auth.currentUser!!.updatePassword(passwordOne).addOnSuccessListener {
@@ -217,6 +222,7 @@ class SettingsFragment : Fragment() {
                     layoutInflater = layoutInflater,
                     context = requireContext(),
                     notice = "Deletion of account",
+                    usePassword = false,
                     onSuccess = {
                         fireStore
                             .collection(UserDataConstants.tableName)

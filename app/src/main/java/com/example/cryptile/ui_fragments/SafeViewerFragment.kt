@@ -86,6 +86,7 @@ class SafeViewerFragment : Fragment() {
     }
 
     private fun applyBindings() {
+        // TODO: recycler should display a text if empty
         binding.apply {
             topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -138,10 +139,10 @@ class SafeViewerFragment : Fragment() {
                                 val intent = Intent(Intent.ACTION_VIEW)
                                 intent.data = uri
                                 intent.type = mime
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK;
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 Log.d(
                                     TAG,
-                                    "uri = ${uri.toString()}" +
+                                    "uri = $uri" +
                                             " path = ${file.absolutePath}" +
                                             " size = ${file.totalSpace}"
                                 )
@@ -271,6 +272,7 @@ class SafeViewerFragment : Fragment() {
                     layoutInflater = layoutInflater,
                     context = requireContext(),
                     notice = "delete safe?",
+                    usePassword = false,
                     onSuccess = {
                         viewModel.delete(safeData)
                         safeData.deleteSafe()

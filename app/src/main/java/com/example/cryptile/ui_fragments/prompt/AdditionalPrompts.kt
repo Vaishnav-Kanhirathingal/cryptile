@@ -95,10 +95,25 @@ object AdditionalPrompts {
         layoutInflater: LayoutInflater,
         context: Context,
         notice: String,
+        usePassword: Boolean,
         onSuccess: () -> Unit
     ) {
-        // TODO: should only ask for password and not email
         val auth = FirebaseAuth.getInstance()
+        val email = auth.currentUser!!.email!!
+        for (i in auth.currentUser!!.providerData) {
+            Log.d(TAG, "providerData = ${i.providerId}")
+            if ("google.com" == i.providerId && !usePassword) {
+                // TODO: use fingerprint id
+                Biometrics.verifyBiometrics(
+                    context = context,
+                    description = notice,
+                    onSuccess = onSuccess,
+                    onFailure = {}
+                )
+                return
+            }
+        }
+
         val binding = PromptVerifyAccountBinding.inflate(layoutInflater)
         val dialogBox = Dialog(context)
         dialogBox.apply {
@@ -107,24 +122,17 @@ object AdditionalPrompts {
             setCancelable(true)
             show()
         }
-        Log.d(TAG, "provider - ${auth.currentUser!!.providerId}")
-        // TODO: check why firebase also, verify automatically using fingerprint if google sign in.
+
         binding.apply {
             noticeTextView.text = "*** $notice ***"
             confirmButton.setOnClickListener {
-                val cred = EmailAuthProvider.getCredential(
-                    userEmailTextLayout.editText!!.text.toString(),
-                    userPasswordTextLayout.editText!!.text.toString()
-                )
+                val cred = EmailAuthProvider
+                    .getCredential(email, userPasswordTextLayout.editText!!.text.toString())
                 auth.currentUser!!.reauthenticate(cred).addOnSuccessListener {
                     Log.d(TAG, "user authenticated")
                     onSuccess()
                     dialogBox.dismiss()
                 }.addOnFailureListener {
-                    userEmailTextLayout.apply {
-                        error = "Email might be incorrect"
-                        isErrorEnabled = true
-                    }
                     userPasswordTextLayout.apply {
                         error = "Password might be incorrect"
                         isErrorEnabled = true
