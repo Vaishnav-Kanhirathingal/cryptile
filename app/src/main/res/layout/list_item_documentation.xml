@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/doc_elevation"
     android:backgroundTint="@color/card_background_light"
     app:cardCornerRadius="@dimen/card_radius"
     app:cardElevation="@dimen/doc_elevation"
-    android:layout_marginHorizontal="@dimen/doc_elevation"
     app:cardUseCompatPadding="true">
 
     <LinearLayout
@@ -26,8 +26,8 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:dividerColor="@color/black"
             android:layout_marginVertical="@dimen/documentation_card_padding"
+            app:dividerColor="@color/black"
             app:dividerThickness="@dimen/divider_thickness"
             tools:dividerThickness="1dp" />
 

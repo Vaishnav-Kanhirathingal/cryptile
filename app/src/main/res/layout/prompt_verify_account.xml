@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/prompt_vertical"
-        android:hint="Password"
+        android:hint="Account Password"
         app:counterEnabled="true"
         app:counterMaxLength="32"
         app:endIconMode="password_toggle"

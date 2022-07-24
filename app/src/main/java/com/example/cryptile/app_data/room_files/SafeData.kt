@@ -558,7 +558,6 @@ class SafeData(
         val finalList = mutableListOf<SafeFiles>()
         if (!listOfFiles.isNullOrEmpty()) {
             for (i in listOfFiles) {
-                // TODO: add try catch, notify user of error, add to log
                 try {
                     finalList.add(
                         Gson().fromJson(

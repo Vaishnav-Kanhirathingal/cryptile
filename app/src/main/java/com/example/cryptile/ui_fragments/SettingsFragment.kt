@@ -222,7 +222,7 @@ class SettingsFragment : Fragment() {
                     layoutInflater = layoutInflater,
                     context = requireContext(),
                     notice = "Deletion of account",
-                    usePassword = false,
+                    usePassword = true,
                     onSuccess = {
                         fireStore
                             .collection(UserDataConstants.tableName)

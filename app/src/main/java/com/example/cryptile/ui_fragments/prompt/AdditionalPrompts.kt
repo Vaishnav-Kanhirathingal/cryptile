@@ -99,7 +99,6 @@ object AdditionalPrompts {
         usePassword: Boolean,
         onSuccess: () -> Unit
     ) {
-        // TODO: should use password if available.
         val auth = FirebaseAuth.getInstance()
         val email = auth.currentUser!!.email!!
         for (i in auth.currentUser!!.providerData) {

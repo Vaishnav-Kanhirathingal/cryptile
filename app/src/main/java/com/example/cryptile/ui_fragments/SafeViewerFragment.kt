@@ -89,7 +89,6 @@ class SafeViewerFragment : Fragment() {
     }
 
     private fun applyBindings() {
-        // TODO: recycler should display a text if empty
         binding.apply {
             topAppBar.setOnMenuItemClickListener {
                 when (it.itemId) {
