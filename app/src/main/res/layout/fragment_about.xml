@@ -29,16 +29,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="@dimen/layout_horizontal"
-            android:paddingVertical="@dimen/layout_vertical">
+            android:paddingHorizontal="@dimen/about_padding"
+            android:paddingVertical="@dimen/about_padding">
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/layout_vertical"
                 android:backgroundTint="@color/card_background_light"
-                app:cardCornerRadius="@dimen/card_radius"
-                app:cardElevation="@dimen/card_elevation"
+                app:cardCornerRadius="@dimen/about_padding"
+                app:cardElevation="@dimen/about_padding"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
@@ -77,8 +76,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/layout_vertical"
                 android:backgroundTint="@color/card_background_light"
-                app:cardCornerRadius="@dimen/card_radius"
-                app:cardElevation="@dimen/card_elevation"
+                app:cardCornerRadius="@dimen/about_padding"
+                app:cardElevation="@dimen/about_padding"
                 app:cardUseCompatPadding="true">
 
                 <LinearLayout
