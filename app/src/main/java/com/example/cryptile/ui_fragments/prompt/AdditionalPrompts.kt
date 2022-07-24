@@ -89,6 +89,7 @@ object AdditionalPrompts {
      * uses email and password based verification if the user has an email based account
      * @param [notice] displays a notice of the action that will be performed once the user
      * enters the password and email
+     * @param [usePassword] asks for password if available and set to true.
      * @param [onSuccess] task to be performed after the account has been verified
      */
     fun verifyUser(
@@ -98,49 +99,48 @@ object AdditionalPrompts {
         usePassword: Boolean,
         onSuccess: () -> Unit
     ) {
+        // TODO: should use password if available.
         val auth = FirebaseAuth.getInstance()
         val email = auth.currentUser!!.email!!
         for (i in auth.currentUser!!.providerData) {
             Log.d(TAG, "providerData = ${i.providerId}")
-            if ("google.com" == i.providerId && !usePassword) {
-                // TODO: use fingerprint id
-                Biometrics.verifyBiometrics(
-                    context = context,
-                    description = notice,
-                    onSuccess = onSuccess,
-                    onFailure = {}
-                )
+            if ("password" == i.providerId && usePassword) {
+                val binding = PromptVerifyAccountBinding.inflate(layoutInflater)
+                val dialogBox = Dialog(context)
+                dialogBox.apply {
+                    setContentView(binding.root)
+                    window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
+                    setCancelable(true)
+                    show()
+                }
+                binding.apply {
+                    noticeTextView.text = "*** $notice ***"
+                    confirmButton.setOnClickListener {
+                        val cred = EmailAuthProvider
+                            .getCredential(email, userPasswordTextLayout.editText!!.text.toString())
+                        auth.currentUser!!.reauthenticate(cred).addOnSuccessListener {
+                            Log.d(TAG, "user authenticated")
+                            onSuccess()
+                            dialogBox.dismiss()
+                        }.addOnFailureListener {
+                            it.printStackTrace()
+                            userPasswordTextLayout.apply {
+                                error = "Password might be incorrect"
+                                isErrorEnabled = true
+                            }
+                        }
+                    }
+                    cancelButton.setOnClickListener { dialogBox.dismiss() }
+                }
                 return
             }
         }
-
-        val binding = PromptVerifyAccountBinding.inflate(layoutInflater)
-        val dialogBox = Dialog(context)
-        dialogBox.apply {
-            setContentView(binding.root)
-            window!!.setLayout(MATCH_PARENT, WRAP_CONTENT)
-            setCancelable(true)
-            show()
-        }
-
-        binding.apply {
-            noticeTextView.text = "*** $notice ***"
-            confirmButton.setOnClickListener {
-                val cred = EmailAuthProvider
-                    .getCredential(email, userPasswordTextLayout.editText!!.text.toString())
-                auth.currentUser!!.reauthenticate(cred).addOnSuccessListener {
-                    Log.d(TAG, "user authenticated")
-                    onSuccess()
-                    dialogBox.dismiss()
-                }.addOnFailureListener {
-                    userPasswordTextLayout.apply {
-                        error = "Password might be incorrect"
-                        isErrorEnabled = true
-                    }
-                }
-            }
-            cancelButton.setOnClickListener { dialogBox.dismiss() }
-        }
+        Biometrics.verifyBiometrics(
+            context = context,
+            description = notice,
+            onSuccess = onSuccess,
+            onFailure = {}
+        )
     }
 
     /**
