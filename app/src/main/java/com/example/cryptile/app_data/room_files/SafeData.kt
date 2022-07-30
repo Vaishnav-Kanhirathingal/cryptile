@@ -36,7 +36,7 @@ class SafeData(
     @ColumnInfo(name = "safe_owner") var safeOwner: String,
     @ColumnInfo(name = "safe_uses_multiple_password") var safeUsesMultiplePassword: Boolean,
     @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
-    @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: Int,// TODO: use this
+    @ColumnInfo(name = "encryption_algorithm") var encryptionLevel: Int,
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
     @ColumnInfo(name = "hide_safe_path") var hideSafePath: Boolean,
     @ColumnInfo(name = "safe_absolute_location") var safeAbsoluteLocation: String,
@@ -173,7 +173,7 @@ class SafeData(
                     safeOwner == x.safeOwner &&
                     safeUsesMultiplePassword == x.safeUsesMultiplePassword &&
                     personalAccessOnly == x.personalAccessOnly &&
-                    encryptionAlgorithm == x.encryptionAlgorithm &&
+                    encryptionLevel == x.encryptionLevel &&
                     safeCreated == x.safeCreated &&
                     safeAbsoluteLocation == x.safeAbsoluteLocation &&
                     safeSalt == x.safeSalt
@@ -719,7 +719,14 @@ class SafeData(
         return SecretKeySpec(
             SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(
                 PBEKeySpec(
-                    password.toCharArray(), saltString.toByteArray(), 65536, 256
+                    password.toCharArray(),
+                    saltString.toByteArray(),
+                    when (encryptionLevel) {
+                        1 -> 16_384
+                        2 -> 65_536
+                        else -> 262_144
+                    },
+                    256
                 )
             ).encoded, "AES"
         )
