@@ -34,8 +34,9 @@ class ViewerAdapter(
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
                 fileNameTextView.text = safeFiles.fileNameUpperCase
-                fileDetailsTextView.text =
-                    "${safeFiles.fileAdded} | ${SafeFiles.getFormattedSize(safeFiles.fileSize)}"
+                fileDetailsTextView.text = safeFiles.fileAdded + " | " +
+                        SafeFiles.getFormattedSize(safeFiles.fileSize) + " | " +
+                        safeFiles.extension.substring(1).uppercase()
                 fileImageView.setImageResource(
                     when (safeFiles.fileType) {
                         FileType.UNKNOWN -> R.drawable.file_unknown_24

@@ -384,7 +384,6 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
-
     /**
      * registers activity to import a new file to the safe.
      */
