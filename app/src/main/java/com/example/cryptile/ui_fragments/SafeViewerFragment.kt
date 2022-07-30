@@ -13,6 +13,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -122,15 +123,20 @@ class SafeViewerFragment : Fragment() {
                             context = requireContext(),
                             layoutInflater = layoutInflater,
                             fileOpener = { file: File ->
-                                val uri: Uri = Uri.fromFile(file).normalizeScheme()
+                                val uri: Uri = FileProvider.getUriForFile(
+                                    requireContext(),
+                                    "com.example.cryptile.fileProvider",
+                                    file
+                                )
                                 val mime = MimeTypeMap
                                     .getSingleton()
                                     .getMimeTypeFromExtension(safeFile.extension.substring(1))
                                 Log.d(TAG, "mime = $mime")
-                                val intent = Intent(Intent.ACTION_VIEW)
-                                intent.data = uri
-                                intent.type = mime
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                                intent.action = Intent.ACTION_VIEW
+                                intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                intent.setDataAndType(uri, mime)
                                 Log.d(
                                     TAG, "data received:" +
                                             "uri = $uri\n" +
