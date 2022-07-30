@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/card_elevation"
     android:backgroundTint="@color/card_background_light"
-    android:orientation="vertical"
     app:cardCornerRadius="@dimen/card_radius"
     app:cardElevation="@dimen/card_elevation"
     app:cardUseCompatPadding="true">
@@ -43,7 +42,6 @@
                     app:layout_constraintWidth_max="60dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
-
 
         <TextView
             android:id="@+id/file_name_text_view"

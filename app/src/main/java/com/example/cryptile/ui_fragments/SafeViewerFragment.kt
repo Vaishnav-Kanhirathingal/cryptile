@@ -114,28 +114,29 @@ class SafeViewerFragment : Fragment() {
             }
             topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
             viewerAdapter = ViewerAdapter(
-                opener = {
+                opener = { safeFile: SafeFiles ->
                     CoroutineScope(Dispatchers.IO).launch {
                         safeData.openFile(
                             keyList = key,
-                            safeFile = it,
+                            safeFile = safeFile,
                             context = requireContext(),
                             layoutInflater = layoutInflater,
-                            opener = { file ->
+                            fileOpener = { file: File ->
                                 val uri: Uri = Uri.fromFile(file).normalizeScheme()
                                 val mime = MimeTypeMap
                                     .getSingleton()
-                                    .getMimeTypeFromExtension(it.extension.substring(1))
+                                    .getMimeTypeFromExtension(safeFile.extension.substring(1))
                                 Log.d(TAG, "mime = $mime")
                                 val intent = Intent(Intent.ACTION_VIEW)
                                 intent.data = uri
                                 intent.type = mime
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                 Log.d(
-                                    TAG,
-                                    "uri = $uri" +
-                                            " path = ${file.absolutePath}" +
-                                            " size = ${file.totalSpace}"
+                                    TAG, "data received:" +
+                                            "uri = $uri\n" +
+                                            "extension = ${safeFile.extension.substring(1)}\n" +
+                                            "path = ${file.absolutePath}\n" +
+                                            "size = ${file.totalSpace} "
                                 )
                                 CoroutineScope(Dispatchers.Main).launch {
                                     context!!.startActivity(intent)
@@ -377,12 +378,19 @@ class SafeViewerFragment : Fragment() {
         }
     }
 
+
     /**
      * registers activity to import a new file to the safe.
      */
     private fun registerActivity() {
+        // TODO: fix issue for path
         addFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             try {
+
+                val filePath = File(it.data!!.data!!.path).absolutePath
+
+                Log.d(TAG, "it.data!!.data!!.encodedPath = $filePath")
+
                 val path = it.data!!.data!!.lastPathSegment!!.removePrefix("primary:")
                 Log.d(TAG, "File Path = $path")
                 if (path.isBlank()) {

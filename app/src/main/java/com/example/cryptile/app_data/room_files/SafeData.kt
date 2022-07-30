@@ -524,7 +524,7 @@ class SafeData(
         safeFile: SafeFiles,
         context: Context,
         layoutInflater: LayoutInflater,
-        opener: (File) -> Unit
+        fileOpener: (File) -> Unit
     ) {
         val decryptedFile = File(
             Environment.getExternalStorageDirectory(),
@@ -543,7 +543,7 @@ class SafeData(
                     "file extension ${safeFile.fileDirectory}, " +
                     "file size - ${safeFile.fileSize}"
         )
-        opener(File(decryptedFile.absolutePath))
+        fileOpener(File(decryptedFile.absolutePath))
     }
 
     /**
@@ -649,6 +649,7 @@ class SafeData(
      * takes file's absolute path and returns a SafeFiles object
      */
     private fun getSafeFileEnum(fileAbsolutePath: String): SafeFiles {
+        Log.d(TAG,"fileAbsolutePath = $fileAbsolutePath")
         val pointerIndex = fileAbsolutePath.lastIndexOf('.')
         val extensionType = fileAbsolutePath.substring(pointerIndex, fileAbsolutePath.length)
         val fileName =
