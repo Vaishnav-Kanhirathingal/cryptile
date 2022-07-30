@@ -155,9 +155,9 @@ class CreateSafeFragment : Fragment() {
                 safeUsesMultiplePassword = useMultiplePasswordsSwitch.isChecked,
                 personalAccessOnly = personalAccessOnlySwitch.isChecked,
                 encryptionAlgorithm = when (encryptionLevelSlider.value) {
-                    1.0f -> "one"
-                    2.0f -> "two"
-                    else -> "three"
+                    1.0f -> 1
+                    2.0f -> 2
+                    else -> 3
                 },
                 safeCreated = System.currentTimeMillis(),
                 hideSafePath = pathHiddenSwitch.isChecked,

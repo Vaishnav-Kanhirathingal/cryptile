@@ -36,7 +36,7 @@ class SafeData(
     @ColumnInfo(name = "safe_owner") var safeOwner: String,
     @ColumnInfo(name = "safe_uses_multiple_password") var safeUsesMultiplePassword: Boolean,
     @ColumnInfo(name = "personal_access_only") var personalAccessOnly: Boolean,
-    @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: String,// TODO: use this
+    @ColumnInfo(name = "encryption_algorithm") var encryptionAlgorithm: Int,// TODO: use this
     @ColumnInfo(name = "safe_created") var safeCreated: Long,
     @ColumnInfo(name = "hide_safe_path") var hideSafePath: Boolean,
     @ColumnInfo(name = "safe_absolute_location") var safeAbsoluteLocation: String,
@@ -456,7 +456,8 @@ class SafeData(
     /**
      * takes a safe file, decrypts it and stores it into the destination file.
      * @param from safe file to decrypt.
-     * @param destinationFile file to store decrypted safe file.
+     * @param destinationFile file to store decrypted data. If already exists would be deleted and
+     * recreated
      * @param keyList takes list of keys used for encryption and decryption.
      */
     private fun readFromWriteTo(
@@ -473,27 +474,28 @@ class SafeData(
 
         // TODO: compensate in other functions if destination already exists
         val size = dir.list()!!.size
-        destinationFile.delete()
-        if (!destinationFile.exists()) {
-            AdditionalPrompts.initializeLoading(
-                layoutInflater,
-                context,
-                "Decrypting file - ${from.fileNameUpperCase}"
-            )
-            for (i in 0 until size) {
-                Thread.sleep(100)
-                AdditionalPrompts.addProgress(
-                    progress = (i * 100) / size,
-                    dismiss = false
-                )
-                val fileBytes = File(dir, "${encryptedFileName}_$i").readBytes()
-                destinationFile.appendBytes(decrypt(fileBytes, keyList)!!)
-            }
-            AdditionalPrompts.addProgress(
-                progress = 100,
-                dismiss = true
-            )
+
+        if (destinationFile.exists()) {
+            destinationFile.delete()
         }
+        AdditionalPrompts.initializeLoading(
+            layoutInflater,
+            context,
+            "Decrypting file - ${from.fileNameUpperCase}"
+        )
+        for (i in 0 until size) {
+            Thread.sleep(100)
+            AdditionalPrompts.addProgress(
+                progress = (i * 100) / size,
+                dismiss = false
+            )
+            val fileBytes = File(dir, "${encryptedFileName}_$i").readBytes()
+            destinationFile.appendBytes(decrypt(fileBytes, keyList)!!)
+        }
+        AdditionalPrompts.addProgress(
+            progress = 100,
+            dismiss = true
+        )
     }
 
     /**
@@ -543,7 +545,7 @@ class SafeData(
                     "file extension ${safeFile.fileDirectory}, " +
                     "file size - ${safeFile.fileSize}"
         )
-        fileOpener(File(decryptedFile.absolutePath))
+        fileOpener(decryptedFile)
     }
 
     /**
@@ -649,7 +651,7 @@ class SafeData(
      * takes file's absolute path and returns a SafeFiles object
      */
     private fun getSafeFileEnum(fileAbsolutePath: String): SafeFiles {
-        Log.d(TAG,"fileAbsolutePath = $fileAbsolutePath")
+        Log.d(TAG, "fileAbsolutePath = $fileAbsolutePath")
         val pointerIndex = fileAbsolutePath.lastIndexOf('.')
         val extensionType = fileAbsolutePath.substring(pointerIndex, fileAbsolutePath.length)
         val fileName =

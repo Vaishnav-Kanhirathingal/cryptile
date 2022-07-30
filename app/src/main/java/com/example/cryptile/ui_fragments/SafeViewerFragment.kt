@@ -392,11 +392,6 @@ class SafeViewerFragment : Fragment() {
         // TODO: fix issue for path
         addFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             try {
-
-                val filePath = File(it.data!!.data!!.path).absolutePath
-
-                Log.d(TAG, "it.data!!.data!!.encodedPath = $filePath")
-
                 val path = it.data!!.data!!.lastPathSegment!!.removePrefix("primary:")
                 Log.d(TAG, "File Path = $path")
                 if (path.isBlank()) {
@@ -436,5 +431,17 @@ class SafeViewerFragment : Fragment() {
                 e.printStackTrace()
             }
         }
+    }
+
+    override fun onPause() {
+        Log.d(TAG,"pause started")
+        // TODO: delayed clear cache
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // TODO: start a work to clear cache
+        Log.d(TAG, "fragment destroyed")
     }
 }
