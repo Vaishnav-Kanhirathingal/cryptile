@@ -88,6 +88,7 @@ class MainFragment : Fragment() {
             navController = findNavController(),
         )
         viewModel.getListOfIds().asLiveData().observe(viewLifecycleOwner) {
+            // TODO: clear cache instantly for each safe
             safeAdapter.submitList(it)
             binding.includedSubLayout.emptySafeTextView.visibility =
                 if (it.isEmpty()) View.VISIBLE else View.GONE
