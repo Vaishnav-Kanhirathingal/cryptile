@@ -62,9 +62,9 @@ class SafeViewerFragment : Fragment() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        safeDataId = arguments!!.getInt("id")
+        safeDataId = requireArguments().getInt("id")
         val list = Gson().fromJson(
-            arguments!!.getString("key")!!,
+            requireArguments().getString("key")!!,
             mutableListOf<String>()::class.java
         )
         val keyList = mutableListOf<SecretKey>()
@@ -145,7 +145,7 @@ class SafeViewerFragment : Fragment() {
                                             "size = ${file.totalSpace} "
                                 )
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    context!!.startActivity(intent)
+                                    requireContext().startActivity(intent)
                                 }
                             }
                         )

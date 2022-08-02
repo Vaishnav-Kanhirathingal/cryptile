@@ -3,10 +3,12 @@ package com.example.cryptile.ui_fragments.prompt
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.annotation.RequiresApi
 import com.example.cryptile.databinding.PromptLoadingBinding
 import com.example.cryptile.databinding.PromptMessageBinding
 import com.example.cryptile.databinding.PromptVerifyAccountBinding
@@ -92,6 +94,7 @@ object AdditionalPrompts {
      * @param [usePassword] asks for password if available and set to true.
      * @param [onSuccess] task to be performed after the account has been verified
      */
+    @RequiresApi(Build.VERSION_CODES.P)
     fun verifyUser(
         layoutInflater: LayoutInflater,
         context: Context,

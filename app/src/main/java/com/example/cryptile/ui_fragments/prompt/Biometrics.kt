@@ -2,9 +2,11 @@ package com.example.cryptile.ui_fragments.prompt
 
 import android.content.Context
 import android.hardware.biometrics.BiometricPrompt
+import android.os.Build
 import android.os.CancellationSignal
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 
 private const val TAG = "Biometrics"
 
@@ -14,6 +16,7 @@ object Biometrics {
      * @param [onSuccess] action to be performed on Success.
      * @param [onFailure] action to be performed if the verification fails completely.
      */
+    @RequiresApi(Build.VERSION_CODES.P)
     fun verifyBiometrics(
         context: Context,
         description: String,
@@ -39,7 +42,7 @@ object Biometrics {
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
                 //gets called as soon as the prompt is displayed and with cancel button
                 super.onAuthenticationError(errorCode, errString)
-                Log.d(TAG, "onAuthenticationError called")
+                Log.d(TAG, "onAuthenticationError called, $errorCode $errString")
                 onFailure()
             }
         }

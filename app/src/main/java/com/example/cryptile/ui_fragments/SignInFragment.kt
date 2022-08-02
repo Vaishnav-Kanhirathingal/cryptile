@@ -17,7 +17,6 @@ import com.example.cryptile.app_data.data_store_files.AppDataStore
 import com.example.cryptile.app_data.data_store_files.StoreBoolean
 import com.example.cryptile.databinding.FragmentSignInBinding
 import com.example.cryptile.firebase.FirebaseFunctions
-import com.example.cryptile.ui_fragments.prompt.Biometrics
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -131,30 +130,12 @@ open class SignInFragment : Fragment() {
      * navigates to the main screen if conditions are correct
      */
     private fun navigateIfSignedIn() {
-        val navigateUnderConditions = {
-            if (auth.currentUser != null) {
-                dataStore.keepMeSignedInFlow.asLiveData()
-                    .observe(viewLifecycleOwner) {
-                        if (it) {
-                            navigateToMain()
-                        }
-                    }
+        if (auth.currentUser != null) {
+            dataStore.keepMeSignedInFlow.asLiveData().observe(viewLifecycleOwner) {
+                if (it) {
+                    navigateToMain()
+                }
             }
-        }
-        dataStore.fingerprintAppLockFlow.asLiveData().observe(viewLifecycleOwner) { useFinger ->
-            if (useFinger) {
-                Biometrics.verifyBiometrics(
-                    context = requireContext(),
-                    description = "Scan fingerprint to access app",
-                    onSuccess = navigateUnderConditions,
-                    onFailure = {
-                        Log.d(TAG, "failed authentication")
-                        auth.signOut()
-//                        ActivityCompat.finishAffinity(requireActivity())
-                        // TODO: exit app or log out
-                    })
-            } else navigateUnderConditions()
-
         }
     }
 
