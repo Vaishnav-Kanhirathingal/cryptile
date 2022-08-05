@@ -3,6 +3,7 @@ package com.example.cryptile.ui_fragments
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -13,6 +14,7 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
@@ -20,6 +22,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.room_files.SafeData
@@ -31,6 +37,7 @@ import com.example.cryptile.ui_fragments.adapters.ViewerAdapter
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.example.cryptile.worker.CleanerWorker
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -39,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.crypto.SecretKey
 
 
@@ -84,11 +92,13 @@ class SafeViewerFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         applyBindings()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun applyBindings() {
         binding.apply {
             topAppBar.setOnMenuItemClickListener {
@@ -235,6 +245,7 @@ class SafeViewerFragment : Fragment() {
      * a prompt with all the safe's settings wil be launched. here, the user can can change the
      * safe's name, password, delete and export the entire safe.
      */
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun openSafeSettings() {
         val dialogBox = Dialog(requireContext())
         val settingsBinding = PromptSafeSettingsBinding.inflate(layoutInflater)
@@ -433,14 +444,20 @@ class SafeViewerFragment : Fragment() {
     }
 
     override fun onPause() {
-        Log.d(TAG,"pause started")
-        // TODO: delayed clear cache
+        Log.d(TAG, "clearing_cache started after onPause")
+        val x = Gson().toJson(safeData)
+        Log.d(TAG, "data sent is $x")
+        val data = Data.Builder().putString(CleanerWorker.safeJsonKey, x).build()
+        val cacheWorker =
+            OneTimeWorkRequestBuilder<CleanerWorker>()
+                .setInputData(data)
+                .setInitialDelay(10, TimeUnit.MINUTES)
+                .build()
+        WorkManager.getInstance(requireContext()).beginUniqueWork(
+            "clearing_cache",
+            ExistingWorkPolicy.REPLACE,
+            cacheWorker
+        ).enqueue()
         super.onPause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // TODO: start a work to clear cache
-        Log.d(TAG, "fragment destroyed")
     }
 }
