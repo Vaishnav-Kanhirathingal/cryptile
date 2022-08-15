@@ -9,7 +9,7 @@ import com.google.gson.Gson
 
 class CleanerWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
-    val TAG = this::class.java.simpleName
+    val TAG: String = this::class.java.simpleName
 
     companion object {
         const val safeJsonKey = "safe_json"

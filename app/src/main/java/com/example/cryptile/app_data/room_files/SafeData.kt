@@ -537,7 +537,7 @@ class SafeData(
         saveChangesToLogFile(
             action = "open file",
             string = "File directory opened - ${safeFile.fileDirectory}, " +
-                    "file extension ${safeFile.fileDirectory}, " +
+                    "file extension ${safeFile.extension}, " +
                     "file size - ${safeFile.fileSize}"
         )
         fileOpener(decryptedFile)
@@ -565,7 +565,6 @@ class SafeData(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-
             }
         }
         return finalList
@@ -584,27 +583,20 @@ class SafeData(
     ) {
         val safeFile = getSafeFileEnum(fileAbsolutePath)
         val file = File(Environment.getExternalStorageDirectory(), fileAbsolutePath)
-
         val inputFileSize = Files
             .readAttributes(file.toPath(), BasicFileAttributes::class.java).size()
         Log.d(TAG, "file size = $inputFileSize")
-
         val destinationDirectory = File(
             Environment.getExternalStorageDirectory(),
             "$safeAbsoluteLocation/$safeDataDirectoryName/${safeFile.fileDirectory}"
         )
         destinationDirectory.mkdirs()
-
-
         val newDestinationDirectory = File(destinationDirectory, encStorageDirectoryName)
         newDestinationDirectory.mkdirs()
-
         var i: Long = 0
         var iterationCount = 0
-
         AdditionalPrompts.initializeLoading(layoutInflater, context, "Importing file")
         val parts = (inputFileSize / encFileLimit) + 1
-
         val inputStream = BufferedInputStream(FileInputStream(file))
         while (i < inputFileSize) {
             Thread.sleep(100)
@@ -618,18 +610,13 @@ class SafeData(
             Log.d(TAG, "currentLimit = $currentLimit, iteration i = $i")
             val cacheArray = ByteArray(currentLimit)
             inputStream.read(cacheArray, 0, currentLimit)
-
             File(newDestinationDirectory, "${encryptedFileName}_$iterationCount")
                 .writeBytes(encrypt(cacheArray, keyList)!!)
-
             iterationCount += 1
             i += currentLimit
         }
         AdditionalPrompts.addProgress(100, true)
         inputStream.close()
-
-
-
         FileWriter(File(destinationDirectory, safeDataFileName)).apply {
             append(GsonBuilder().setPrettyPrinting().create().toJson(safeFile));flush();close()
         }
