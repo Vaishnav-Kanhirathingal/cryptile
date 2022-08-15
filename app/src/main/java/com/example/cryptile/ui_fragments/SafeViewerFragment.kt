@@ -15,7 +15,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.content.FileProvider
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -49,10 +48,9 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.crypto.SecretKey
 
-
-private const val TAG = "SafeViewerFragment"
-
 class SafeViewerFragment : Fragment() {
+    val TAG: String = this::class.java.simpleName
+
     private val viewModel: AppViewModel by activityViewModels {
         AppViewModelFactory((activity?.application as AppApplication).database.safeDao())
     }
@@ -133,7 +131,7 @@ class SafeViewerFragment : Fragment() {
                             context = requireContext(),
                             layoutInflater = layoutInflater,
                             fileOpener = { file: File ->
-                                val uri: Uri = FileProvider.getUriForFile(
+                                val uri: Uri = getUriForFile(
                                     requireContext(),
                                     "com.example.cryptile.fileProvider",
                                     file
@@ -173,6 +171,7 @@ class SafeViewerFragment : Fragment() {
             viewModel.getById(safeDataId!!).asLiveData().observe(viewLifecycleOwner) {
                 safeData = it
                 fileList.value = it.getDataFileList()
+                topAppBar.title = it.safeName
 
             }
             fileList.observe(viewLifecycleOwner) {
@@ -189,7 +188,6 @@ class SafeViewerFragment : Fragment() {
      * vaishnav.kanhira@gmail.com for problem analysis.
      */
     private fun sendLog() {
-
         AdditionalPrompts.confirmationPrompt(
             context = requireContext(),
             title = "Send Log?",
