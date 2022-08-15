@@ -29,14 +29,17 @@ class ViewerAdapter(
         private val layoutInflater: LayoutInflater
     ) : RecyclerView.ViewHolder(binding.root) {
         /**
-         * binds the UI side of the things
+         * binds the UI side of the things.
+         * @param [safeFiles] used for binding of individual list item binding
          */
         fun bind(safeFiles: SafeFiles) {
             binding.apply {
                 fileNameTextView.text = safeFiles.fileNameUpperCase
-                fileDetailsTextView.text = safeFiles.fileAdded + " | " +
-                        SafeFiles.getFormattedSize(safeFiles.fileSize) + " | " +
-                        safeFiles.extension.substring(1).uppercase()
+
+                "${safeFiles.fileAdded} | ${SafeFiles.getFormattedSize(safeFiles.fileSize)} | ${
+                    safeFiles.extension.substring(1).uppercase()
+                }".apply { fileDetailsTextView.text = this }
+
                 fileImageView.setImageResource(
                     when (safeFiles.fileType) {
                         FileType.UNKNOWN -> R.drawable.file_unknown_24
@@ -66,9 +69,10 @@ class ViewerAdapter(
                 show()
             }
             binding.apply {
-                fileNameTextView.text = safeFiles.fileNameUpperCase + safeFiles.extension
-                fileDetailsTextView.text =
-                    "${safeFiles.fileAdded} | ${SafeFiles.getFormattedSize(safeFiles.fileSize)}"
+                (safeFiles.fileNameUpperCase + safeFiles.extension)
+                    .apply { fileNameTextView.text = this }
+                "${safeFiles.fileAdded} | ${SafeFiles.getFormattedSize(safeFiles.fileSize)}"
+                    .apply { fileDetailsTextView.text = this }
                 openButton.setOnClickListener { opener(safeFiles);dialog.dismiss() }
                 exportButton.setOnClickListener { exporter(safeFiles);dialog.dismiss() }
                 deleteButton.setOnClickListener { deleter(safeFiles);dialog.dismiss() }
