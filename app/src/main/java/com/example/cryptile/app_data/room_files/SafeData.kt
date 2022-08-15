@@ -471,17 +471,12 @@ class SafeData(
             Environment.getExternalStorageDirectory(),
             "${safeAbsoluteLocation}/$safeDataDirectoryName/${from.fileDirectory}/$encStorageDirectoryName"
         )
-
-        // TODO: compensate in other functions if destination already exists
         val size = dir.list()!!.size
 
-        if (destinationFile.exists()) {
-            destinationFile.delete()
-        }
+        if (destinationFile.exists()) destinationFile.delete()
+
         AdditionalPrompts.initializeLoading(
-            layoutInflater,
-            context,
-            "Decrypting file - ${from.fileNameUpperCase}"
+            layoutInflater, context, "Decrypting file - ${from.fileNameUpperCase}"
         )
         for (i in 0 until size) {
             Thread.sleep(100)
