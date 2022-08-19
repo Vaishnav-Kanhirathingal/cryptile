@@ -64,23 +64,25 @@ class SafeAdapter(
                         R.drawable.error_24
                     }
                 )
-                safeCreatedTextView.text =
-                    "Created: ${SimpleDateFormat("dd/MM/yyyy").format(safeData.safeCreated)}"
+                safeCreatedTextView.text = context.getString(
+                    R.string.created_on,
+                    SimpleDateFormat("dd/MM/yyyy").format(safeData.safeCreated)
+                )
                 safeOwnerTextView.text = safeData.safeOwner
 
                 if (safeData.hideSafePath) {
                     safePathImageView.setImageResource(R.drawable.location_off_24)
-                    safeAbsolutePathTextView.text = "Location hidden"
+                    safeAbsolutePathTextView.text = context.getString(R.string.location_hidden)
                 } else {
                     safePathImageView.setImageResource(R.drawable.location_24)
                     safeAbsolutePathTextView.text = safeData.safeAbsoluteLocation
                 }
                 if (safeData.personalAccessOnly) {
                     safeAccessImageView.setImageResource(R.drawable.personal_safe_24)
-                    safeAccessTextView.text = "Owner Access only"
+                    safeAccessTextView.text = context.getString(R.string.owner_access_only)
                 } else {
                     safeAccessImageView.setImageResource(R.drawable.lock_24)
-                    safeAccessTextView.text = "Public Access"
+                    safeAccessTextView.text = context.getString(R.string.public_access)
                 }
             }
         }
