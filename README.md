@@ -4,7 +4,7 @@
 
 ## Purpose of CRYPTILE -
 
-> This is an encryption application. it would take your files and encrypt them so that only you can see them. This can be useful when you have files that are important but, at the same time you want them accessible at all times. With CRYPTILE, you don't have to worry about having your data stolen. Since the only place the data will ever exist is on your physical device, no worry about any cloud provider having your data, neither of any other app being able to read it. It would be password locked and wouldn't be in readable format for anybody without the password/s. A safe is a term that would be a collection of such files.
+> This is an encryption application. it would take your files and encrypt them so that only you can see them. This can be useful when you have files that are important but, at the same time you want them accessible at all times. With CRYPTILE, you don't have to worry about having your data stolen. Since the only place the data will ever exist is on your physical device, no worry about any cloud provider having your data, nor of any other app being able to read it. It would be password locked and wouldn't be in readable format for anybody without the password/s. A safe is a term that would be a collection of such files.
 
 ## An example use case -
 
