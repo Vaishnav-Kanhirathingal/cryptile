@@ -1,6 +1,10 @@
 # CRYPTILE
 
-> Privacy is the key, encrypt everything.
+> With improvement in cyber security tactics, there is also a much greater improvement in cyber attack tactics. With people storing their entire lives on their phones, it is a lot easier to access a weakpoint such as your mobile device and get access to documents that you thought were safe just lying around in your device. This kind of unauthorised access can flip somebody's life upside-down. So, it is always a better option to protect yourself against all types of attacks and prevent such a situation. Privacy is the key, encrypt everything.
+
+<img src = "https://github.com/Vaishnav-Kanhirathingal/CRYPTILE/blob/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
+
+> For app updates you can always check the build section.
 
 ## Purpose of CRYPTILE -
 
