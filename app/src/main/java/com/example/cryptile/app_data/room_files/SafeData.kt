@@ -317,16 +317,20 @@ class SafeData(
      * Clears content of '.CACHE' directory within the safe. Does not delete the directory.
      */
     fun clearCache() {
-        for (child in File(
-            Environment.getExternalStorageDirectory(),
-            "$safeAbsoluteLocation/$cacheDirectoryName"
-        ).listFiles()!!) {
-            child.delete()
+        try {
+            for (child in File(
+                Environment.getExternalStorageDirectory(),
+                "$safeAbsoluteLocation/$cacheDirectoryName"
+            ).listFiles()!!) {
+                child.delete()
+            }
+            saveChangesToLogFile(
+                action = "clear cache",
+                string = "cache cleared from cache directory."
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        saveChangesToLogFile(
-            action = "clear cache",
-            string = "cache cleared from cache directory."
-        )
     }
 
     //---------------------------------------------------------------------------safe-data-functions
@@ -343,6 +347,7 @@ class SafeData(
         layoutInflater: LayoutInflater,
         oldKey: List<SecretKey>,
         newKey: List<SecretKey>,
+        onProcessFinish: () -> Unit
     ) {
         val fileList = getDataFileList()
         if (fileList.isNotEmpty()) {
@@ -364,8 +369,10 @@ class SafeData(
                         progress = (iterator * 100) / size,
                         dismiss = false
                     )
+                    Log.d(TAG,"encrypting file: ${file.name}")
                     val originalByteArray = file.readBytes()
                     file.writeBytes(encrypt(decrypt(originalByteArray, oldKey)!!, newKey)!!)
+                    Log.d(TAG,"encrypted file: ${file.name}")
                     iterator++
                 }
                 AdditionalPrompts.addProgress(
@@ -399,6 +406,7 @@ class SafeData(
             action = "password change",
             string = "encryption changed for all files"
         )
+        onProcessFinish()
     }
 
     /**

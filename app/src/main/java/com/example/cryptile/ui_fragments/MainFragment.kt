@@ -90,7 +90,11 @@ class MainFragment : Fragment() {
         viewModel.getListOfIds().asLiveData().observe(viewLifecycleOwner) {
             for (i in it) {
                 viewModel.getById(i).asLiveData().observe(viewLifecycleOwner) { sd ->
-                    sd.clearCache()
+                    try {
+                        sd.clearCache()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
             safeAdapter.submitList(it)

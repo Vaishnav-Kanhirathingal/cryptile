@@ -334,8 +334,7 @@ class SafeViewerFragment : Fragment() {
                         p2Check = true
                     }
                 }
-                // TODO: replace with p1check && p2check
-                if (true) {
+                if (p1Check && p2Check) {
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
                         title = "Change security settings?",
@@ -347,10 +346,12 @@ class SafeViewerFragment : Fragment() {
                                 .firestore
                                 .collection(UserDataConstants.tableName)
                                 .document(Firebase.auth.currentUser!!.uid)
-                                .get().addOnSuccessListener {
-                                    safeData.safeUsesMultiplePassword =
+                                .get()
+                                .addOnSuccessListener {
+                                    val temp = safeData
+                                    temp.safeUsesMultiplePassword =
                                         useMultiplePasswordsSwitch.isChecked
-                                    safeData.personalAccessOnly =
+                                    temp.personalAccessOnly =
                                         personalAccessOnlySwitch.isChecked
                                     val newKeyList =
                                         if (useMultiplePasswordsSwitch.isChecked) {
@@ -368,16 +369,27 @@ class SafeViewerFragment : Fragment() {
                                             )
                                         )
                                     }
+                                    dialogBox.dismiss()
                                     CoroutineScope(Dispatchers.IO).launch {
                                         safeData.changeEncryption(
                                             context = requireContext(),
                                             layoutInflater = layoutInflater,
                                             oldKey = key,
-                                            newKey = newKeyList
+                                            newKey = newKeyList,
+                                            onProcessFinish = {
+                                                CoroutineScope(Dispatchers.Main).launch {
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        "Password Changed for safe: ${safeData.safeName}",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
                                         )
+                                        safeData = temp
+                                        viewModel.update(safeData)
+                                        key = newKeyList
                                     }
-                                    viewModel.update(safeData)
-                                    key = newKeyList
                                 }.addOnFailureListener {
                                     it.printStackTrace()
                                     Toast.makeText(

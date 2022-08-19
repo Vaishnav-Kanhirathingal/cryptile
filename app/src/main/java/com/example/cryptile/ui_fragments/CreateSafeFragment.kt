@@ -80,9 +80,7 @@ class CreateSafeFragment : Fragment() {
                 findNavController().navigateUp()
             }
             confirmButton.setOnClickListener {
-                val passwordCheck = verifyPasswordParameters()
-                // TODO: replace with [passwordCheck]
-                if (true) {
+                if (verifyPasswordParameters()) {
                     firebaseFirestore
                         .collection(UserDataConstants.tableName)
                         .document(auth.currentUser!!.uid)
