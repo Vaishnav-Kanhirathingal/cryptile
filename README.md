@@ -60,29 +60,35 @@
 
 <img src = "https://user-images.githubusercontent.com/94210466/180609344-ed3dced9-93f0-4c44-acb8-270169b90a6f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609350-2543d8fa-0909-48b8-8781-e980a141438f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609351-6638b7bc-ade4-4836-b72c-4f7f7fdc2402.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/185548003-3b59728c-728c-4a44-bb50-4470935fe140.jpg" width = 324>
 
+### Adding a file -
+
+> Adding a file is quite easy. just click on the `+` sign and select the file you want to import.
+
+<img src = "https://user-images.githubusercontent.com/94210466/185549991-a430235a-9f69-4893-b61c-d08bfea02166.jpg" width = 324>
+
 ### Opening the file -
 
 > Select the file you want to open from the safe's list. Once the decrypting is done, It would open the file in it's dedicated app.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179976023-5bdaac97-de5b-42ff-8709-b8642aff87f8.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/185549087-3b10fcf5-fadc-4ad0-a526-676b4ca4379d.jpg" width = 324>
 
 ### Interacting with a file -
 
 > Long clicking on the file you want to interact with opens a prompt with all the options of actions you can perform on the file.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179976110-8cb0d683-d225-4257-86dc-e55844bbc8a3.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/185549164-08641a31-7412-4a7b-90ee-ab1ca30d1775.jpg" width = 324>
 
 ### Safe settings -
 
 > Inside the safe, in the option menu, select the safe settings. Here, you can see options to change the safe's attributes. You can also find additional options. Options include changing the safe's name, exporting all the contents of the safe, deleting the safe, changing the safe's password, changing the safe's access type.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179976163-866acd4c-30c9-4ab4-89b7-a2402766404c.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/179976179-13fe2884-e4e7-4da1-b116-4a4984cbe680.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/185549260-0b0bf11e-19d5-40cf-8084-3d3c1ce2b32a.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/185549283-ce7d1698-f370-4d4c-a3d1-b95677d5be4c.jpg" width = 324>
 
 ### Sending LOGs -
 
 > If you encounter any issue with the safe, you can email the safe's log data for analysis. To send LOGs, open the safe and inside the options menu, select the `send logs` option and select any email client. Once the email is ready, you can enter your issues inside the body of the mail.
 
-<img src = "https://user-images.githubusercontent.com/94210466/179976370-02abc4b2-8050-4a47-a71e-019ec788507d.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/185549260-0b0bf11e-19d5-40cf-8084-3d3c1ce2b32a.jpg" width = 324>
 
 ### Settings -
 
