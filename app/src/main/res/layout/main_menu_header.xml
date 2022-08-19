@@ -16,7 +16,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/google" />
+        tools:src="@drawable/account_108" />
 
 
     <com.google.android.material.divider.MaterialDivider

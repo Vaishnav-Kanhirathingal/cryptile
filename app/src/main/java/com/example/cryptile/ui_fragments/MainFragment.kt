@@ -122,7 +122,7 @@ class MainFragment : Fragment() {
                         }
                     } catch (e: Exception) {
                         CoroutineScope(Dispatchers.Main).launch {
-                            findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.google)
+                            findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.account_108)
                             e.printStackTrace()
                         }
                     }
@@ -149,9 +149,7 @@ class MainFragment : Fragment() {
                             auth.signOut()
                             Toast.makeText(requireContext(), "Signed-Out", Toast.LENGTH_SHORT)
                                 .show()
-                            findNavController().navigate(
-                                MainFragmentDirections.actionMainFragmentToSignInFragment()
-                            )
+                            findNavController().navigate(MainFragmentDirections.actionMainFragmentToSignInFragment())
                         }
                     )
                     true
@@ -166,21 +164,15 @@ class MainFragment : Fragment() {
                     true
                 }
                 R.id.settings -> {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToSettingsFragment()
-                    )
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
                     true
                 }
                 R.id.app_about -> {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToAboutFragment()
-                    )
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToAboutFragment())
                     true
                 }
                 R.id.documentation -> {
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToDocumentationFragment()
-                    )
+                    findNavController().navigate(MainFragmentDirections.actionMainFragmentToDocumentationFragment())
                     true
                 }
                 R.id.app_exit -> {
