@@ -56,9 +56,9 @@
 
 ### Interacting with the safe -
 
-> Click on the safe with your safe's name and enter your passwords. Then, click the `open` button. Once that is done, to add a file to the safe, click on the `+` icon at the bottom of the screen. Then, navigate to the file you want to import and select it. Selecting the file would import it to the safe as below. If the safe directories are not found, the card will display a `!` sign as in the third image.
+> Click on the safe with your safe's name and enter your passwords. Then, click the `open` button. Once that is done, to add a file to the safe, click on the `+` icon at the bottom of the screen. Then, navigate to the file you want to import and select it. Selecting the file would import it to the safe as below. If the safe directories are not found, the card will display a `!` sign as in the third image. If you attempt to open the error prone safe, a prompt to remove it from the app's database will be displayed.
 
-<img src = "https://user-images.githubusercontent.com/94210466/180609344-ed3dced9-93f0-4c44-acb8-270169b90a6f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609350-2543d8fa-0909-48b8-8781-e980a141438f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609351-6638b7bc-ade4-4836-b72c-4f7f7fdc2402.jpg" width = 324>
+<img src = "https://user-images.githubusercontent.com/94210466/180609344-ed3dced9-93f0-4c44-acb8-270169b90a6f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609350-2543d8fa-0909-48b8-8781-e980a141438f.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/180609351-6638b7bc-ade4-4836-b72c-4f7f7fdc2402.jpg" width = 324> <img src = "https://user-images.githubusercontent.com/94210466/185548003-3b59728c-728c-4a44-bb50-4470935fe140.jpg" width = 324>
 
 ### Opening the file -
 
