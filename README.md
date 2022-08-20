@@ -4,7 +4,7 @@
 
 <img src = "https://github.com/Vaishnav-Kanhirathingal/CRYPTILE/blob/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png">
 
-> For app updates you can always check the build section.
+> For app updates you can always check the release section.
 
 ## Purpose of CRYPTILE -
 
