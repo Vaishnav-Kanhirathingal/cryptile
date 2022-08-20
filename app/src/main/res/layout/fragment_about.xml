@@ -120,40 +120,35 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:src="@drawable/whatsapp_24"
-                            android:tooltipText="WhatsApp" />
+                            android:src="@drawable/whatsapp_24" />
 
                         <ImageButton
                             android:id="@+id/personal_github_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:src="@drawable/github_24"
-                            android:tooltipText="Github" />
+                            android:src="@drawable/github_24" />
 
                         <ImageButton
                             android:id="@+id/personal_gmail_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:src="@drawable/gmail_24"
-                            android:tooltipText="Gmail" />
+                            android:src="@drawable/gmail_24" />
 
                         <ImageButton
                             android:id="@+id/personal_outlook_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:src="@drawable/outlook_24"
-                            android:tooltipText="Outlook" />
+                            android:src="@drawable/outlook_24" />
 
                         <ImageButton
                             android:id="@+id/personal_instagram_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:src="@drawable/instagram_24"
-                            android:tooltipText="Instagram" />
+                            android:src="@drawable/instagram_24" />
                     </LinearLayout>
 
                     <TextView

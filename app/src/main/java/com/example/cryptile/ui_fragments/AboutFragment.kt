@@ -32,12 +32,31 @@ class AboutFragment : Fragment() {
     private fun applyBinding() {
         binding.apply {
             topAppBar.setNavigationOnClickListener { findNavController().navigateUp() }
-            projectGithubButton.setOnClickListener { open("https://github.com/Vaishnav-Kanhirathingal/CRYPTILE") }
-            personalWhatsappButton.setOnClickListener { open("https://wa.me/917219648837") }
-            personalGithubButton.setOnClickListener { open("https://github.com/Vaishnav-Kanhirathingal") }
-            personalGmailButton.setOnClickListener { open("mailto:vaishnav.kanhira@gmail.com") }
-            personalOutlookButton.setOnClickListener { open("mailto:vaishnav.kanhira@outlook.com") }
-            personalInstagramButton.setOnClickListener { open("https://www.instagram.com/vaishnav_k.p/") }
+
+            projectGithubButton.apply {
+                setOnClickListener { open("https://github.com/Vaishnav-Kanhirathingal/CRYPTILE") }
+                tooltipText = "Vaishnav-Kanhirathingal/CRYPTILE"
+            }
+            personalWhatsappButton.apply {
+                setOnClickListener { open("https://wa.me/917219648837") }
+                tooltipText = "+91 7219648837"
+            }
+            personalGithubButton.apply {
+                setOnClickListener { open("https://github.com/Vaishnav-Kanhirathingal") }
+                tooltipText = "Vaishnav-Kanhirathingal"
+            }
+            personalGmailButton.apply {
+                setOnClickListener { open("mailto:vaishnav.kanhira@gmail.com") }
+                tooltipText = "vaishnav.kanhira@gmail.com"
+            }
+            personalOutlookButton.apply {
+                setOnClickListener { open("mailto:vaishnav.kanhira@outlook.com") }
+                tooltipText = "vaishnav.kanhira@outlook.com"
+            }
+            personalInstagramButton.apply {
+                setOnClickListener { open("https://www.instagram.com/vaishnav_k.p/") }
+                tooltipText = "vaishnav_k.p"
+            }
         }
     }
 
