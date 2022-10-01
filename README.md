@@ -94,7 +94,6 @@
 
 
 ``` English
-
 [2022-10-01]-[16:52:02.411] | [Qwerty] | [nsMs117QBuQOrgJkaahbPiZ5KrG3] | [creation------------] | [				-------------SAFE-CREATED-------------				]
 [2022-10-01]-[16:52:02.425] | [Qwerty] | [nsMs117QBuQOrgJkaahbPiZ5KrG3] | [Updating safeData---] | [metadata file updated, new meta-data - {"encryptionLevel":1,"hideSafePath":true,"id":0,"personalAccessOnly":true,"safeAbsoluteLocation":"Cryptile/Qwerty","safeCreated":1664623322127,"safeName":"Qwerty","safeOwner":"Vaishnav Kanhira","safeSalt":"r\u0006yB\u0018sÎÑÉ,Ujpåw\u0002²x\u0017\u0005ïV\u0005ÚÜó\bå²","safeUsesMultiplePassword":false}]
 [2022-10-01]-[16:52:02.775] | [Qwerty] | [nsMs117QBuQOrgJkaahbPiZ5KrG3] | [clear cache---------] | [cache cleared from cache directory.]
@@ -107,9 +106,7 @@
 [2022-10-01]-[16:54:00.145] | [Qwerty] | [nsMs117QBuQOrgJkaahbPiZ5KrG3] | [clear cache---------] | [cache cleared from cache directory.]
 [2022-10-01]-[16:54:13.623] | [Qwerty] | [nsMs117QBuQOrgJkaahbPiZ5KrG3] | [login---------------] | [Login attempt succeeded]
 [2022-10-01]-[16:54:15.140] | [Qwerty] | [nsMs117QBuQOrgJkaahbPiZ5KrG3] | [clear cache---------] | [cache cleared from cache directory.]
-
 ```
-
 > If you encounter any issue with the safe, you can email the safe's log data for analysis. To send LOGs, open the safe and inside the options menu, select the `send logs` option and select any email client. Once the email is ready, you can enter your issues inside the body of the mail.
 
 <img src = "https://user-images.githubusercontent.com/94210466/185549260-0b0bf11e-19d5-40cf-8084-3d3c1ce2b32a.jpg" width = 324>
