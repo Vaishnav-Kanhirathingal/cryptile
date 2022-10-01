@@ -3,7 +3,6 @@ package com.example.cryptile.ui_fragments
 import android.Manifest
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import coil.load
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
@@ -40,7 +40,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.URL
 
 private const val TAG = "MainFragment"
 
@@ -110,22 +109,12 @@ class MainFragment : Fragment() {
         val menu = binding.navigationViewMainScreen
         val headerMenu = menu.getHeaderView(0)
         headerMenu.apply {
-            CoroutineScope(Dispatchers.IO).launch {
-                repeat(2) {
-                    try {
-                        Thread.sleep(3000)
-                        Log.d(TAG, "url = ${viewModel.userPhotoUrl.value!!}")
-                        val url = URL(viewModel.userPhotoUrl.value!!)
-                        val bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                        CoroutineScope(Dispatchers.Main).launch {
-                            findViewById<ImageView>(R.id.user_image).setImageBitmap(bmp)
-                        }
-                    } catch (e: Exception) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.account_108)
-                            e.printStackTrace()
-                        }
-                    }
+            viewModel.userPhotoUrl.observe(viewLifecycleOwner) {
+                try {
+                    findViewById<ImageView>(R.id.user_image).load(it)
+                } catch (e: Exception) {
+                    findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.account_108)
+                    e.printStackTrace()
                 }
             }
             viewModel.userDisplayName.observe(viewLifecycleOwner) {
