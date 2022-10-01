@@ -1,11 +1,13 @@
 package com.example.cryptile.ui_fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.asLiveData
@@ -49,6 +51,7 @@ class SettingsFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         dataStore = AppDataStore(requireContext())
@@ -60,6 +63,7 @@ class SettingsFragment : Fragment() {
     /**
      * the layout is divided into different sections. each sections bindings are done separately.
      */
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun applyBinding() {
         appSettingSectionBinding()
         userNameSectionBinding()
@@ -89,6 +93,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun userNameSectionBinding() {
         binding.newUserNameTextLayout.apply {
             this.editText!!.setText(viewModel.userDisplayName.value)
@@ -129,6 +134,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun changeAccountPasswordSectionBinding() {
         binding.apply {
             accountPasswordLayout.visibility =
@@ -212,6 +218,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun deleteAccountSectionBinding() {
         binding.apply {
             conditionCheckBox.setOnCheckedChangeListener { _, isChecked ->
