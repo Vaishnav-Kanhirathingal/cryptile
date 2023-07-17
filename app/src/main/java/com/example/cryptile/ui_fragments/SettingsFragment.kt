@@ -22,7 +22,9 @@ import com.example.cryptile.firebase.UserDataConstants
 import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.example.cryptile.view_models.AppViewModel
 import com.example.cryptile.view_models.AppViewModelFactory
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -231,27 +233,36 @@ class SettingsFragment : Fragment() {
                     notice = "Deletion of account",
                     usePassword = true,
                     onSuccess = {
+                        val user = auth.currentUser!!
                         fireStore
                             .collection(UserDataConstants.tableName)
-                            .document(auth.currentUser!!.uid)
+                            .document(user.uid)
                             .delete()
                             .addOnSuccessListener {
-                                auth.currentUser!!.delete().addOnSuccessListener {
-                                    AdditionalPrompts.showMessagePrompt(
-                                        context = requireContext(),
-                                        layoutInflater = layoutInflater,
-                                        message = "Your account has been deleted. Sign in using another account to access the app.",
-                                        onDismiss = {
-                                            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSignInFragment())
-                                        }
-                                    )
-                                }.addOnFailureListener {
-                                    it.printStackTrace()
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "failed to delete account. Reason - ${it.message}",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                val cred = GoogleAuthProvider.getCredential(
+                                    GoogleSignIn.getLastSignedInAccount(requireContext())?.idToken,
+                                    null
+                                )
+                                user.reauthenticate(cred).addOnSuccessListener {
+                                    user.delete().addOnSuccessListener {
+                                        AdditionalPrompts.showMessagePrompt(
+                                            context = requireContext(),
+                                            layoutInflater = layoutInflater,
+                                            message = "Your account has been deleted. Sign in using another account to access the app.",
+                                            onDismiss = {
+                                                findNavController().navigate(
+                                                    SettingsFragmentDirections.actionSettingsFragmentToSignInFragment()
+                                                )
+                                            }
+                                        )
+                                    }.addOnFailureListener {
+                                        it.printStackTrace()
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "failed to delete account. Reason - ${it.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }.addOnFailureListener {
                                 it.printStackTrace()

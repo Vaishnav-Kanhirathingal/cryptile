@@ -181,6 +181,7 @@ open class SignInFragment : Fragment() {
                         }
                     )
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     Toast.makeText(requireContext(), "Login Failed", Toast.LENGTH_SHORT).show()
                 }
             }
