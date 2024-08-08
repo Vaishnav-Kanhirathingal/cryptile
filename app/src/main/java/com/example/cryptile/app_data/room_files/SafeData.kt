@@ -12,12 +12,20 @@ import com.example.cryptile.ui_fragments.prompt.AdditionalPrompts
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileReader
+import java.io.FileWriter
+import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Base64
+import java.util.Locale
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -369,10 +377,10 @@ class SafeData(
                         progress = (iterator * 100) / size,
                         dismiss = false
                     )
-                    Log.d(TAG,"encrypting file: ${file.name}")
+                    Log.d(TAG, "encrypting file: ${file.name}")
                     val originalByteArray = file.readBytes()
                     file.writeBytes(encrypt(decrypt(originalByteArray, oldKey)!!, newKey)!!)
-                    Log.d(TAG,"encrypted file: ${file.name}")
+                    Log.d(TAG, "encrypted file: ${file.name}")
                     iterator++
                 }
                 AdditionalPrompts.addProgress(

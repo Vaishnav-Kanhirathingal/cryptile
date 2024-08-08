@@ -2,7 +2,7 @@ package com.example.cryptile.data_classes
 
 import android.util.Log
 import com.google.gson.Gson
-import java.util.*
+import java.util.Locale
 
 
 private const val TAG = "SafeFiles"
@@ -25,20 +25,25 @@ data class SafeFiles(
                 in listOf(
                     ".WEBM", ".MPG", ".MPEG", ".MPV", ".OGG", ".MP4", ".AVI", ".MOV", ".SWF"
                 ) -> FileType.VIDEO
+
                 in listOf(
                     ".M4A", ".FLAC", ".MP3", ".WAV", ".AAC", ".PCM", ".AIFF", ".OGG", ".WMA",
                     ".ALAC"
                 ) -> FileType.AUDIO
+
                 in listOf(
                     ".GIF", ".JPG", ".PNG", ".GIF", ".WEBP", ".TIFF", ".PSD", ".RAW", ".BMP",
                     ".HEIF", ".INDD", ".JPEG", ".SVG", ".AI", ".EPS"
                 ) -> FileType.IMAGE
+
                 in listOf(
                     ".PDF", ".WORDX", ".XLS", ".XLSX", ".XLSB", ".DOC", ".DOCX"
                 ) -> FileType.DOCUMENT
+
                 in listOf(
                     ".ZIP", ".7Z", ".ARJ", ".DEB", ".PKG", ".RAR", ".RPM", ".TAR", ".GZ", ".Z"
                 ) -> return FileType.COMPRESSED
+
                 in listOf(".TXT") -> FileType.TEXT
                 else -> FileType.UNKNOWN
             }

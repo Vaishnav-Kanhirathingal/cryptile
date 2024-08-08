@@ -105,19 +105,23 @@ class SafeViewerFragment : Fragment() {
                         startAdditionActivity()
                         true
                     }
+
                     R.id.safe_settings -> {
                         openSafeSettings()
                         true
                     }
+
                     R.id.clear_cache -> {
                         safeData.clearCache()
                         Toast.makeText(requireContext(), "cache cleared", Toast.LENGTH_SHORT).show()
                         true
                     }
+
                     R.id.send_log_files -> {
                         sendLog()
                         true
                     }
+
                     else -> false
                 }
             }

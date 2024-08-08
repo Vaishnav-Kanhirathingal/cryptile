@@ -143,6 +143,7 @@ class MainFragment : Fragment() {
                     )
                     true
                 }
+
                 R.id.safe_remove_all -> {
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
@@ -152,18 +153,22 @@ class MainFragment : Fragment() {
                     )
                     true
                 }
+
                 R.id.settings -> {
                     findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
                     true
                 }
+
                 R.id.app_about -> {
                     findNavController().navigate(MainFragmentDirections.actionMainFragmentToAboutFragment())
                     true
                 }
+
                 R.id.documentation -> {
                     findNavController().navigate(MainFragmentDirections.actionMainFragmentToDocumentationFragment())
                     true
                 }
+
                 R.id.app_exit -> {
                     AdditionalPrompts.confirmationPrompt(
                         context = requireContext(),
@@ -177,6 +182,7 @@ class MainFragment : Fragment() {
                     )
                     true
                 }
+
                 else -> {
                     throw IllegalArgumentException("menu item not set")
                 }
