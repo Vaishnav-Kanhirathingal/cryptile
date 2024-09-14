@@ -3,7 +3,10 @@ package com.example.cryptile.ui_fragments
 import android.Manifest
 import android.app.Dialog
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +23,7 @@ import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import coil.load
+import com.example.cryptile.BuildConfig
 import com.example.cryptile.R
 import com.example.cryptile.app_data.AppApplication
 import com.example.cryptile.app_data.data_store_files.AppDataStore
@@ -112,6 +116,17 @@ class MainFragment : Fragment() {
             viewModel.userPhotoUrl.observe(viewLifecycleOwner) {
                 try {
                     findViewById<ImageView>(R.id.user_image).load(it)
+                    findViewById<ImageView>(R.id.user_image).setOnClickListener {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+                            startActivity(
+                                Intent(
+                                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                    uri
+                                )
+                            )
+                        }
+                    }
                 } catch (e: Exception) {
                     findViewById<ImageView>(R.id.user_image).setImageResource(R.drawable.account_108)
                     e.printStackTrace()
